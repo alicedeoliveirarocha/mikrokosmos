@@ -1,2 +1,2 @@
-# mikrokosmos
-Alice 
+# Mikrokosmos
+Alice e Giovanna
