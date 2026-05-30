@@ -1,0 +1,1048 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+/* ===================================================================
+   MIKROKOSMOS UNIVERSAL THEME SYSTEM
+   Sistema de temas que separa completamente K-pop e Cinema
+   Arquitetura Multi-Tenant SaaS - Alice & Giovanna 2025
+   =================================================================== */
+
+@layer base {
+  /* CSS Variables - Valores injetados dinamicamente pelo UniverseContext */
+  :root {
+    --primary-neon: #00FFFF; /* Fallback inicial */
+    --gradient-from: #00FFFF;
+    --gradient-to: #0080FF;
+    --accent-color: #0080FF;
+  }
+
+  /* ===================================================================
+     UNIVERSAL BACKGROUND - Adapta-se automaticamente ao universo ativo
+     =================================================================== */
+  
+  .universe-background {
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===================================================================
+     CATEGORIA: K-POP
+     Estética: Galaxy, Neon, Glassmorphism, Vibrante
+     =================================================================== */
+  
+  .universe-background[data-category="Kpop"] {
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  }
+
+  /* Estrelas animadas - Exclusivo K-pop */
+  .universe-background[data-category="Kpop"]::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(2px 2px at 20% 30%, white, transparent),
+      radial-gradient(2px 2px at 60% 70%, white, transparent),
+      radial-gradient(1px 1px at 50% 50%, white, transparent),
+      radial-gradient(1px 1px at 80% 10%, white, transparent),
+      radial-gradient(2px 2px at 90% 60%, white, transparent),
+      radial-gradient(1px 1px at 33% 80%, white, transparent),
+      radial-gradient(1px 1px at 15% 90%, white, transparent);
+    background-size: 200% 200%;
+    animation: twinkle 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Nebulosa neon - Exclusivo K-pop */
+  .universe-background[data-category="Kpop"]::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(
+      circle,
+      var(--gradient-from) 0%,
+      transparent 70%
+    );
+    opacity: 0.15;
+    filter: blur(80px);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===================================================================
+     CATEGORIA: CINEMA
+     Estética: Cinematic, Vintage, Dourado, Sóbrio, Elegante
+     =================================================================== */
+  
+  .universe-background[data-category="Cinema"] {
+    background: #050505;
+    background-image: 
+      linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(10,10,10,1) 100%);
+  }
+
+  /* Luz de projetor sutil - Exclusivo Cinema */
+  .universe-background[data-category="Cinema"]::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Vinheta dourada inferior - Exclusivo Cinema */
+  .universe-background[data-category="Cinema"]::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to top, rgba(212, 175, 55, 0.08), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===================================================================
+     ANIMAÇÕES
+     =================================================================== */
+
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.15;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 0.25;
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+  }
+
+  /* ===================================================================
+     GLASSMORPHISM - ADAPTA-SE À CATEGORIA
+     =================================================================== */
+
+  /* K-pop Glass: Vibrante, colorido, translúcido */
+  [data-category="Kpop"] .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  [data-category="Kpop"] .glass-strong {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Cinema Glass: Escuro, vintage, elegante */
+  [data-category="Cinema"] .glass {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  [data-category="Cinema"] .glass-strong {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+  }
+
+  /* Cinema Glass específico (para compatibilidade) */
+  .cinema-glass {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ===================================================================
+     PRODUCT CARDS - RESET COMPLETO POR CATEGORIA
+     =================================================================== */
+
+  /* K-pop: Photocard Style - Bordas arredondadas, neon, brilhante */
+  [data-category="Kpop"] .product-card {
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  [data-category="Kpop"] .product-card:hover {
+    border-color: var(--primary-neon);
+    box-shadow: 0 0 30px rgba(var(--primary-neon), 0.3);
+    transform: translateY(-5px);
+  }
+
+  /* Cinema: Movie Poster/Ticket Style - Bordas retas, dourado sutil, elegante */
+  [data-category="Cinema"] .product-card {
+    border-radius: 0.25rem;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  [data-category="Cinema"] .product-card:hover {
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 
+      0 8px 30px rgba(0, 0, 0, 0.7),
+      0 0 20px rgba(212, 175, 55, 0.15);
+    transform: translateY(-3px);
+  }
+
+  /* Remove glow neon dos botões no Cinema */
+  [data-category="Cinema"] .product-card .neon-glow {
+    box-shadow: none !important;
+  }
+
+  /* ===================================================================
+     BUTTONS - ADAPTA-SE À CATEGORIA
+     =================================================================== */
+
+  /* K-pop: Botões neon vibrantes */
+  [data-category="Kpop"] .btn-primary {
+    background: var(--primary-neon);
+    color: #000;
+    box-shadow: 0 0 20px rgba(var(--primary-neon), 0.4);
+  }
+
+  [data-category="Kpop"] .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(var(--primary-neon), 0.6);
+    transform: scale(1.05);
+  }
+
+  /* Cinema: Botões dourados elegantes */
+  [data-category="Cinema"] .btn-primary {
+    background: linear-gradient(135deg, #D4AF37 0%, #C9A22E 100%);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  }
+
+  [data-category="Cinema"] .btn-primary:hover {
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* ===================================================================
+     TYPOGRAPHY - ADAPTA-SE À CATEGORIA
+     =================================================================== */
+
+  /* K-pop: Text effects neon */
+  [data-category="Kpop"] .neon-text {
+    text-shadow: 
+      0 0 10px var(--primary-neon),
+      0 0 20px var(--primary-neon),
+      0 0 30px var(--primary-neon);
+  }
+
+  /* Cinema: Text effects dourado suave */
+  [data-category="Cinema"] .neon-text {
+    text-shadow: 
+      0 2px 10px rgba(212, 175, 55, 0.5),
+      0 0 20px rgba(212, 175, 55, 0.2);
+    color: #D4AF37;
+  }
+
+  /* Cinema: Fonte mais clássica e elegante para preços */
+  [data-category="Cinema"] .price-text {
+    font-family: Georgia, 'Times New Roman', serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===================================================================
+     SCROLLBAR CUSTOMIZATION
+     =================================================================== */
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* ===================================================================
+     CINEMA-SPECIFIC COMPONENTS
+     =================================================================== */
+
+  /* Ticket shape button - Para Cinema */
+  .ticket-shape {
+    clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+  }
+
+  /* Spotlight effect */
+  .spotlight {
+    position: relative;
+  }
+
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--primary-neon) 0%, transparent 70%);
+    opacity: 0.2;
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  /* Vintage film texture - Para Cinema */
+  .film-grain {
+    position: relative;
+  }
+
+  .film-grain::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* ===================================================================
+     BADGES - ADAPTA-SE À CATEGORIA
+     =================================================================== */
+
+  /* K-pop: Badges neon arredondados */
+  [data-category="Kpop"] .category-badge {
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Cinema: Badges retangulares dourados */
+  [data-category="Cinema"] .category-badge {
+    border-radius: 0.125rem;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(5px);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===================================================================
+     CINEMA MODE - PREMIUM EXPERIENCE
+     Vertical Movie Posters, IMAX/Netflix Style, Cinematic Lighting
+     =================================================================== */
+
+  /* Movie poster container with cinematic lighting */
+  .movie-poster {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .movie-poster::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    right: -20%;
+    bottom: -20%;
+    background: radial-gradient(circle, var(--primary-neon) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(40px);
+  }
+
+  .movie-poster:hover::before {
+    opacity: 0.3;
+  }
+
+  /* Cinematic spotlight beam effect */
+  .cinema-spotlight {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cinema-spotlight::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    width: 200px;
+    height: 200%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    transform: translateX(-50%) rotate(0deg);
+    opacity: 0;
+    transition: all 0.6s ease;
+    pointer-events: none;
+  }
+
+  .cinema-spotlight:hover::after {
+    opacity: 1;
+    top: -50%;
+    transform: translateX(-50%) rotate(5deg);
+  }
+
+  /* Premium glassmorphism for cinema cards */
+  .cinema-glass-premium {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .cinema-glass-premium:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+  }
+
+  /* Animated light rays for cinematic atmosphere */
+  @keyframes lightRay {
+    0% {
+      transform: translateX(-50%) scaleY(0);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateX(-50%) scaleY(1);
+      opacity: 0;
+    }
+  }
+
+  .light-ray {
+    animation: lightRay 8s ease-in-out infinite;
+  }
+
+  /* Neon glow pulse effect */
+  @keyframes neonPulse {
+    0%, 100% {
+      filter: brightness(1) drop-shadow(0 0 10px currentColor);
+    }
+    50% {
+      filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+    }
+  }
+
+  .neon-pulse {
+    animation: neonPulse 2s ease-in-out infinite;
+  }
+
+  /* Immersive dark gradient overlay */
+  .dark-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.5) 40%,
+      rgba(0, 0, 0, 0.8) 100%
+    );
+  }
+
+  /* Premium ticket button with holographic effect */
+  .ticket-holographic {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ticket-holographic::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+  }
+
+  .ticket-holographic:hover::before {
+    left: 100%;
+  }
+
+  /* Cinematic blur effect for backgrounds */
+  .cinema-blur {
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+  }
+
+  /* Dynamic spotlight effect */
+  @keyframes spotlightMove {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .dynamic-spotlight {
+    background-size: 200% 200%;
+    animation: spotlightMove 10s ease-in-out infinite;
+  }
+
+  /* Premium border glow on hover */
+  .border-glow {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .border-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      var(--primary-neon),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .border-glow:hover::before {
+    opacity: 0.5;
+  }
+
+  /* Futuristic text shadow for cinema mode */
+  .cinema-text-glow {
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 20px rgba(255, 255, 255, 0.2),
+      0 0 30px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Image brightness adjustment on hover */
+  .image-brightness-hover {
+    transition: filter 0.4s ease;
+  }
+
+  .image-brightness-hover:hover {
+    filter: brightness(1.2) saturate(1.3) contrast(1.1);
+  }
+
+  /* ===================================================================
+     FUTURISTIC ATMOSPHERE - ENHANCED BACKGROUND EFFECTS
+     Floating particles, glowing stars, nebula, cyberpunk grid
+     =================================================================== */
+
+  /* Particle glow effect */
+  @keyframes particleFloat {
+    0% {
+      transform: translateY(100vh) translateX(0) scale(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-10vh) translateX(20px) scale(1);
+      opacity: 0;
+    }
+  }
+
+  .particle-float {
+    animation: particleFloat linear infinite;
+  }
+
+  /* Star twinkle animation */
+  @keyframes starTwinkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+
+  .star-twinkle {
+    animation: starTwinkle ease-in-out infinite;
+  }
+
+  /* Nebula pulse effect */
+  @keyframes nebulaPulse {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(1) translate(-50%, -50%);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.3) translate(-50%, -50%);
+    }
+  }
+
+  .nebula-pulse {
+    animation: nebulaPulse 30s ease-in-out infinite;
+  }
+
+  /* Cyberpunk scan line effect */
+  @keyframes scanLine {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  .scan-line {
+    animation: scanLine 8s linear infinite;
+  }
+
+  /* Grid fade in/out */
+  @keyframes gridPulse {
+    0%, 100% {
+      opacity: 0.05;
+    }
+    50% {
+      opacity: 0.15;
+    }
+  }
+
+  .grid-pulse {
+    animation: gridPulse 10s ease-in-out infinite;
+  }
+
+  /* Ambient orb movement */
+  @keyframes orbFloat {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(30px, -20px) scale(1.1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translate(50px, 10px) scale(1.2);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translate(20px, 30px) scale(1.05);
+      opacity: 0.6;
+    }
+  }
+
+  .orb-float {
+    animation: orbFloat 25s ease-in-out infinite;
+  }
+
+  /* Light beam pulse */
+  @keyframes beamPulse {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scaleY(1);
+    }
+    50% {
+      opacity: 0.3;
+      transform: scaleY(1.2);
+    }
+  }
+
+  .beam-pulse {
+    animation: beamPulse 8s ease-in-out infinite;
+  }
+
+  /* Depth layer parallax */
+  @keyframes depthMove {
+    0%, 100% {
+      transform: translateX(0) translateY(0);
+    }
+    33% {
+      transform: translateX(20px) translateY(-10px);
+    }
+    66% {
+      transform: translateX(-15px) translateY(15px);
+    }
+  }
+
+  .depth-layer {
+    animation: depthMove 40s ease-in-out infinite;
+  }
+
+  /* Holographic shimmer effect */
+  @keyframes holoShimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .holo-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 45%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.03) 55%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: holoShimmer 8s linear infinite;
+  }
+
+  /* Atmospheric glow pulse */
+  @keyframes atmosphereGlow {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(var(--primary-neon-rgb), 0.1);
+      filter: brightness(1);
+    }
+    50% {
+      box-shadow: 0 0 80px rgba(var(--primary-neon-rgb), 0.2);
+      filter: brightness(1.1);
+    }
+  }
+
+  .atmosphere-glow {
+    animation: atmosphereGlow 6s ease-in-out infinite;
+  }
+
+  /* Enhanced depth with multiple layers */
+  .depth-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  .depth-3d > * {
+    transform: translateZ(0);
+  }
+
+  /* Cyberpunk glow text */
+  .cyber-glow-text {
+    text-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 40px currentColor;
+    animation: textPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes textPulse {
+    0%, 100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Vignette overlay for cinematic depth */
+  .vignette-overlay {
+    position: relative;
+  }
+
+  .vignette-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.3) 70%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Ambient light sweep */
+  @keyframes lightSweep {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%) rotate(-10deg);
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(200%) rotate(-10deg);
+    }
+  }
+
+  .light-sweep {
+    animation: lightSweep 15s ease-in-out infinite;
+  }
+
+  /* ===================================================================
+     DELIVERY TRACKING MAP - CYBERPUNK UI
+     Dark mode map, neon routes, animated motorcycle, futuristic cards
+     =================================================================== */
+
+  /* Animated route dash */
+  @keyframes routeDash {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -20;
+    }
+  }
+
+  .route-dash-animate {
+    animation: routeDash 1s linear infinite;
+  }
+
+  /* Pulsing location marker */
+  @keyframes markerPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.7;
+    }
+  }
+
+  .marker-pulse {
+    animation: markerPulse 2s ease-in-out infinite;
+  }
+
+  /* Motorcycle bounce effect */
+  @keyframes motorcycleBounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .motorcycle-bounce {
+    animation: motorcycleBounce 0.5s ease-in-out infinite;
+  }
+
+  /* Neon glow pulse for tracking indicators */
+  @keyframes neonGlowPulse {
+    0%, 100% {
+      box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+      opacity: 0.8;
+    }
+    50% {
+      box-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
+      opacity: 1;
+    }
+  }
+
+  .neon-glow-pulse {
+    animation: neonGlowPulse 2s ease-in-out infinite;
+  }
+
+  /* Map grid shimmer */
+  @keyframes gridShimmer {
+    0%, 100% {
+      opacity: 0.02;
+    }
+    50% {
+      opacity: 0.05;
+    }
+  }
+
+  .grid-shimmer {
+    animation: gridShimmer 4s ease-in-out infinite;
+  }
+
+  /* Tracking card slide in */
+  @keyframes cardSlideIn {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .card-slide-in {
+    animation: cardSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Progress bar fill */
+  @keyframes progressFill {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  .progress-fill {
+    animation: progressFill 2s ease-out;
+  }
+
+  /* Cyberpunk scanline effect */
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  .scanline-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanline-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      currentColor,
+      transparent
+    );
+    opacity: 0.1;
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Delivery status indicator glow */
+  @keyframes statusGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px currentColor;
+    }
+    50% {
+      box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+  }
+
+  .status-glow {
+    animation: statusGlow 1.5s ease-in-out infinite;
+  }
+
+  /* Map marker bounce */
+  @keyframes markerBounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .marker-bounce {
+    animation: markerBounce 1s ease-in-out infinite;
+  }
+
+  /* Cyberpunk border scan */
+  @keyframes borderScan {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .border-scan {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      currentColor 50%,
+      transparent 100%
+    );
+    background-size: 200% 2px;
+    animation: borderScan 3s linear infinite;
+  }
+
+  /* ETA timer pulse */
+  @keyframes etaPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.05);
+      filter: brightness(1.2);
+    }
+  }
+
+  .eta-pulse {
+    animation: etaPulse 2s ease-in-out infinite;
+  }
+
+  /* Route trace animation */
+  @keyframes routeTrace {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .route-trace {
+    stroke-dasharray: 1000;
+    animation: routeTrace 3s ease-in-out;
+  }
+}
