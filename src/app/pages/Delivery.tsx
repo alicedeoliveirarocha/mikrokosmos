@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 export function Delivery() {
   const { orders, updateOrderStatus } = useOrders();
-  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('saiu-para-entrega');
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('pronto');
   const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
 
   const statusConfig = {
@@ -145,7 +145,7 @@ export function Delivery() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-white/10">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">Pedido #{order.id.slice(-8)}</h3>
-                        <p className="text-white/60 text-sm">{formatDate(order.createdAt)}</p>
+                        <p className="text-white/60 text-sm">{formatDate(order.created_at)}</p>
                       </div>
                       <div className="text-right mt-3 md:mt-0">
                         <p 
@@ -158,17 +158,17 @@ export function Delivery() {
                     </div>
 
                     {/* Informações de Entrega */}
-                    {order.customerName && (
+                    {order.customer_name && (
                       <div className="mb-4 space-y-2">
                         <div className="flex items-start gap-3 p-3 bg-white/5 rounded-xl">
                           <MapPin className="w-5 h-5 mt-0.5" style={{ color: 'var(--primary-neon)' }} />
                           <div>
-                            <p className="text-white font-medium">{order.customerName}</p>
-                            {order.customerPhone && (
-                              <p className="text-white/60 text-sm">📱 {order.customerPhone}</p>
+                            <p className="text-white font-medium">{order.customer_name}</p>
+                            {order.customer_phone && (
+                              <p className="text-white/60 text-sm">📱 {order.customer_phone}</p>
                             )}
-                            {order.customerAddress && (
-                              <p className="text-white/80 text-sm mt-1">{order.customerAddress}</p>
+                            {order.customer_address && (
+                              <p className="text-white/80 text-sm mt-1">{order.customer_address}</p>
                             )}
                           </div>
                         </div>
@@ -234,7 +234,7 @@ export function Delivery() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-white/10">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">Pedido #{order.id.slice(-8)}</h3>
-                        <p className="text-white/60 text-sm">{formatDate(order.createdAt)}</p>
+                        <p className="text-white/60 text-sm">{formatDate(order.created_at)}</p>
                       </div>
                       <div className="text-right mt-3 md:mt-0">
                         <p 
@@ -247,17 +247,17 @@ export function Delivery() {
                     </div>
 
                     {/* Informações de Entrega */}
-                    {order.customerName && (
+                    {order.customer_name && (
                       <div className="mb-4 p-3 bg-white/5 rounded-xl">
                         <div className="flex items-start gap-3">
                           <MapPin className="w-5 h-5 mt-0.5" style={{ color: 'var(--primary-neon)' }} />
                           <div>
-                            <p className="text-white font-medium">{order.customerName}</p>
-                            {order.customerPhone && (
-                              <p className="text-white/60 text-sm">📱 {order.customerPhone}</p>
+                            <p className="text-white font-medium">{order.customer_name}</p>
+                            {order.customer_phone && (
+                              <p className="text-white/60 text-sm">📱 {order.customer_phone}</p>
                             )}
-                            {order.customerAddress && (
-                              <p className="text-white/80 text-sm mt-1">{order.customerAddress}</p>
+                            {order.customer_address && (
+                              <p className="text-white/80 text-sm mt-1">{order.customer_address}</p>
                             )}
                           </div>
                         </div>
@@ -338,9 +338,9 @@ export function Delivery() {
                 return (
                   <DeliveryMap
                     orderId={order.id.slice(-8)}
-                    customerName={order.customerName || 'Cliente'}
-                    customerAddress={order.customerAddress || 'Endereço não informado'}
-                    customerPhone={order.customerPhone}
+                    customerName={order.customer_name || 'Cliente'}
+                    customerAddress={order.customer_address || 'Endereço não informado'}
+                    customerPhone={order.customer_phone}
                     estimatedTime="15-20 min"
                     status="on-route"
                   />

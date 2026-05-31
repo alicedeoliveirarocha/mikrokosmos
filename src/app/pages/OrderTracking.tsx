@@ -1,0 +1,184 @@
+import { useState } from 'react';
+import { Header } from '../components/Header';
+import { UniverseToggle } from '../components/UniverseToggle';
+import { DeliveryMap } from '../components/DeliveryMap';
+import { useOrders } from '../context/OrdersContext';
+import { useAuth } from '../context/AuthContext';
+import { motion, AnimatePresence } from 'motion/react';
+import { Package, CheckCircle, Navigation, X, Map, Clock, ChefHat, Bike } from 'lucide-react';
+
+export function OrderTracking() {
+  const { orders } = useOrders();
+  const { user } = useAuth();
+  const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
+
+  // Cliente vê apenas os próprios pedidos
+  const myOrders = orders.filter(o => 
+  o.user_id === user?.id || o.customer_name === user?.nome
+);
+
+  const statusConfig = {
+    'pendente':           { label: 'Aguardando Cozinha', icon: Clock,       color: '#FF9800', emoji: '⏳' },
+    'preparando':         { label: 'Sendo Preparado',    icon: ChefHat,     color: '#00FFFF', emoji: '👨‍🍳' },
+    'pronto':             { label: 'Pronto!',             icon: Package,     color: '#9C27B0', emoji: '✅' },
+    'saiu-para-entrega':  { label: 'Saiu para Entrega',  icon: Bike,        color: '#FF6B35', emoji: '🛵' },
+    'entregue':           { label: 'Entregue',            icon: CheckCircle, color: '#4CAF50', emoji: '🎉' },
+    'cancelado':          { label: 'Cancelado',           icon: X,           color: '#f44336', emoji: '❌' },
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString.replace(' ', 'T'));
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit', month: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+    });
+  };
+
+  if (myOrders.length === 0) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <Package className="w-24 h-24 mx-auto mb-6 text-white/20" />
+            <h2 className="text-3xl font-bold text-white mb-4">Nenhum pedido ainda</h2>
+            <p className="text-white/60 mb-8">Faça um pedido para acompanhar aqui!</p>
+          </motion.div>
+        </div>
+        <UniverseToggle />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="max-w-4xl mx-auto px-4 py-8 pb-32">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+          className="text-3xl font-bold text-white mb-8"
+        >
+          Meus Pedidos
+        </motion.h1>
+
+        <div className="space-y-4">
+          {myOrders.map((order, index) => {
+            const config = statusConfig[order.status] || statusConfig['pendente'];
+            const Icon = config.icon;
+            const canTrack = order.status === 'saiu-para-entrega';
+
+            return (
+              <motion.div
+                key={order.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Pedido #{order.id.slice(-8)}</h3>
+                    <p className="text-white/40 text-sm">{formatDate(order.created_at)}</p>
+                  </div>
+                  <p className="text-2xl font-bold" style={{ color: 'var(--primary-neon)' }}>
+                    R$ {order.total.toFixed(2)}
+                  </p>
+                </div>
+
+                {/* Status */}
+                <div className="flex items-center gap-3 mb-4 p-3 rounded-xl" style={{ backgroundColor: `${config.color}15`, border: `1px solid ${config.color}40` }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${config.color}30` }}>
+                    <Icon className="w-5 h-5" style={{ color: config.color }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/50">Status</p>
+                    <p className="font-bold text-white">{config.emoji} {config.label}</p>
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="flex items-center gap-1 mb-4">
+                  {['pendente', 'preparando', 'pronto', 'saiu-para-entrega', 'entregue'].map((s, i) => {
+                    const statuses = ['pendente', 'preparando', 'pronto', 'saiu-para-entrega', 'entregue'];
+                    const currentIndex = statuses.indexOf(order.status);
+                    const isActive = i <= currentIndex && order.status !== 'cancelado';
+                    return (
+                      <div key={s} className="flex-1 h-2 rounded-full transition-all" style={{ backgroundColor: isActive ? config.color : 'rgba(255,255,255,0.1)' }} />
+                    );
+                  })}
+                </div>
+
+                {/* Itens */}
+                <div className="space-y-1 mb-4">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between text-sm">
+                      <span className="text-white/70">{item.product.nome}</span>
+                      <span className="text-white/50">x{item.quantidade}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Botão Track — só aparece quando saiu para entrega */}
+                {canTrack && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    onClick={() => setTrackingOrder(order.id)}
+                    className="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-black"
+                    style={{ backgroundColor: '#FF6B35', boxShadow: '0 10px 30px rgba(255, 107, 53, 0.3)' }}
+                  >
+                    <Map className="w-5 h-5" />
+                    🛵 Acompanhar Motoboy
+                  </motion.button>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </main>
+
+      {/* Fullscreen Map */}
+      <AnimatePresence>
+        {trackingOrder && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm"
+            onClick={() => setTrackingOrder(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="absolute inset-4 md:inset-8 rounded-3xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }} whileTap={{ scale: 0.9 }}
+                onClick={() => setTrackingOrder(null)}
+                className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/80 backdrop-blur-xl border border-white/20 flex items-center justify-center"
+              >
+                <X className="w-6 h-6 text-white" />
+              </motion.button>
+              {(() => {
+                const order = orders.find(o => o.id === trackingOrder);
+                if (!order) return null;
+                return (
+                  <DeliveryMap
+                    orderId={order.id.slice(-8)}
+                    customerName={order.customer_name || 'Você'}
+                    customerAddress={order.customer_address || 'Seu endereço'}
+                    customerPhone={order.customer_phone}
+                    estimatedTime="15-20 min"
+                    status="on-route"
+                  />
+                );
+              })()}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <UniverseToggle />
+    </div>
+  );
+}

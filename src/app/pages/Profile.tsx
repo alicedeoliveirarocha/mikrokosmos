@@ -37,7 +37,9 @@ export function Profile() {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    if (!dateString) return 'Data não disponível';
+    const date = new Date(dateString.replace(' ', 'T'));
+    if (isNaN(date.getTime())) return 'Data não disponível';
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: 'long',
@@ -209,7 +211,7 @@ export function Profile() {
               </div>
               <div>
                 <p className="text-white/60 text-sm">Membro desde</p>
-                <p className="text-white text-lg">{formatDate(user.dataCriacao)}</p>
+                <p className="text-white text-lg">{formatDate(user.created_at)}</p>
               </div>
             </div>
           </div>
@@ -230,7 +232,7 @@ export function Profile() {
             </div>
             <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
               <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {Math.floor((Date.now() - new Date(user.dataCriacao).getTime()) / (1000 * 60 * 60 * 24))}
+                {Math.floor((Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24))}
               </p>
               <p className="text-white/60 text-sm">Dias</p>
             </div>

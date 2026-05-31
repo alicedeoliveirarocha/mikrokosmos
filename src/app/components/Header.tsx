@@ -98,7 +98,7 @@ export function Header() {
             {isDelivery && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/delivery')}
+                onClick={() => navigate('/meus-pedidos')}
                 className="relative w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
                 title="Delivery"
               >

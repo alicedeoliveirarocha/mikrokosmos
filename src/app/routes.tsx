@@ -1,6 +1,7 @@
 // src/app/routes.tsx
 // Rotas com RBAC real — cliente NÃO consegue acessar /cozinha, /delivery ou /analytics
 
+import { OrderTracking } from "./pages/OrderTracking";
 import { createBrowserRouter } from "react-router";
 import { Welcome } from "./pages/Welcome";
 import { Home } from "./pages/Home";
@@ -47,6 +48,15 @@ export const router = createBrowserRouter([
             <Profile />
           </ProtectedRoute>
         ),
+      },
+
+      {
+        path: "meus-pedidos",
+        Component: () => (
+          <ProtectedRoute requireAuth={true}>
+            <OrderTracking />
+          </ProtectedRoute>
+          ),
       },
 
       // COZINHA — só cozinha e admin

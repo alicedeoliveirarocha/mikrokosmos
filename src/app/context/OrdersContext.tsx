@@ -24,7 +24,6 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
   // Carrega pedidos e ativa realtime
   useEffect(() => {
     if (!user) {
-      setOrders([]);
       setLoading(false);
       return;
     }
@@ -40,7 +39,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user?.id]);
 
   const loadOrders = async () => {
     // RLS do Supabase já garante: cliente vê só os próprios, staff vê todos
