@@ -10,9 +10,8 @@ import { toast } from 'sonner';
 
 export function Delivery() {
   const { orders, updateOrderStatus } = useOrders();
-  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('pronto');
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('saiu-para-entrega');
   const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
-
   const statusConfig = {
     'saiu-para-entrega': { label: 'Em Entrega', icon: Navigation, color: '#FF9800' },
     'entregue': { label: 'Entregues', icon: CheckCircle, color: '#4CAF50' },

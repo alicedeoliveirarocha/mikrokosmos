@@ -1,7 +1,4 @@
-// src/app/context/OrdersContext.tsx
-// SUBSTITUI o arquivo atual — pedidos agora salvos no Supabase com realtime
-
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { supabase, Order, OrderItem } from '../../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -20,47 +17,45 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const cancelledRef = useRef(false);
 
-  // Carrega pedidos e ativa realtime
   useEffect(() => {
     if (!user) {
       setLoading(false);
       return;
     }
 
-    loadOrders();
+    cancelledRef.current = false;
 
-    // Realtime: cozinha vê novos pedidos instantaneamente
+    const load = async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!cancelledRef.current && data && !error) {
+        setOrders(data as Order[]);
+      }
+      if (!cancelledRef.current) setLoading(false);
+    };
+
+    load();
+
     const channel = supabase
       .channel('orders-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
-        loadOrders();
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      cancelledRef.current = true;
+      supabase.removeChannel(channel);
+    };
   }, [user?.id]);
-
-  const loadOrders = async () => {
-    // RLS do Supabase já garante: cliente vê só os próprios, staff vê todos
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (data && !error) {
-      setOrders(data as Order[]);
-    }
-    setLoading(false);
-  };
 
   const addOrder = async (orderData: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => {
     const { data, error } = await supabase
       .from('orders')
-      .insert({
-        ...orderData,
-        user_id: user?.id || null,
-      })
+      .insert({ ...orderData, user_id: user?.id || null })
       .select()
       .single();
 
@@ -76,7 +71,6 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       .from('orders')
       .update({ status })
       .eq('id', orderId);
-    // Realtime vai atualizar automaticamente
   };
 
   const getOrdersByStatus = (status: Order['status']) => {
