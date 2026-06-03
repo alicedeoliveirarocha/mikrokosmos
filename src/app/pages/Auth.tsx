@@ -20,12 +20,12 @@ export function Auth() {
 
     try {
       if (isLogin) {
-        const success = await login(email, senha);
-        if (success) {
+        const result = await login(email, senha);
+        if (result.success) {
           toast.success('Login realizado com sucesso!');
           navigate('/home');
         } else {
-          toast.error('Email ou senha incorretos');
+          toast.error(result.error || 'Email ou senha incorretos');
         }
       } else {
         if (!nome.trim()) {
@@ -33,12 +33,18 @@ export function Auth() {
           setLoading(false);
           return;
         }
-        const success = await register(nome, email, senha);
-        if (success) {
-          toast.success('Conta criada com sucesso!');
-          navigate('/home');
+        const result = await register(nome, email, senha);
+        if (result.success) {
+          toast.success('Conta criada! Verifique seu email para confirmar. 📧');
+          // Não redireciona — usuário precisa confirmar email primeiro
         } else {
-          toast.error('Email já cadastrado');
+          // Traduz erros do Supabase para português
+          const errorMsg = result.error?.includes('already registered')
+            ? 'Este email já está cadastrado. Tente fazer login.'
+            : result.error?.includes('Password should be')
+            ? 'Senha deve ter pelo menos 6 caracteres.'
+            : result.error || 'Erro ao criar conta.';
+          toast.error(errorMsg);
         }
       }
     } catch (error) {
@@ -47,7 +53,7 @@ export function Auth() {
       setLoading(false);
     }
   };
-
+  
   const handleGuestAccess = () => {
     toast.success('Navegando como visitante');
     navigate('/home');
