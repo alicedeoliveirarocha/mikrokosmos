@@ -90,36 +90,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (nome: string, email: string, senha: string, role: UserRole = 'cliente') => {
-   const { data, error } = await supabase.auth.signUp({
-      email,
-      password: senha,
-      options: { data: { nome, role } }
-    });
-
-    if (error) {
-      return { 
-        success: false, 
-        error: 'Este email já está cadastrado. Faça login!' 
-     };
+  // Tenta fazer login primeiro para ver se email já existe
+  const { error: signInError } = await supabase.auth.signInWithPassword({ 
+    email, 
+    password: 'check_only_fake_password_xyz123' 
+  });
+  
+  // Se o erro for "Invalid login credentials", email existe mas senha errada = já cadastrado
+  if (!signInError || signInError.message.includes('Invalid login credentials')) {
+    if (!signInError) {
+      // Conseguiu logar com senha falsa?? Não deveria, mas faz logout
+      await supabase.auth.signOut();
     }
+    return { success: false, error: 'Este email já está cadastrado. Faça login!' };
+  }
 
-    if (!data.session) {
-     return { 
-        success: false, 
-       error: 'Este email já está cadastrado. Faça login!' 
-     };
-    }
-
-    return { success: true };
-  };
-
-  const { error } = await supabase.auth.signUp({
+  // Email não existe, pode registrar
+  const { data, error } = await supabase.auth.signUp({
     email,
     password: senha,
     options: { data: { nome, role } }
   });
 
-  if (error) return { success: false, error: error.message };
+  if (error || !data.session) {
+    return { success: false, error: 'Este email já está cadastrado. Faça login!' };
+  }
+
   return { success: true };
 };
 
