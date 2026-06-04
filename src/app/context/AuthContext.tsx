@@ -90,14 +90,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (nome: string, email: string, senha: string, role: UserRole = 'cliente') => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password: senha,
-      options: { data: { nome, role } }
-    });
-    if (error) return { success: false, error: error.message };
-    return { success: true };
-  };
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: senha,
+    options: { data: { nome, role } }
+  });
+
+  if (error) {
+    if (error.status === 422 || error.message.includes('already registered')) {
+      return { success: false, error: 'Este email já está cadastrado. Faça login!' };
+    }
+    return { success: false, error: error.message };
+  }
+
+  // Se retornou usuário mas sem session, email já existia (Supabase retorna 200 nesse caso)
+  if (data.user && !data.session) {
+    return { success: false, error: 'Este email já está cadastrado. Faça login!' };
+  }
+
+  return { success: true };
+};
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password: senha,
+    options: { data: { nome, role } }
+  });
+
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+};
 
   const logout = async () => {
     await supabase.auth.signOut();
