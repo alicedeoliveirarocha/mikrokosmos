@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router';
 import { useUniverse } from '../context/UniverseContext';
 import { RoleSwitcher } from './RoleSwitcher';
+import { MusicPlayer } from './MusicPlayer';
 
 function LayoutContent() {
   const { categoria } = useUniverse();
@@ -11,6 +12,7 @@ function LayoutContent() {
         <Outlet />
       </div>
       <RoleSwitcher />
+      <MusicPlayer />
     </div>
   );
 }
