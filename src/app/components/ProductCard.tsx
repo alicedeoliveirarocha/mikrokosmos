@@ -19,7 +19,6 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const [totalRatings, setTotalRatings] = useState(0);
 
   useEffect(() => {
-    // Carregar ratings do produto
     const allRatings = JSON.parse(localStorage.getItem('mikrokosmos_product_ratings') || '{}');
     const productRatings = allRatings[product.id] || [];
     
@@ -30,7 +29,6 @@ export function ProductCard({ product, index }: ProductCardProps) {
     }
   }, [product.id]);
 
-  // Determina o estilo do card baseado na categoria
   const isKpop = categoria === 'Kpop';
   const isCinema = categoria === 'Cinema';
 
@@ -42,14 +40,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
       onClick={() => navigate(`/produto/${product.id}`)}
       className="group cursor-pointer"
     >
-      {/* CARD - Muda completamente de estilo baseado na categoria */}
       <div className={`
         product-card
         relative overflow-hidden backdrop-blur-sm 
         transition-all duration-300
         ${isKpop ? 'rounded-2xl' : 'rounded-sm'}
       `}>
-        {/* Imagem */}
         <div className={`relative overflow-hidden ${isKpop ? 'h-48' : 'h-56'}`}>
           <ImageWithFallback
             src={getProductImage(product.imageUrl)}
@@ -64,31 +60,31 @@ export function ProductCard({ product, index }: ProductCardProps) {
             }
           `} />
           
-          {/* Badge de Categoria - Muda estilo baseado na categoria */}
           <div className={`
             category-badge
             absolute top-3 left-3 px-3 py-1
             ${isKpop ? 'rounded-full' : 'rounded-sm'}
           `}>
-            <span className={`
-              text-xs font-medium
-              ${isCinema ? 'text-[#D4AF37] tracking-wider' : 'text-white'}
-            `}>
+            <span
+              className="text-xs font-medium tracking-wider"
+              style={{ color: isCinema ? 'var(--primary-neon)' : 'white' }}
+            >
               {product.categoria}
             </span>
           </div>
 
-          {/* Cinema: Rating badge no canto superior direito */}
           {isCinema && totalRatings > 0 && (
-            <div className="absolute top-3 right-3 px-2 py-1 rounded-sm bg-black/70 border border-[#D4AF37]/30">
-              <span className="text-[#D4AF37] text-xs font-mono">
+            <div
+              className="absolute top-3 right-3 px-2 py-1 rounded-sm bg-black/70"
+              style={{ border: '1px solid color-mix(in srgb, var(--primary-neon) 30%, transparent)' }}
+            >
+              <span className="text-xs font-mono" style={{ color: 'var(--primary-neon)' }}>
                 ★ {averageRating.toFixed(1)}
               </span>
             </div>
           )}
         </div>
 
-        {/* Conteúdo */}
         <div className="p-4">
           <h3 className={`
             font-bold text-white mb-1
@@ -105,7 +101,6 @@ export function ProductCard({ product, index }: ProductCardProps) {
             {product.desc}
           </p>
           
-          {/* Rating - Apenas para K-pop */}
           {isKpop && totalRatings > 0 && (
             <div className="flex items-center gap-2 mb-3">
               <StarRating rating={averageRating} readonly size={14} />
@@ -116,18 +111,13 @@ export function ProductCard({ product, index }: ProductCardProps) {
           )}
           
           <div className="flex items-center justify-between">
-            {/* Preço - Estilo diferente por categoria */}
-            <span 
-              className={`
-                text-2xl font-bold
-                ${isCinema ? 'price-text' : ''}
-              `}
-              style={{ color: isCinema ? '#D4AF37' : 'var(--primary-neon)' }}
+            <span
+              className={`text-2xl font-bold ${isCinema ? 'price-text' : ''}`}
+              style={{ color: 'var(--primary-neon)' }}
             >
               R$ {product.preco.toFixed(2)}
             </span>
             
-            {/* Botão de adicionar - Estilo diferente por categoria */}
             {isKpop ? (
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -139,7 +129,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
             ) : (
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="px-4 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C9A22E] text-black font-bold text-sm tracking-wider uppercase rounded-sm"
+                className="px-4 py-2 text-black font-bold text-sm tracking-wider uppercase rounded-sm"
+                style={{ backgroundColor: 'var(--primary-neon)' }}
               >
                 Ver
               </motion.div>
