@@ -1,4 +1,4 @@
-import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -17,12 +17,11 @@ export function Header() {
   const isHome = location.pathname === '/home';
   const isCinema = location.pathname === '/cinema';
   const isCinemaMode = categoria === 'Cinema';
+  const isKpopMode = categoria === 'Kpop';
 
-  // RBAC: verificações de role
   const isAdmin = user?.role === 'admin';
   const isCozinha = user?.role === 'cozinha' || isAdmin;
   const isDelivery = user?.role === 'delivery' || isAdmin;
-  const isStaff = isAdmin || isCozinha || isDelivery;
 
   const pendingOrders = orders.filter(o => ['pendente', 'preparando'].includes(o.status)).length;
   const deliveryOrders = orders.filter(o => ['pronto', 'saiu-para-entrega'].includes(o.status)).length;
@@ -51,15 +50,20 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Cinema — visível para todos */}
+            {/* Cinema / Photocards — visível para todos */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/cinema')}
               className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-              title="Cinema"
+              title={isKpopMode ? 'Photocards' : 'Cinema'}
             >
-              <Film className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">Cinema</span>
+              {isKpopMode
+                ? <Sparkles className="w-5 h-5" />
+                : <Film className="w-5 h-5" />
+              }
+              <span className="hidden xl:inline text-sm">
+                {isKpopMode ? 'Photocards' : 'Cinema'}
+              </span>
             </motion.button>
 
             {/* Analytics — só admin */}
