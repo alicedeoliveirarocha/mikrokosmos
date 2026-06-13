@@ -17,11 +17,9 @@ export function Home() {
     const categoryMatch = selectedCategory === 'Todos' || product.categoria === selectedCategory;
     const universeMatch = product.universo === 'both' || product.universo === universeActive;
 
-    // Filtra culinária coreana/japonesa SOMENTE para K-pop
-    // Cinema NÃO deve mostrar pratos coreanos/japoneses
     const culinariaMatch = categoria === 'Cinema'
       ? !product.culinaria || (product.culinaria !== 'coreana' && product.culinaria !== 'japonesa')
-      : true; // K-pop pode mostrar qualquer culinária
+      : true;
 
     return categoryMatch && universeMatch && culinariaMatch;
   });
@@ -34,7 +32,7 @@ export function Home() {
       <Header />
       
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Info da Mesa - Estilo adaptável */}
+        {/* Info da Mesa */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -42,15 +40,16 @@ export function Home() {
             mb-8 p-6 backdrop-blur-sm
             ${isKpop 
               ? 'rounded-2xl bg-gradient-to-r from-white/5 to-white/10 border border-white/10' 
-              : 'rounded-sm bg-black/60 border border-[#D4AF37]/20'
+              : 'rounded-sm bg-black/60'
             }
           `}
+          style={{ borderColor: isCinema ? 'color-mix(in srgb, var(--primary-neon) 20%, transparent)' : undefined }}
         >
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className={`text-xl font-bold text-white mb-1 ${isCinema ? 'font-serif' : ''}`}>
                 {isCinema ? 'Sessão: ' : 'Mesa: '}
-                <span style={{ color: isKpop ? 'var(--primary-neon)' : '#D4AF37' }}>
+                <span style={{ color: 'var(--primary-neon)' }}>
                   MK-01
                 </span>
               </h2>
@@ -66,14 +65,14 @@ export function Home() {
                   : 'rounded-sm border font-mono tracking-wide'
                 }
               `}
-              style={{ borderColor: isKpop ? 'var(--primary-neon)' : '#D4AF37' }}
+              style={{ borderColor: 'var(--primary-neon)' }}
             >
               <span className="text-white/80 text-sm">
                 {isCinema ? 'Saga Atual: ' : 'Era Atual: '}
               </span>
               <span 
                 className="font-bold"
-                style={{ color: isKpop ? 'var(--primary-neon)' : '#D4AF37' }}
+                style={{ color: 'var(--primary-neon)' }}
               >
                 {universeName}
               </span>
@@ -81,7 +80,7 @@ export function Home() {
           </div>
         </motion.div>
 
-        {/* Filtros de Categoria - Estilo adaptável */}
+        {/* Filtros de Categoria */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -99,19 +98,13 @@ export function Home() {
                 px-6 py-2 whitespace-nowrap font-medium transition-all duration-300
                 ${isKpop ? 'rounded-full' : 'rounded-sm tracking-wide'}
                 ${selectedCategory === category
-                  ? isCinema 
-                    ? 'text-black shadow-lg shadow-[#D4AF37]/30' 
-                    : 'text-black shadow-lg shadow-[var(--primary-neon)]/30'
+                  ? 'text-black shadow-lg'
                   : 'bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 border border-white/20'
                 }
               `}
               style={
                 selectedCategory === category
-                  ? { 
-                      background: isCinema 
-                        ? 'linear-gradient(135deg, #D4AF37 0%, #C9A22E 100%)' 
-                        : 'var(--primary-neon)' 
-                    }
+                  ? { backgroundColor: 'var(--primary-neon)' }
                   : {}
               }
             >
