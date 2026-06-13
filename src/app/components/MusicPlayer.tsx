@@ -63,4 +63,14 @@ export function MusicPlayer() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            onClick={() =>
+            onClick={() => setIsMinimized(false)}
+            className="w-10 h-10 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center"
+            style={{ color: 'var(--primary-neon)' }}
+          >
+            <Music className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
