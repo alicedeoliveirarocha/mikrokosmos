@@ -1,0 +1,28 @@
+@keyframes holographic {
+  0%   { background-position: 0% 50%;   filter: hue-rotate(0deg); }
+  50%  { background-position: 100% 50%; filter: hue-rotate(180deg); }
+  100% { background-position: 0% 50%;   filter: hue-rotate(360deg); }
+}
+@keyframes shimmer-card {
+  from { transform: translateX(-150%) rotate(20deg); }
+  to   { transform: translateX(350%)  rotate(20deg); }
+}
+@keyframes sparkle-float {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
+  50%      { opacity: 1; transform: translateY(-8px) scale(1); }
+}
+.card-ultra-rare {
+  background: linear-gradient(-45deg, #ff0080, #ff8c00, #40e0d0, #9400d3, #ff69b4, #00ff88, #ff0080);
+  background-size: 400% 400%;
+  animation: holographic 3s ease infinite;
+}
+.card-ultra-rare .shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.35) 50%, transparent 65%);
+  animation: shimmer-card 2s infinite;
+  pointer-events: none;
+}
+.sparkle {
+  animation: sparkle-float var(--delay, 1.5s) ease-in-out infinite;
+}
