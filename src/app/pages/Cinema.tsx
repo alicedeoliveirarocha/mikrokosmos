@@ -235,27 +235,46 @@ export function Cinema() {
                   whileHover={{ scale: 1.08, y: -6 }}
                   className="cursor-pointer group"
                 >
+                  {/* ── CARD COM FOTO REAL ── */}
                   <div className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
                     style={{
                       aspectRatio: '2/3',
-                      background: isUR ? undefined : cfg.gradient,
-                      boxShadow: isUR ? '0 0 30px rgba(255,0,128,0.5), 0 0 60px rgba(64,224,208,0.3)' : isRare ? `0 0 20px ${cfg.accentColor}60` : '0 4px 15px rgba(0,0,0,0.5)',
-                      border: isUR ? '2px solid rgba(255,255,255,0.4)' : isRare ? `1.5px solid ${cfg.accentColor}80` : '1px solid rgba(255,255,255,0.1)',
+                      // foto real como background; gradiente como fallback
+                      backgroundImage: card.imageUrl ? `url(${card.imageUrl})` : undefined,
+                      background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center top',
+                      boxShadow: isUR
+                        ? '0 0 30px rgba(255,0,128,0.5), 0 0 60px rgba(64,224,208,0.3)'
+                        : isRare ? `0 0 20px ${cfg.accentColor}60` : '0 4px 15px rgba(0,0,0,0.5)',
+                      border: isUR
+                        ? '2px solid rgba(255,255,255,0.4)'
+                        : isRare ? `1.5px solid ${cfg.accentColor}80` : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
-                    {isUR && <div className="shimmer" />}
+                    {/* Overlay escuro para legibilidade do texto */}
+                    <div className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%)',
+                        zIndex: 1,
+                      }}
+                    />
+
+                    {isUR && <div className="shimmer" style={{ zIndex: 2 }} />}
                     {isUR && ['10%','80%','50%','20%','70%'].map((left, i) => (
                       <div key={i} className="sparkle absolute text-xs text-yellow-300"
-                        style={{ left, top: `${15 + i * 15}%`, '--delay': `${0.3 + i * 0.4}s` } as React.CSSProperties}
+                        style={{ left, top: `${15 + i * 15}%`, '--delay': `${0.3 + i * 0.4}s`, zIndex: 3 } as React.CSSProperties}
                       >✦</div>
                     ))}
-                    <div className="absolute inset-0 flex flex-col justify-between p-3">
+
+                    {/* Conteúdo do card */}
+                    <div className="absolute inset-0 flex flex-col justify-between p-3" style={{ zIndex: 4 }}>
                       <div className="flex items-start justify-between">
                         <div className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider"
                           style={{
-                            backgroundColor: isUR ? 'rgba(0,0,0,0.6)' : isRare ? `${cfg.accentColor}30` : 'rgba(0,0,0,0.4)',
-                            color: isUR ? '#FFD700' : isRare ? cfg.accentColor : 'rgba(255,255,255,0.7)',
-                            border: isUR ? '1px solid #FFD700' : isRare ? `1px solid ${cfg.accentColor}` : '1px solid rgba(255,255,255,0.2)',
+                            backgroundColor: 'rgba(0,0,0,0.65)',
+                            color: isUR ? '#FFD700' : isRare ? cfg.accentColor : 'rgba(255,255,255,0.9)',
+                            border: isUR ? '1px solid #FFD700' : isRare ? `1px solid ${cfg.accentColor}` : '1px solid rgba(255,255,255,0.3)',
                           }}
                         >
                           {isUR ? '⭐ UR' : isRare ? '🟦 R' : '🟫 C'}
@@ -264,37 +283,41 @@ export function Cinema() {
                           <div className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[9px] font-bold">PRÉ</div>
                         )}
                       </div>
-                      <div className="flex items-center justify-center flex-1">
-                        <div className="flex items-center justify-center rounded-full font-black text-3xl"
-                          style={{
-                            width: 72, height: 72,
-                            backgroundColor: isUR ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.4)',
-                            border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
-                            color: isUR ? '#FFD700' : cfg.accentColor,
-                            textShadow: isUR ? '0 0 20px #FFD700' : `0 0 15px ${cfg.accentColor}`,
-                            boxShadow: isUR ? '0 0 30px rgba(255,215,0,0.4)' : `0 0 20px ${cfg.accentColor}30`,
-                          }}
-                        >
-                          {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
+
+                      {/* Só mostra o círculo com letra se não tiver foto */}
+                      {!card.imageUrl && (
+                        <div className="flex items-center justify-center flex-1">
+                          <div className="flex items-center justify-center rounded-full font-black text-3xl"
+                            style={{
+                              width: 72, height: 72,
+                              backgroundColor: isUR ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.4)',
+                              border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
+                              color: isUR ? '#FFD700' : cfg.accentColor,
+                              textShadow: isUR ? '0 0 20px #FFD700' : `0 0 15px ${cfg.accentColor}`,
+                              boxShadow: isUR ? '0 0 30px rgba(255,215,0,0.4)' : `0 0 20px ${cfg.accentColor}30`,
+                            }}
+                          >
+                            {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
+                          </div>
                         </div>
-                      </div>
-                      <div className="rounded-lg p-2" style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)' }}>
+                      )}
+
+                      <div className="rounded-lg p-2" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}>
                         <p className="font-black text-sm leading-tight truncate" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>{card.member}</p>
-                        <p className="text-white/70 text-[10px] truncate">{card.groupName}</p>
-                        <p className="text-white/40 text-[9px] truncate">{card.era}</p>
+                        <p className="text-white/80 text-[10px] truncate">{card.groupName}</p>
+                        <p className="text-white/50 text-[9px] truncate">{card.era}</p>
                       </div>
                     </div>
-                    {/* Hover — sem preço, só info */}
+
+                    {/* Hover overlay */}
                     <div className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 60%)' }}
+                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 60%)', zIndex: 5 }}
                     >
                       <div className="w-full">
-                        <p className="text-white/80 text-[10px] mb-2 line-clamp-3">{card.description}</p>
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-bold" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>
                             🎁 Grátis com pedido
                           </span>
-                          <span className="text-white/30 text-[9px]">Drop: {card.dropRate}%</span>
                         </div>
                       </div>
                     </div>

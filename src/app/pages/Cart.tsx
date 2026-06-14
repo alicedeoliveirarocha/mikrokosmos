@@ -78,7 +78,100 @@ export function Cart() {
     }
   };
 
-  // ── Tela de sucesso com photocards ──────────────────────────────
+  // ── helper: renderiza um card com foto real ──────────────────────
+  const renderPhotocard = (
+    card: Photocard,
+    opts: { width?: number; height?: number; showCheck?: boolean; isSelected?: boolean; onClick?: () => void; dimmed?: boolean }
+  ) => {
+    const cfg = GROUP_CONFIG[card.group];
+    const isUR = card.rarity === 'ultra-rare';
+    const isRare = card.rarity === 'rare';
+    const { width = 140, height = 210, showCheck = false, isSelected = false, onClick, dimmed = false } = opts;
+
+    return (
+      <motion.div
+        key={card.id}
+        onClick={onClick}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: onClick ? 1.06 : 1 }}
+        className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''} ${onClick ? 'cursor-pointer' : ''}`}
+        style={{
+          width, height,
+          backgroundImage: card.imageUrl ? `url(${card.imageUrl})` : undefined,
+          background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+          border: isSelected
+            ? '2.5px solid white'
+            : isUR ? '2px solid rgba(255,255,255,0.4)'
+            : isRare ? `1.5px solid ${cfg.accentColor}`
+            : '1px solid rgba(255,255,255,0.2)',
+          boxShadow: isSelected
+            ? '0 0 20px rgba(255,255,255,0.5)'
+            : isUR ? '0 0 30px rgba(255,0,128,0.5)'
+            : isRare ? `0 0 20px ${cfg.accentColor}60` : 'none',
+          opacity: dimmed ? 0.4 : 1,
+        }}
+      >
+        {/* overlay legibilidade */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.8) 100%)',
+            zIndex: 1,
+          }}
+        />
+
+        {isUR && <div className="shimmer" style={{ zIndex: 2 }} />}
+
+        {/* check overlay */}
+        {showCheck && isSelected && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40" style={{ zIndex: 10 }}>
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+              <Check className="w-6 h-6 text-black" />
+            </div>
+          </div>
+        )}
+
+        {/* conteúdo */}
+        <div className="absolute inset-0 flex flex-col justify-between p-2" style={{ zIndex: 5 }}>
+          <div className="text-[9px] font-black px-1.5 py-0.5 rounded-full w-fit"
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.65)',
+              color: isUR ? '#FFD700' : cfg.accentColor,
+              border: isUR ? '1px solid #FFD700' : `1px solid ${cfg.accentColor}`,
+            }}
+          >
+            {isUR ? '⭐ UR' : isRare ? '🟦 R' : '🟫 C'}
+          </div>
+
+          {/* círculo com letra só se não tiver foto */}
+          {!card.imageUrl && (
+            <div className="flex items-center justify-center flex-1">
+              <div className="flex items-center justify-center rounded-full font-black text-xl"
+                style={{
+                  width: 48, height: 48,
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
+                  color: isUR ? '#FFD700' : cfg.accentColor,
+                }}
+              >
+                {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
+              </div>
+            </div>
+          )}
+
+          <div className="rounded-md p-1.5" style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}>
+            <p className="font-black text-[10px] truncate" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>{card.member}</p>
+            <p className="text-white/70 text-[9px] truncate">{card.groupName}</p>
+            <p className="text-white/40 text-[8px] truncate">{card.era}</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // ── Tela de sucesso ──────────────────────────────────────────────
   if (orderDone) {
     return (
       <div className="min-h-screen">
@@ -87,61 +180,26 @@ export function Cart() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-3xl font-bold text-white mb-2">Pedido Confirmado!</h2>
-            <p className="text-white/60 mb-8">Sua comanda foi para a cozinha. Aqui estão suas photocards:</p>
+            <p className="text-white/60 mb-8">
+              {isKpop && selectedCards.length > 0
+                ? 'Sua comanda foi para a cozinha. Aqui estão suas photocards:'
+                : 'Sua comanda foi para a cozinha!'}
+            </p>
 
-            <div className="flex flex-wrap justify-center gap-4 mb-10">
-              {selectedCards.map(card => {
-                const cfg = GROUP_CONFIG[card.group];
-                const isUR = card.rarity === 'ultra-rare';
-                const isRare = card.rarity === 'rare';
-                return (
+            {isKpop && selectedCards.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-4 mb-10">
+                {selectedCards.map((card, i) => (
                   <motion.div
                     key={card.id}
                     initial={{ opacity: 0, y: 20, rotate: -5 }}
                     animate={{ opacity: 1, y: 0, rotate: 0 }}
-                    transition={{ type: 'spring', stiffness: 200 }}
-                    className={`relative rounded-xl overflow-hidden ${isUR ? 'card-ultra-rare' : ''}`}
-                    style={{
-                      width: 140, height: 210,
-                      background: isUR ? undefined : cfg.gradient,
-                      border: isUR ? '2px solid rgba(255,255,255,0.4)' : isRare ? `1.5px solid ${cfg.accentColor}` : '1px solid rgba(255,255,255,0.2)',
-                      boxShadow: isUR ? '0 0 30px rgba(255,0,128,0.5)' : isRare ? `0 0 20px ${cfg.accentColor}60` : 'none',
-                    }}
+                    transition={{ type: 'spring', stiffness: 200, delay: i * 0.1 }}
                   >
-                    {isUR && <div className="shimmer" />}
-                    <div className="absolute inset-0 flex flex-col justify-between p-3">
-                      <div className="text-[10px] font-black px-2 py-0.5 rounded-full w-fit"
-                        style={{
-                          backgroundColor: isUR ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.4)',
-                          color: isUR ? '#FFD700' : cfg.accentColor,
-                          border: isUR ? '1px solid #FFD700' : `1px solid ${cfg.accentColor}`,
-                        }}
-                      >
-                        {isUR ? '⭐ UR' : isRare ? '🟦 R' : '🟫 C'}
-                      </div>
-                      <div className="flex items-center justify-center flex-1">
-                        <div className="flex items-center justify-center rounded-full font-black text-2xl"
-                          style={{
-                            width: 60, height: 60,
-                            backgroundColor: 'rgba(0,0,0,0.4)',
-                            border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
-                            color: isUR ? '#FFD700' : cfg.accentColor,
-                            textShadow: isUR ? '0 0 20px #FFD700' : `0 0 15px ${cfg.accentColor}`,
-                          }}
-                        >
-                          {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
-                        </div>
-                      </div>
-                      <div className="rounded-lg p-2" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                        <p className="font-black text-xs" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>{card.member}</p>
-                        <p className="text-white/60 text-[10px]">{card.groupName}</p>
-                        <p className="text-white/40 text-[9px]">{card.era}</p>
-                      </div>
-                    </div>
+                    {renderPhotocard(card, { width: 140, height: 210 })}
                   </motion.div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
 
             <p className="text-white/40 text-sm mb-6">Salve os seus cards com print ou download 📸</p>
 
@@ -195,12 +253,11 @@ export function Cart() {
               <h2 className="text-2xl font-bold text-white">Escolha suas {CARDS_PER_ORDER} Photocards</h2>
             </div>
             <p className="text-white/50 text-sm">
-              Grátis com seu pedido! Selecione {CARDS_PER_ORDER} cards para ganhar.
-              {' '}<span style={{ color: 'var(--primary-neon)' }}>{selectedCards.length}/{CARDS_PER_ORDER} selecionadas</span>
+              Grátis com seu pedido! Selecione {CARDS_PER_ORDER} cards para ganhar.{' '}
+              <span style={{ color: 'var(--primary-neon)' }}>{selectedCards.length}/{CARDS_PER_ORDER} selecionadas</span>
             </p>
           </motion.div>
 
-          {/* Filtro raridade */}
           <div className="flex gap-2 mb-6 flex-wrap">
             {(['all', 'common', 'rare', 'ultra-rare'] as const).map(r => (
               <button key={r} onClick={() => setRarityFilter(r)}
@@ -214,89 +271,26 @@ export function Cart() {
             ))}
           </div>
 
-          {/* Grid de cards */}
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 mb-6">
-            {filteredCards.map((card, index) => {
-              const cfg = GROUP_CONFIG[card.group];
-              const isUR = card.rarity === 'ultra-rare';
-              const isRare = card.rarity === 'rare';
+            {filteredCards.map((card) => {
               const isSelected = !!selectedCards.find(c => c.id === card.id);
-
-              return (
-                <motion.div
-                  key={card.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.01 }}
-                  whileHover={{ scale: 1.06 }}
-                  onClick={() => toggleCard(card)}
-                  className="cursor-pointer relative"
-                >
-                  <div
-                    className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
-                    style={{
-                      aspectRatio: '2/3',
-                      background: isUR ? undefined : cfg.gradient,
-                      border: isSelected
-                        ? '2.5px solid white'
-                        : isUR ? '2px solid rgba(255,255,255,0.4)'
-                        : isRare ? `1.5px solid ${cfg.accentColor}80`
-                        : '1px solid rgba(255,255,255,0.1)',
-                      boxShadow: isSelected ? '0 0 20px rgba(255,255,255,0.5)' : isUR ? '0 0 20px rgba(255,0,128,0.4)' : 'none',
-                      opacity: (!isSelected && selectedCards.length >= CARDS_PER_ORDER) ? 0.4 : 1,
-                    }}
-                  >
-                    {isUR && <div className="shimmer" />}
-
-                    {/* Check overlay */}
-                    {isSelected && (
-                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                          <Check className="w-6 h-6 text-black" />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="absolute inset-0 flex flex-col justify-between p-2">
-                      <div className="text-[9px] font-black px-1.5 py-0.5 rounded-full w-fit"
-                        style={{
-                          backgroundColor: 'rgba(0,0,0,0.6)',
-                          color: isUR ? '#FFD700' : cfg.accentColor,
-                          border: isUR ? '1px solid #FFD700' : `1px solid ${cfg.accentColor}`,
-                        }}
-                      >
-                        {isUR ? '⭐' : isRare ? '🟦' : '🟫'}
-                      </div>
-                      <div className="flex items-center justify-center flex-1">
-                        <div className="flex items-center justify-center rounded-full font-black text-xl"
-                          style={{
-                            width: 48, height: 48,
-                            backgroundColor: 'rgba(0,0,0,0.4)',
-                            border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
-                            color: isUR ? '#FFD700' : cfg.accentColor,
-                          }}
-                        >
-                          {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
-                        </div>
-                      </div>
-                      <div className="rounded-md p-1.5" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                        <p className="font-black text-[10px] truncate" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>{card.member}</p>
-                        <p className="text-white/50 text-[9px] truncate">{card.groupName}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
+              return renderPhotocard(card, {
+                width: undefined,
+                height: undefined,
+                showCheck: true,
+                isSelected,
+                dimmed: !isSelected && selectedCards.length >= CARDS_PER_ORDER,
+                onClick: () => toggleCard(card),
+              });
             })}
           </div>
         </main>
 
-        {/* Bottom bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-xl border-t border-white/10 p-4 z-30">
           <div className="max-w-5xl mx-auto flex items-center gap-4">
             <div className="flex gap-2 flex-1">
               {Array.from({ length: CARDS_PER_ORDER }).map((_, i) => (
-                <div key={i} className="flex-1 h-2 rounded-full"
+                <div key={i} className="flex-1 h-2 rounded-full transition-all"
                   style={{ backgroundColor: i < selectedCards.length ? 'var(--primary-neon)' : 'rgba(255,255,255,0.1)' }}
                 />
               ))}
@@ -309,13 +303,13 @@ export function Cart() {
                 Voltar
               </motion.button>
               <motion.button
-                whileHover={{ scale: selectedCards.length === CARDS_PER_ORDER ? 1.02 : 1 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => selectedCards.length === CARDS_PER_ORDER && setStep('checkout')}
                 className="px-6 py-3 rounded-xl font-bold text-black transition-opacity"
                 style={{
                   backgroundColor: 'var(--primary-neon)',
                   opacity: selectedCards.length === CARDS_PER_ORDER ? 1 : 0.4,
+                  cursor: selectedCards.length === CARDS_PER_ORDER ? 'pointer' : 'not-allowed',
                 }}
               >
                 Continuar ({selectedCards.length}/{CARDS_PER_ORDER})
@@ -367,28 +361,14 @@ export function Cart() {
             </div>
           </div>
 
-          {/* Cards selecionados */}
           {isKpop && selectedCards.length > 0 && (
             <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10">
               <p className="text-white/60 text-sm mb-3 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
                 Suas photocards grátis:
               </p>
-              <div className="flex gap-3">
-                {selectedCards.map(card => {
-                  const cfg = GROUP_CONFIG[card.group];
-                  const isUR = card.rarity === 'ultra-rare';
-                  return (
-                    <div key={card.id} className="text-center">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-black mb-1"
-                        style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: isUR ? '#FFD700' : cfg.accentColor, border: `2px solid ${isUR ? '#FFD700' : cfg.accentColor}` }}
-                      >
-                        {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
-                      </div>
-                      <p className="text-white/60 text-[10px]">{card.member}</p>
-                    </div>
-                  );
-                })}
+              <div className="flex gap-3 flex-wrap">
+                {selectedCards.map(card => renderPhotocard(card, { width: 70, height: 105 }))}
               </div>
             </div>
           )}
@@ -482,7 +462,6 @@ export function Cart() {
           ))}
         </div>
 
-        {/* Banner photocard */}
         {isKpop && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             className="mb-6 p-4 rounded-2xl border flex items-center gap-4"
@@ -491,7 +470,7 @@ export function Cart() {
             <Sparkles className="w-8 h-8 flex-shrink-0" style={{ color: 'var(--primary-neon)' }} />
             <div>
               <p className="text-white font-bold">🎁 Ganhe {CARDS_PER_ORDER} Photocards Grátis!</p>
-              <p className="text-white/50 text-sm">Escolha seus cards favoritos para acompanhar o pedido — Common, Rare ou Ultra Rare!</p>
+              <p className="text-white/50 text-sm">Escolha seus cards favoritos — Common, Rare ou Ultra Rare!</p>
             </div>
           </motion.div>
         )}
