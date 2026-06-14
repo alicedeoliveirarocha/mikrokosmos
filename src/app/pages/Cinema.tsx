@@ -9,6 +9,9 @@ import { useState } from 'react';
 import { photocards, Rarity, GroupId, GROUP_CONFIG } from '../data/photocards';
 import { toast } from 'sonner';
 
+const encodeImgUrl = (url: string) =>
+  url.split('/').map(s => encodeURIComponent(s)).join('/');
+
 export function Cinema() {
   const navigate = useNavigate();
   const { universeName, primaryColor, categoria } = useUniverse();
@@ -240,7 +243,7 @@ export function Cinema() {
                     style={{
                       aspectRatio: '2/3',
                       // foto real como background; gradiente como fallback
-                      backgroundImage: card.imageUrl ? `url(${card.imageUrl})` : undefined,
+                      backgroundImage: card.imageUrl ? `url(${encodeImgUrl(card.imageUrl)})` : undefined,
                       background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
                       backgroundSize: 'cover',
                       backgroundPosition: 'center top',

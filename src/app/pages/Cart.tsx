@@ -13,6 +13,9 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { toast } from 'sonner';
 import { photocards, Photocard, GROUP_CONFIG } from '../data/photocards';
 
+const encodeImgUrl = (url: string) =>
+  url.split('/').map(s => encodeURIComponent(s)).join('/');
+
 const CARDS_PER_ORDER = 3;
 
 export function Cart() {
@@ -98,7 +101,7 @@ export function Cart() {
         className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''} ${onClick ? 'cursor-pointer' : ''}`}
         style={{
           width, height,
-          backgroundImage: card.imageUrl ? `url(${card.imageUrl})` : undefined,
+          backgroundImage: card.imageUrl ? `url(${encodeImgUrl(card.imageUrl)})` : undefined,
           background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
