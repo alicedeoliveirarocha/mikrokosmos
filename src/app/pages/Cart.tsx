@@ -6,15 +6,12 @@ import { useOrders } from '../context/OrdersContext';
 import { useAuth } from '../context/AuthContext';
 import { useUniverse } from '../context/UniverseContext';
 import { useNavigate } from 'react-router';
-import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, Phone, MessageSquare, Sparkles, Download, Check } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, User, MapPin, Phone, MessageSquare, Sparkles, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getProductImage } from '../utils/productImages';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { toast } from 'sonner';
 import { photocards, Photocard, GROUP_CONFIG } from '../data/photocards';
-
-const encodeImgUrl = (url: string) =>
-  url.split('/').map(s => encodeURIComponent(s)).join('/');
 
 const CARDS_PER_ORDER = 3;
 
@@ -100,11 +97,10 @@ export function Cart() {
         whileHover={{ scale: onClick ? 1.06 : 1 }}
         className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''} ${onClick ? 'cursor-pointer' : ''}`}
         style={{
-          width, height,
-          backgroundImage: card.imageUrl ? `url(${encodeImgUrl(card.imageUrl)})` : undefined,
-          background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          width: width || undefined,
+          height: height || undefined,
+          aspectRatio: width ? undefined : '2/3',
+          background: !card.imageUrl ? (isUR ? undefined : cfg.gradient) : undefined,
           border: isSelected
             ? '2.5px solid white'
             : isUR ? '2px solid rgba(255,255,255,0.4)'
@@ -117,6 +113,16 @@ export function Cart() {
           opacity: dimmed ? 0.4 : 1,
         }}
       >
+        {/* ── Foto real ── */}
+        {card.imageUrl && (
+          <img
+            src={card.imageUrl}
+            alt={card.member}
+            className="absolute inset-0 w-full h-full object-cover object-top"
+            style={{ zIndex: 0 }}
+          />
+        )}
+
         {/* overlay legibilidade */}
         <div className="absolute inset-0 pointer-events-none"
           style={{
@@ -278,8 +284,6 @@ export function Cart() {
             {filteredCards.map((card) => {
               const isSelected = !!selectedCards.find(c => c.id === card.id);
               return renderPhotocard(card, {
-                width: undefined,
-                height: undefined,
                 showCheck: true,
                 isSelected,
                 dimmed: !isSelected && selectedCards.length >= CARDS_PER_ORDER,

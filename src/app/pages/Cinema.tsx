@@ -9,9 +9,6 @@ import { useState } from 'react';
 import { photocards, Rarity, GroupId, GROUP_CONFIG } from '../data/photocards';
 import { toast } from 'sonner';
 
-const encodeImgUrl = (url: string) =>
-  url.split('/').map(s => encodeURIComponent(s)).join('/');
-
 export function Cinema() {
   const navigate = useNavigate();
   const { universeName, primaryColor, categoria } = useUniverse();
@@ -238,15 +235,11 @@ export function Cinema() {
                   whileHover={{ scale: 1.08, y: -6 }}
                   className="cursor-pointer group"
                 >
-                  {/* ── CARD COM FOTO REAL ── */}
-                  <div className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
+                  <div
+                    className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
                     style={{
                       aspectRatio: '2/3',
-                      // foto real como background; gradiente como fallback
-                      backgroundImage: card.imageUrl ? `url(${encodeImgUrl(card.imageUrl)})` : undefined,
-                      background: card.imageUrl ? undefined : (isUR ? undefined : cfg.gradient),
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center top',
+                      background: !card.imageUrl ? (isUR ? undefined : cfg.gradient) : undefined,
                       boxShadow: isUR
                         ? '0 0 30px rgba(255,0,128,0.5), 0 0 60px rgba(64,224,208,0.3)'
                         : isRare ? `0 0 20px ${cfg.accentColor}60` : '0 4px 15px rgba(0,0,0,0.5)',
@@ -255,7 +248,17 @@ export function Cinema() {
                         : isRare ? `1.5px solid ${cfg.accentColor}80` : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
-                    {/* Overlay escuro para legibilidade do texto */}
+                    {/* ── Foto real ── */}
+                    {card.imageUrl && (
+                      <img
+                        src={card.imageUrl}
+                        alt={card.member}
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                        style={{ zIndex: 0 }}
+                      />
+                    )}
+
+                    {/* Overlay escuro para legibilidade */}
                     <div className="absolute inset-0 pointer-events-none"
                       style={{
                         background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%)',
@@ -287,7 +290,7 @@ export function Cinema() {
                         )}
                       </div>
 
-                      {/* Só mostra o círculo com letra se não tiver foto */}
+                      {/* Círculo com letra só se não tiver foto */}
                       {!card.imageUrl && (
                         <div className="flex items-center justify-center flex-1">
                           <div className="flex items-center justify-center rounded-full font-black text-3xl"
