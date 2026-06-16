@@ -1,3 +1,4 @@
+// src/app/pages/Home.tsx
 import { useState } from 'react';
 import { Header } from '../components/Header';
 import { ProductCard } from '../components/ProductCard';
@@ -5,22 +6,23 @@ import { UniverseToggle } from '../components/UniverseToggle';
 import { StatsBar } from '../components/StatsBar';
 import { products } from '../data/products';
 import { useUniverse } from '../context/UniverseContext';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 
 export function Home() {
   const { universeActive, universeName, categoria } = useUniverse();
-  const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
+  const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const categories = ['Todos', ...Array.from(new Set(products.map(p => p.categoria)))];
+  const rawCategories = Array.from(new Set(products.map(p => p.categoria)));
+  const categories = ['all', ...rawCategories];
 
   const filteredProducts = products.filter(product => {
-    const categoryMatch = selectedCategory === 'Todos' || product.categoria === selectedCategory;
+    const categoryMatch = selectedCategory === 'all' || product.categoria === selectedCategory;
     const universeMatch = product.universo === 'both' || product.universo === universeActive;
-
     const culinariaMatch = categoria === 'Cinema'
       ? !product.culinaria || (product.culinaria !== 'coreana' && product.culinaria !== 'japonesa')
       : true;
-
     return categoryMatch && universeMatch && culinariaMatch;
   });
 
@@ -30,7 +32,7 @@ export function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      
+
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Info da Mesa */}
         <motion.div
@@ -38,8 +40,8 @@ export function Home() {
           animate={{ opacity: 1, y: 0 }}
           className={`
             mb-8 p-6 backdrop-blur-sm
-            ${isKpop 
-              ? 'rounded-2xl bg-gradient-to-r from-white/5 to-white/10 border border-white/10' 
+            ${isKpop
+              ? 'rounded-2xl bg-gradient-to-r from-white/5 to-white/10 border border-white/10'
               : 'rounded-sm bg-black/60'
             }
           `}
@@ -48,32 +50,21 @@ export function Home() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className={`text-xl font-bold text-white mb-1 ${isCinema ? 'font-serif' : ''}`}>
-                {isCinema ? 'Sessão: ' : 'Mesa: '}
-                <span style={{ color: 'var(--primary-neon)' }}>
-                  MK-01
-                </span>
+                {isCinema ? t('home.session') : t('home.table')}:{' '}
+                <span style={{ color: 'var(--primary-neon)' }}>MK-01</span>
               </h2>
               <p className="text-white/60 text-sm">
-                Status: <span className="text-green-400">Ativo</span>
+                {t('home.status')}: <span className="text-green-400">{t('home.statusActive')}</span>
               </p>
             </div>
-            <div 
-              className={`
-                px-4 py-2 backdrop-blur-sm
-                ${isKpop 
-                  ? 'rounded-full border' 
-                  : 'rounded-sm border font-mono tracking-wide'
-                }
-              `}
+            <div
+              className={`px-4 py-2 backdrop-blur-sm ${isKpop ? 'rounded-full border' : 'rounded-sm border font-mono tracking-wide'}`}
               style={{ borderColor: 'var(--primary-neon)' }}
             >
               <span className="text-white/80 text-sm">
-                {isCinema ? 'Saga Atual: ' : 'Era Atual: '}
+                {isCinema ? t('home.currentSaga') : t('home.currentEra')}:{' '}
               </span>
-              <span 
-                className="font-bold"
-                style={{ color: 'var(--primary-neon)' }}
-              >
+              <span className="font-bold" style={{ color: 'var(--primary-neon)' }}>
                 {universeName}
               </span>
             </div>
@@ -102,13 +93,9 @@ export function Home() {
                   : 'bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 border border-white/20'
                 }
               `}
-              style={
-                selectedCategory === category
-                  ? { backgroundColor: 'var(--primary-neon)' }
-                  : {}
-              }
+              style={selectedCategory === category ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              {category}
+              {category === 'all' ? t('home.all') : category}
             </motion.button>
           ))}
         </motion.div>
@@ -123,10 +110,7 @@ export function Home() {
         {filteredProducts.length === 0 && (
           <div className="text-center py-20">
             <p className={`text-white/60 text-lg ${isCinema ? 'font-serif' : ''}`}>
-              {isCinema 
-                ? 'Nenhum item disponível para esta saga.' 
-                : 'Nenhum produto encontrado para esta era.'
-              }
+              {isCinema ? t('home.noProductsCinema') : t('home.noProductsKpop')}
             </p>
           </div>
         )}
