@@ -1,17 +1,18 @@
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router';
-import { Sparkles, ArrowRight, GraduationCap, User, ChefHat, Bike, BarChart3 } from 'lucide-react';
+import { Sparkles, ArrowRight, GraduationCap, User, ChefHat, Bike, BarChart3, Film } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
+import { useUniverse } from '../context/UniverseContext';
 
 export function Welcome() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { orders } = useOrders();
+  const { categoria } = useUniverse();
   const [showContent, setShowContent] = useState(false);
 
-  // Contar pedidos
   const pendingOrders = orders.filter(o => ['pendente', 'preparando'].includes(o.status)).length;
   const deliveryOrders = orders.filter(o => ['pronto', 'saiu-para-entrega'].includes(o.status)).length;
 
@@ -21,6 +22,8 @@ export function Welcome() {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const isKpop = categoria === 'Kpop';
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -40,7 +43,6 @@ export function Welcome() {
           </p>
         </motion.div>
 
-        {/* Conteúdo animado */}
         {showContent && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -48,7 +50,7 @@ export function Welcome() {
             transition={{ delay: 0.3 }}
           >
             <p className="text-white/80 text-lg mb-8 leading-relaxed">
-              Bem-vindo ao futuro da gastronomia K-pop! 
+              Bem-vindo ao futuro da gastronomia K-pop!
               <br />
               Uma experiência imersiva que sincroniza sabor e música.
             </p>
@@ -62,8 +64,8 @@ export function Welcome() {
                 className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6"
               >
                 <Sparkles className="w-8 h-8 mx-auto mb-3" style={{ color: '#00FFFF' }} />
-                <h3 className="text-white font-bold mb-2">5 Universos</h3>
-                <p className="text-white/60 text-sm">AESPA, ENHYPEN, BTS, BLACKPINK, RED VELVET</p>
+                <h3 className="text-white font-bold mb-2">7 Universos K-pop</h3>
+                <p className="text-white/60 text-sm">BTS, BLACKPINK, AESPA, ENHYPEN, RED VELVET, NEWJEANS, ILLIT</p>
               </motion.div>
 
               <motion.div
@@ -89,7 +91,7 @@ export function Welcome() {
               </motion.div>
             </div>
 
-            {/* Botão de entrada */}
+            {/* Botão principal */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -104,7 +106,7 @@ export function Welcome() {
               <ArrowRight className="w-6 h-6" />
             </motion.button>
 
-            {/* Cinema Mode Button */}
+            {/* Botão Cinema / Photocards */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -115,7 +117,10 @@ export function Welcome() {
                 boxShadow: '0 0 30px rgba(212, 175, 55, 0.3)',
               }}
             >
-              🎬 MODO CINEMA
+              {isKpop
+                ? <><Sparkles className="w-6 h-6" /> PHOTOCARDS</>
+                : <><Film className="w-6 h-6" /> MODO CINEMA</>
+              }
               <ArrowRight className="w-6 h-6" />
             </motion.button>
 
@@ -142,7 +147,7 @@ export function Welcome() {
               </div>
             </div>
 
-            {/* Acesso Rápido - Cozinha e Delivery */}
+            {/* Acesso Rápido */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-8 max-w-2xl mx-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -164,7 +169,7 @@ export function Welcome() {
                 <ChefHat className="w-6 h-6 mx-auto mb-2" style={{ color: 'var(--primary-neon)' }} />
                 <p className="text-white text-sm font-medium">Cozinha</p>
                 {pendingOrders > 0 && (
-                  <span 
+                  <span
                     className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}
                   >
@@ -182,7 +187,7 @@ export function Welcome() {
                 <Bike className="w-6 h-6 mx-auto mb-2" style={{ color: 'var(--primary-neon)' }} />
                 <p className="text-white text-sm font-medium">Delivery</p>
                 {deliveryOrders > 0 && (
-                  <span 
+                  <span
                     className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}
                   >

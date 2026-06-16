@@ -27,7 +27,7 @@ export function Header() {
   const deliveryOrders = orders.filter(o => ['pronto', 'saiu-para-entrega'].includes(o.status)).length;
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/30 border-b border-white/10">
+    <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/60 border-b border-white/20">
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -50,7 +50,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Cinema / Photocards — visível para todos */}
+            {/* Cinema / Photocards */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/cinema')}
@@ -79,7 +79,7 @@ export function Header() {
               </motion.button>
             )}
 
-            {/* Cozinha — cozinha e admin */}
+            {/* Cozinha */}
             {isCozinha && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -98,7 +98,7 @@ export function Header() {
               </motion.button>
             )}
 
-            {/* Delivery — delivery e admin */}
+            {/* Delivery */}
             {isDelivery && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -117,7 +117,7 @@ export function Header() {
               </motion.button>
             )}
 
-            {/* Learning — visível para todos */}
+            {/* Learning */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/learning')}
@@ -128,7 +128,7 @@ export function Header() {
               <span className="hidden xl:inline text-sm">Learning</span>
             </motion.button>
 
-            {/* Sobre — visível para todos */}
+            {/* Sobre */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/info')}
@@ -138,7 +138,7 @@ export function Header() {
               <span className="hidden xl:inline text-sm">Sobre</span>
             </motion.button>
 
-            {/* Perfil/Login — visível para todos */}
+            {/* Perfil/Login */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate(isAuthenticated ? '/perfil' : '/auth')}
@@ -149,7 +149,7 @@ export function Header() {
               <span className="hidden xl:inline text-sm">{isAuthenticated ? 'Perfil' : 'Login'}</span>
             </motion.button>
 
-            {/* Carrinho — visível para todos */}
+            {/* Carrinho */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/carrinho')}
