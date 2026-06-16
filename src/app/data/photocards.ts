@@ -73,8 +73,8 @@ export const photocards: Photocard[] = [
   { id: 'ae-winter-rare1',    member: 'Winter',   groupName: 'aespa', group: 'aespa',  rarity: 'rare',       era: 'Drama',       imageUrl: '/photocards/AESPA/winter-rare2.jpg' },
   { id: 'ae-winter-rare2',    member: 'Winter',   groupName: 'aespa', group: 'aespa',  rarity: 'rare',       era: 'Drama',       imageUrl: '/photocards/AESPA/winter-rare1.jpg' },
   { id: 'ae-giselle-rare',    member: 'Giselle',  groupName: 'aespa', group: 'aespa',  rarity: 'rare',       era: 'Whiplash',    imageUrl: '/photocards/AESPA/giselle-rare.jpg' },
-  { id: 'ae-ningning-rare1',  member: 'Ningning', groupName: 'aespa', group: 'aespa',  rarity: 'rare',       era: 'Girls',       imageUrl: '/photocards/AESPA/ningning-rare.jpg' },
-  { id: 'ae-ningning-rare2',  member: 'Ningning', groupName: 'aespa', group: 'aespa',  rarity: 'ultra-rare', era: 'Red Dress',   imageUrl: '/photocards/AESPA/ningning-ultra-rare.jpg', isGroupPhoto: true },
+  { id: 'ae-ningning-rare1',  member: 'Ningning', groupName: 'aespa', group: 'aespa',  rarity: 'rare',       era: 'Girls',       imageUrl: '/photocards/AESPA/ningning-rare1.jpg' },
+  { id: 'ae-ningning-rare2',  member: 'Ningning', groupName: 'aespa', group: 'aespa',  rarity: 'ultra-rare', era: 'Red Dress',   imageUrl: '/photocards/AESPA/ningning-ultra-rare2.jpg', isGroupPhoto: true },
   { id: 'ae-group-rare',      member: 'Aespa',    groupName: 'aespa', group: 'aespa',  rarity: 'ultra-rare', era: 'Cute Daily',  imageUrl: '/photocards/AESPA/aespa-group-rare.jpg', isGroupPhoto: true },
 
 
@@ -91,7 +91,7 @@ export const photocards: Photocard[] = [
   { id: 'en-jake-rare',       member: 'Jake',     groupName: 'ENHYPEN', group: 'enhypen', rarity: 'rare',       era: "Valentine's Day",  imageUrl: '/photocards/ENHYPEN/jake-rare.jpg' },
   { id: 'en-jungwon-rare',    member: 'Jungwon',  groupName: 'ENHYPEN', group: 'enhypen', rarity: 'rare',       era: 'Future Perfect',   imageUrl: '/photocards/ENHYPEN/jungwon-rare.jpg' },
   { id: 'en-ultra-rare',      member: 'ENHYPEN',  groupName: 'ENHYPEN', group: 'enhypen', rarity: 'ultra-rare', era: 'ENniversary 2025', imageUrl: '/photocards/ENHYPEN/enhypen-ultra-rare.jpg', isGroupPhoto: true },
-  { id: 'en-ultra-rare2',     member: 'ENHYPEN',  groupName: 'ENHYPEN', group: 'enhypen', rarity: 'ultra-rare', era: 'Qipao',            imageUrl: '/photocards/ENHYPEN/what is this 🤭.jpg', isGroupPhoto: true },
+  { id: 'en-ultra-rare2',     member: 'ENHYPEN',  groupName: 'ENHYPEN', group: 'enhypen', rarity: 'ultra-rare', era: 'Qipao',            imageUrl: '/photocards/ENHYPEN/enhypen-ultra-rare2.jpg', isGroupPhoto: true },
 
   // ── RED VELVET ─────────────────────────────────────────────────
   { id: 'rv-irene-rare',    member: 'Irene',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'Like A Flower',  imageUrl: '/photocards/REDVELVET/irene-rare.jpg' },
@@ -99,9 +99,9 @@ export const photocards: Photocard[] = [
   { id: 'rv-irene-common',  member: 'Irene',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'common',     era: 'Daily',          imageUrl: '/photocards/REDVELVET/irene-common.jpg' },
   { id: 'rv-joy-common',    member: 'Joy',        groupName: 'Red Velvet', group: 'redvelvet', rarity: 'common',     era: 'Stage',          imageUrl: '/photocards/REDVELVET/joy-common.jpg' },
   { id: 'rv-yeri-common',   member: 'Yeri',       groupName: 'Red Velvet', group: 'redvelvet', rarity: 'common',     era: 'Instagram',      imageUrl: '/photocards/REDVELVET/yeri-common.jpg' },
-  { id: 'rv-wendy-rare1',   member: 'Wendy',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'After The Rain', imageUrl: '/photocards/REDVELVET/wendy-rare.jpg' },
+  { id: 'rv-wendy-rare1',   member: 'Wendy',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'After The Rain', imageUrl: '/photocards/REDVELVET/wendy-rare1.jpg' },
   { id: 'rv-seulgi-rare',   member: 'Seulgi',     groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'Solo',           imageUrl: '/photocards/REDVELVET/seulgi-rare.jpg' },
-  { id: 'rv-wendy-rare2',   member: 'Wendy',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'Cosmic',         imageUrl: '/photocards/REDVELVET/wendy-rare.jpg' },
+  { id: 'rv-wendy-rare2',   member: 'Wendy',      groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'Cosmic',         imageUrl: '/photocards/REDVELVET/wendy-rare2.jpg' },
   { id: 'rv-joy-rare',      member: 'Joy',        groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'Hello',          imageUrl: '/photocards/REDVELVET/joy-rare.jpg' },
   { id: 'rv-yeri-rare',     member: 'Yeri',       groupName: 'Red Velvet', group: 'redvelvet', rarity: 'rare',       era: 'WISH',           imageUrl: '/photocards/REDVELVET/yeri-rare.jpg' },
   { id: 'rv-ultra-rare',    member: 'Red Velvet', groupName: 'Red Velvet', group: 'redvelvet', rarity: 'ultra-rare', era: 'SM Special',     imageUrl: '/photocards/REDVELVET/rv-ultra-rare.jpg', isGroupPhoto: true },
