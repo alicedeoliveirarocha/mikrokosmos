@@ -1,10 +1,13 @@
+// src/app/components/Header.tsx
 import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
 import { useUniverse } from '../context/UniverseContext';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export function Header() {
   const navigate = useNavigate();
@@ -13,6 +16,7 @@ export function Header() {
   const { isAuthenticated, user } = useAuth();
   const { orders } = useOrders();
   const { categoria } = useUniverse();
+  const { t } = useTranslation();
 
   const isHome = location.pathname === '/home';
   const isCinema = location.pathname === '/cinema';
@@ -50,19 +54,22 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Seletor de idioma */}
+            <LanguageSwitcher />
+
             {/* Cinema / Photocards */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/cinema')}
               className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-              title={isKpopMode ? 'Photocards' : 'Cinema'}
+              title={isKpopMode ? t('nav.photocards', 'Photocards') : t('nav.cinema')}
             >
               {isKpopMode
                 ? <Sparkles className="w-5 h-5" />
                 : <Film className="w-5 h-5" />
               }
               <span className="hidden xl:inline text-sm">
-                {isKpopMode ? 'Photocards' : 'Cinema'}
+                {isKpopMode ? t('photocards.title') : t('nav.cinema')}
               </span>
             </motion.button>
 
@@ -72,10 +79,10 @@ export function Header() {
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/analytics')}
                 className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-                title="Analytics"
+                title={t('nav.analytics')}
               >
                 <BarChart3 className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">Analytics</span>
+                <span className="hidden lg:inline text-sm">{t('nav.analytics')}</span>
               </motion.button>
             )}
 
@@ -85,10 +92,10 @@ export function Header() {
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/cozinha')}
                 className="relative w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-                title="Cozinha"
+                title={t('nav.kitchen')}
               >
                 <ChefHat className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">Cozinha</span>
+                <span className="hidden lg:inline text-sm">{t('nav.kitchen')}</span>
                 {pendingOrders > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}>
@@ -104,10 +111,10 @@ export function Header() {
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/delivery')}
                 className="relative w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-                title="Delivery"
+                title={t('nav.delivery')}
               >
                 <Bike className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">Delivery</span>
+                <span className="hidden lg:inline text-sm">{t('nav.delivery')}</span>
                 {deliveryOrders > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}>
@@ -122,10 +129,10 @@ export function Header() {
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/learning')}
               className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-              title="Learning Dashboard"
+              title={t('nav.learning')}
             >
               <GraduationCap className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">Learning</span>
+              <span className="hidden xl:inline text-sm">{t('nav.learning')}</span>
             </motion.button>
 
             {/* Sobre */}
@@ -133,9 +140,10 @@ export function Header() {
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/info')}
               className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+              title={t('nav.info')}
             >
               <Info className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">Sobre</span>
+              <span className="hidden xl:inline text-sm">{t('nav.info')}</span>
             </motion.button>
 
             {/* Perfil/Login */}
@@ -143,10 +151,12 @@ export function Header() {
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate(isAuthenticated ? '/perfil' : '/auth')}
               className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-              title={isAuthenticated ? 'Perfil' : 'Login'}
+              title={isAuthenticated ? t('nav.profile') : t('nav.login')}
             >
               <User className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">{isAuthenticated ? 'Perfil' : 'Login'}</span>
+              <span className="hidden xl:inline text-sm">
+                {isAuthenticated ? t('nav.profile') : t('nav.login')}
+              </span>
             </motion.button>
 
             {/* Carrinho */}
@@ -154,6 +164,7 @@ export function Header() {
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/carrinho')}
               className="relative w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              title={t('nav.cart')}
             >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
