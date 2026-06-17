@@ -1,7 +1,7 @@
 // src/app/components/MesasPanel.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import { motion } from 'motion/react';
-import { Armchair, Users, Clock, RotateCcw } from 'lucide-react';
+import { Armchair, Users, Clock, RotateCcw, Pencil, Check, X } from 'lucide-react';
 
 type StatusMesa = 'livre' | 'ocupada' | 'reservada';
 
@@ -55,6 +55,9 @@ const NEXT_STATUS: Record<StatusMesa, StatusMesa> = {
 
 export function MesasPanel() {
   const [mesas, setMesas] = useState<Mesa[]>(loadMesas);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editCapacidade, setEditCapacidade] = useState('');
+  const [editHorario, setEditHorario] = useState('');
 
   useEffect(() => { saveMesas(mesas); }, [mesas]);
 
@@ -70,6 +73,32 @@ export function MesasPanel() {
           : undefined,
       };
     }));
+  };
+
+  const abrirEdicao = (mesa: Mesa, e: MouseEvent) => {
+    e.stopPropagation();
+    setEditandoId(mesa.id);
+    setEditCapacidade(String(mesa.capacidade));
+    setEditHorario(mesa.ocupadaDesde || '');
+  };
+
+  const salvarEdicao = (id: string, e: MouseEvent) => {
+    e.stopPropagation();
+    const novaCapacidade = parseInt(editCapacidade, 10);
+    setMesas(prev => prev.map(m => {
+      if (m.id !== id) return m;
+      return {
+        ...m,
+        capacidade: isNaN(novaCapacidade) || novaCapacidade <= 0 ? m.capacidade : novaCapacidade,
+        ocupadaDesde: m.status === 'ocupada' ? (editHorario || m.ocupadaDesde) : m.ocupadaDesde,
+      };
+    }));
+    setEditandoId(null);
+  };
+
+  const cancelarEdicao = (e: MouseEvent) => {
+    e.stopPropagation();
+    setEditandoId(null);
   };
 
   const resetMesas = () => setMesas(mesasIniciais);
@@ -114,38 +143,99 @@ export function MesasPanel() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {mesas.map((mesa, i) => {
           const cfg = STATUS_CONFIG[mesa.status];
+          const emEdicao = editandoId === mesa.id;
           return (
-            <motion.button
+            <motion.div
               key={mesa.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => cycleStatus(mesa.id)}
-              className="p-4 rounded-xl border text-left transition-all"
+              whileHover={emEdicao ? {} : { scale: 1.03 }}
+              whileTap={emEdicao ? {} : { scale: 0.97 }}
+              onClick={() => !emEdicao && cycleStatus(mesa.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (!emEdicao && (e.key === 'Enter' || e.key === ' ')) cycleStatus(mesa.id); }}
+              className="p-4 rounded-xl border text-left transition-all cursor-pointer"
               style={{ backgroundColor: cfg.bg, borderColor: cfg.color + '60' }}
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-white font-bold text-lg">{mesa.numero}</span>
-                <span
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: cfg.color + '25', color: cfg.color, border: `1px solid ${cfg.color}60` }}
-                >
-                  {cfg.label}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 text-white/60 text-xs mb-1">
-                <Users className="w-3.5 h-3.5" />
-                <span>{mesa.capacidade} lugares</span>
-              </div>
-              {mesa.status === 'ocupada' && mesa.ocupadaDesde && (
-                <div className="flex items-center gap-1.5 text-white/40 text-xs">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>desde {mesa.ocupadaDesde}</span>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ backgroundColor: cfg.color + '25', color: cfg.color, border: `1px solid ${cfg.color}60` }}
+                  >
+                    {cfg.label}
+                  </span>
+                  {!emEdicao && (
+                    <button
+                      onClick={(e) => abrirEdicao(mesa, e)}
+                      className="p-1 rounded-full bg-white/10 hover:bg-white/20 text-white/60"
+                      title="Editar capacidade/horário"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
+              </div>
+
+              {emEdicao ? (
+                <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                  <label className="flex items-center gap-1.5 text-white/60 text-xs">
+                    <Users className="w-3.5 h-3.5" />
+                    <input
+                      type="number"
+                      min="1"
+                      value={editCapacidade}
+                      onChange={(e) => setEditCapacidade(e.target.value)}
+                      className="w-16 px-2 py-1 rounded-lg bg-black/30 border border-white/20 text-white text-xs"
+                    />
+                    lugares
+                  </label>
+                  {mesa.status === 'ocupada' && (
+                    <label className="flex items-center gap-1.5 text-white/60 text-xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <input
+                        type="text"
+                        placeholder="HH:MM"
+                        value={editHorario}
+                        onChange={(e) => setEditHorario(e.target.value)}
+                        className="w-16 px-2 py-1 rounded-lg bg-black/30 border border-white/20 text-white text-xs"
+                      />
+                    </label>
+                  )}
+                  <div className="flex gap-1.5 pt-1">
+                    <button
+                      onClick={(e) => salvarEdicao(mesa.id, e)}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-white"
+                      style={{ backgroundColor: 'var(--primary-neon)' }}
+                    >
+                      <Check className="w-3 h-3" /> Salvar
+                    </button>
+                    <button
+                      onClick={cancelarEdicao}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-white/60 bg-white/10"
+                    >
+                      <X className="w-3 h-3" /> Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-1.5 text-white/60 text-xs mb-1">
+                    <Users className="w-3.5 h-3.5" />
+                    <span>{mesa.capacidade} lugares</span>
+                  </div>
+                  {mesa.status === 'ocupada' && mesa.ocupadaDesde && (
+                    <div className="flex items-center gap-1.5 text-white/40 text-xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>desde {mesa.ocupadaDesde}</span>
+                    </div>
+                  )}
+                </>
               )}
-            </motion.button>
+            </motion.div>
           );
         })}
       </div>

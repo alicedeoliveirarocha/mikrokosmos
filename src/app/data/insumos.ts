@@ -48,6 +48,31 @@ export const insumosIniciais: Insumo[] = [
   { id: 'palito',         nome: 'Hashis (par)',              unidade: 'un',  quantidadeAtual: 500, quantidadeMinima: 100,custoUnitario: 0.30,  categoria: 'embalagem', emoji: '🥢' },
 ];
 
+// ─── Estoque inicial — Unidade Pinheiros ───────────────────────────
+// Distribuição diferente de propósito: Pinheiros tem sobra de Salmão e Filé
+// (perto de fornecedores de peixe/carne nobre) mas pouco Frango; serve para
+// a demo de "Transferir estoque entre unidades" fazer sentido de fato.
+export const insumosIniciaisPinheiros: Insumo[] = [
+  { id: 'barriga-porco',  nome: 'Barriga de Porco',        unidade: 'kg',  quantidadeAtual: 9,   quantidadeMinima: 4,  custoUnitario: 42.00, categoria: 'proteina',  emoji: '🥩' },
+  { id: 'file-mignon',    nome: 'Filé Mignon',              unidade: 'kg',  quantidadeAtual: 14,  quantidadeMinima: 2,  custoUnitario: 89.00, categoria: 'proteina',  emoji: '🥩' },
+  { id: 'salmao',         nome: 'Salmão',                   unidade: 'kg',  quantidadeAtual: 17,  quantidadeMinima: 2,  custoUnitario: 65.00, categoria: 'proteina',  emoji: '🐟' },
+  { id: 'frango',         nome: 'Frango',                   unidade: 'kg',  quantidadeAtual: 3,   quantidadeMinima: 5,  custoUnitario: 18.00, categoria: 'proteina',  emoji: '🍗' },
+  { id: 'pepino',         nome: 'Pepino',                   unidade: 'kg',  quantidadeAtual: 5,   quantidadeMinima: 2,  custoUnitario: 4.50,  categoria: 'vegetal',   emoji: '🥒' },
+  { id: 'tteok',          nome: 'Tteok (Bolinho de Arroz)', unidade: 'kg',  quantidadeAtual: 4,   quantidadeMinima: 3,  custoUnitario: 22.00, categoria: 'grao',      emoji: '🍡' },
+  { id: 'arroz-japones',  nome: 'Arroz Japonês',            unidade: 'kg',  quantidadeAtual: 11,  quantidadeMinima: 8,  custoUnitario: 14.00, categoria: 'grao',      emoji: '🍚' },
+  { id: 'nori',           nome: 'Folha de Nori',            unidade: 'un',  quantidadeAtual: 340, quantidadeMinima: 50, custoUnitario: 0.80,  categoria: 'outro',     emoji: '🌿' },
+  { id: 'farinha-panko',  nome: 'Farinha Panko',            unidade: 'kg',  quantidadeAtual: 2,   quantidadeMinima: 3,  custoUnitario: 11.00, categoria: 'outro',     emoji: '🌾' },
+  { id: 'gochujang',      nome: 'Molho Gochujang',          unidade: 'L',   quantidadeAtual: 3,   quantidadeMinima: 2,  custoUnitario: 28.00, categoria: 'molho',     emoji: '🌶️' },
+  { id: 'shoyu',          nome: 'Molho Shoyu',              unidade: 'L',   quantidadeAtual: 9,   quantidadeMinima: 2,  custoUnitario: 12.00, categoria: 'molho',     emoji: '🫙' },
+  { id: 'vinagre-arroz',  nome: 'Vinagre de Arroz',         unidade: 'L',   quantidadeAtual: 4,   quantidadeMinima: 1,  custoUnitario: 8.50,  categoria: 'molho',     emoji: '🍶' },
+  { id: 'oleo-gergelim',  nome: 'Óleo de Gergelim',         unidade: 'L',   quantidadeAtual: 5,   quantidadeMinima: 1,  custoUnitario: 32.00, categoria: 'molho',     emoji: '🫙' },
+  { id: 'doce-leite',     nome: 'Doce de Leite',            unidade: 'kg',  quantidadeAtual: 3,   quantidadeMinima: 2,  custoUnitario: 14.00, categoria: 'outro',     emoji: '🥛' },
+  { id: 'xarope-frutas',  nome: 'Xarope de Frutas',         unidade: 'L',   quantidadeAtual: 6,   quantidadeMinima: 3,  custoUnitario: 15.00, categoria: 'bebida',    emoji: '🍹' },
+  { id: 'cha-verde',      nome: 'Chá Verde (granel)',        unidade: 'kg',  quantidadeAtual: 1.5, quantidadeMinima: 0.5,custoUnitario: 45.00, categoria: 'bebida',    emoji: '🍵' },
+  { id: 'caixa-bento',    nome: 'Caixa Bento',              unidade: 'un',  quantidadeAtual: 90,  quantidadeMinima: 30, custoUnitario: 2.50,  categoria: 'embalagem', emoji: '📦' },
+  { id: 'palito',         nome: 'Hashis (par)',              unidade: 'un',  quantidadeAtual: 280, quantidadeMinima: 100,custoUnitario: 0.30,  categoria: 'embalagem', emoji: '🥢' },
+];
+
 // ─── Mapeamento Produto → Insumos consumidos ───────────────────────
 // Baseado nos nomes/categorias dos produtos do cardápio
 // quantidade = por 1 porção (1 unidade do produto)

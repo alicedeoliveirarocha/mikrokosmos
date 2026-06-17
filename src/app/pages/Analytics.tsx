@@ -5,16 +5,18 @@ import { UniverseToggle } from '../components/UniverseToggle';
 import { RoleBanner } from '../components/RoleBanner';
 import { StockPanel } from '../components/StockPanel';
 import { MesasPanel } from '../components/MesasPanel';
+import { FuncionariosPanel } from '../components/FuncionariosPanel';
+import { UnidadesPanel } from '../components/UnidadesPanel';
 import { useOrders } from '../context/OrdersContext';
 import { products } from '../data/products';
 import { motion } from 'motion/react';
-import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair } from 'lucide-react';
+import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair, Users, Building2 } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
 
 export function Analytics() {
   const { orders } = useOrders();
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
 
   // Calcular métricas gerais
   const completedOrders = orders.filter(o => o.status === 'entregue');
@@ -197,8 +199,8 @@ export function Analytics() {
             <p className="text-white/60">Matriz BCG, Estoque e Relatórios de Desempenho</p>
           </div>
 
-          {/* Tabs principais: Dashboard / Estoque */}
-          <div className="flex gap-2 mb-4">
+          {/* Tabs principais: Dashboard / Estoque / Mesas / Funcionários / Unidades */}
+          <div className="flex gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap sm:flex-wrap">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -237,6 +239,32 @@ export function Analytics() {
               style={activeTab === 'mesas' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
               <Armchair className="w-4 h-4" /> Mesas
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setActiveTab('funcionarios')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
+                activeTab === 'funcionarios'
+                  ? 'text-black'
+                  : 'bg-white/5 text-white/60 border border-white/10'
+              }`}
+              style={activeTab === 'funcionarios' ? { backgroundColor: 'var(--primary-neon)' } : {}}
+            >
+              <Users className="w-4 h-4" /> Funcionários
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setActiveTab('unidades')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
+                activeTab === 'unidades'
+                  ? 'text-black'
+                  : 'bg-white/5 text-white/60 border border-white/10'
+              }`}
+              style={activeTab === 'unidades' ? { backgroundColor: 'var(--primary-neon)' } : {}}
+            >
+              <Building2 className="w-4 h-4" /> Unidades
             </motion.button>
           </div>
 
@@ -281,6 +309,28 @@ export function Analytics() {
             className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
           >
             <MesasPanel />
+          </motion.div>
+        )}
+
+        {/* ═══════════ TAB: FUNCIONÁRIOS ═══════════ */}
+        {activeTab === 'funcionarios' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
+          >
+            <FuncionariosPanel />
+          </motion.div>
+        )}
+
+        {/* ═══════════ TAB: UNIDADES ═══════════ */}
+        {activeTab === 'unidades' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
+          >
+            <UnidadesPanel />
           </motion.div>
         )}
 
