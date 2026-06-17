@@ -1,9 +1,10 @@
 // src/app/components/StockPanel.tsx
-// Painel de Gestão de Estoque para a página de Analytics (admin)
 import { useState } from 'react';
 import { useInsumos } from '../context/InsumoContext';
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertTriangle, Package, Plus, RotateCcw, TrendingDown, Warehouse } from 'lucide-react';
+import { AlertTriangle, Plus, Minus, RotateCcw, TrendingDown, Warehouse } from 'lucide-react';
+
+const MOTIVOS = ['Perda', 'Vencido', 'Quebra', 'Outro'];
 
 export function StockPanel() {
   const {
@@ -11,6 +12,7 @@ export function StockPanel() {
     lowStockItems,
     outOfStockItems,
     restock,
+    discardStock,
     resetStock,
     getStockPercent,
     getStockStatus,
@@ -18,6 +20,8 @@ export function StockPanel() {
   } = useInsumos();
 
   const [restockQtd, setRestockQtd] = useState<Record<string, string>>({});
+  const [discardQtd, setDiscardQtd] = useState<Record<string, string>>({});
+  const [discardMotivo, setDiscardMotivo] = useState<Record<string, string>>({});
   const [filterCat, setFilterCat] = useState<string>('all');
 
   const categories = ['all', 'proteina', 'vegetal', 'grao', 'molho', 'bebida', 'embalagem', 'outro'];
@@ -41,6 +45,14 @@ export function StockPanel() {
     if (qty > 0) {
       restock(id, qty);
       setRestockQtd(prev => ({ ...prev, [id]: '' }));
+    }
+  };
+
+  const handleDiscard = (id: string) => {
+    const qty = parseFloat(discardQtd[id] || '0');
+    if (qty > 0) {
+      discardStock(id, qty, discardMotivo[id] || 'Outro');
+      setDiscardQtd(prev => ({ ...prev, [id]: '' }));
     }
   };
 
@@ -174,7 +186,7 @@ export function StockPanel() {
                 </div>
 
                 {/* Barra de progresso */}
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-2">
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-3">
                   <motion.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: color }}
@@ -185,7 +197,7 @@ export function StockPanel() {
                 </div>
 
                 {/* Reposição rápida */}
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-2 mb-2">
                   <input
                     type="number"
                     min="0"
@@ -201,6 +213,32 @@ export function StockPanel() {
                     style={{ backgroundColor: 'var(--primary-neon)' }}
                   >
                     <Plus className="w-3 h-3" /> Repor
+                  </button>
+                </div>
+
+                {/* Retirada manual (perda/quebra/vencido) */}
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    value={discardQtd[insumo.id] || ''}
+                    onChange={e => setDiscardQtd(prev => ({ ...prev, [insumo.id]: e.target.value }))}
+                    placeholder={`- Qtd (${insumo.unidade})`}
+                    className="flex-1 bg-white/5 border border-red-500/20 rounded-lg px-3 py-1.5 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-red-500/40"
+                  />
+                  <select
+                    value={discardMotivo[insumo.id] || MOTIVOS[0]}
+                    onChange={e => setDiscardMotivo(prev => ({ ...prev, [insumo.id]: e.target.value }))}
+                    className="bg-white/5 border border-red-500/20 rounded-lg px-2 py-1.5 text-white text-xs focus:outline-none focus:border-red-500/40"
+                  >
+                    {MOTIVOS.map(m => <option key={m} value={m} className="bg-black">{m}</option>)}
+                  </select>
+                  <button
+                    onClick={() => handleDiscard(insumo.id)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 transition-colors"
+                  >
+                    <Minus className="w-3 h-3" /> Retirar
                   </button>
                 </div>
               </motion.div>

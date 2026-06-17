@@ -16,6 +16,7 @@ interface InsumoContextType {
   outOfStockItems: Insumo[];
   consumeInsumos: (items: ConsumoItem[]) => void;
   restock: (insumoId: string, quantidade: number) => void;
+  discardStock: (insumoId: string, quantidade: number, motivo?: string) => void;
   resetStock: () => void;
   getStockPercent: (insumo: Insumo) => number;
   getStockStatus: (insumo: Insumo) => 'ok' | 'low' | 'critical' | 'out';
@@ -41,20 +42,17 @@ function saveStock(insumos: Insumo[]) {
 export function InsumoProvider({ children }: { children: ReactNode }) {
   const [insumos, setInsumos] = useState<Insumo[]>(loadStock);
 
-  // Persiste sempre que muda
   useEffect(() => {
     saveStock(insumos);
   }, [insumos]);
 
-  // Quando um pedido é confirmado, consome os insumos dos produtos
+  // Consumo automático quando um pedido é confirmado
   const consumeInsumos = useCallback((items: ConsumoItem[]) => {
     setInsumos(prev => {
       const updated = [...prev];
-
       items.forEach(item => {
         const key = getInsumosMappingKey(item.nome, item.categoria);
         const recipe = productInsumos[key] || productInsumos['default'];
-
         recipe.forEach(({ insumoId, quantidade }) => {
           const idx = updated.findIndex(i => i.id === insumoId);
           if (idx >= 0) {
@@ -66,12 +64,11 @@ export function InsumoProvider({ children }: { children: ReactNode }) {
           }
         });
       });
-
       return updated;
     });
   }, []);
 
-  // Repor estoque manualmente (admin)
+  // Repor estoque manualmente (admin) — entrada de mercadoria
   const restock = useCallback((insumoId: string, quantidade: number) => {
     setInsumos(prev => prev.map(i =>
       i.id === insumoId
@@ -80,18 +77,26 @@ export function InsumoProvider({ children }: { children: ReactNode }) {
     ));
   }, []);
 
-  // Resetar para valores iniciais
+  // Retirar/descartar estoque manualmente — perda, validade, quebra etc.
+  // (Diferente de consumeInsumos: aqui é uma baixa manual, não ligada a um pedido)
+  const discardStock = useCallback((insumoId: string, quantidade: number, motivo?: string) => {
+    setInsumos(prev => prev.map(i =>
+      i.id === insumoId
+        ? { ...i, quantidadeAtual: Math.max(0, i.quantidadeAtual - quantidade) }
+        : i
+    ));
+    // Aqui poderíamos logar o motivo em um histórico futuramente
+  }, []);
+
   const resetStock = useCallback(() => {
     setInsumos(insumosIniciais);
   }, []);
 
-  // % do estoque em relação ao máximo esperado (3x o mínimo = 100%)
   const getStockPercent = useCallback((insumo: Insumo) => {
     const max = insumo.quantidadeMinima * 4;
     return Math.min(100, Math.round((insumo.quantidadeAtual / max) * 100));
   }, []);
 
-  // Status baseado na relação com o mínimo
   const getStockStatus = useCallback((insumo: Insumo): 'ok' | 'low' | 'critical' | 'out' => {
     if (insumo.quantidadeAtual <= 0)                              return 'out';
     if (insumo.quantidadeAtual <= insumo.quantidadeMinima * 0.5) return 'critical';
@@ -110,6 +115,7 @@ export function InsumoProvider({ children }: { children: ReactNode }) {
       outOfStockItems,
       consumeInsumos,
       restock,
+      discardStock,
       resetStock,
       getStockPercent,
       getStockStatus,

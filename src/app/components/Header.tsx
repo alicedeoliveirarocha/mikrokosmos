@@ -1,6 +1,7 @@
 // src/app/components/Header.tsx
-import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles, MoreVertical } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
+import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
@@ -17,6 +18,7 @@ export function Header() {
   const { orders } = useOrders();
   const { categoria } = useUniverse();
   const { t } = useTranslation();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const isHome = location.pathname === '/home';
   const isCinema = location.pathname === '/cinema';
@@ -29,6 +31,18 @@ export function Header() {
 
   const pendingOrders = orders.filter(o => ['pendente', 'preparando'].includes(o.status)).length;
   const deliveryOrders = orders.filter(o => ['pronto', 'saiu-para-entrega'].includes(o.status)).length;
+
+  // Itens secundários — ficam dentro do menu "..." em QUALQUER tamanho de tela,
+  // assim o usuário nunca precisa girar o celular para acessá-los.
+  const moreItems: {
+    key: string; label: string; icon: typeof Info; path: string; badge?: number; show: boolean;
+  }[] = [
+    { key: 'analytics', label: t('nav.analytics'), icon: BarChart3,    path: '/analytics', show: isAdmin },
+    { key: 'cozinha',   label: t('nav.kitchen'),    icon: ChefHat,     path: '/cozinha',   show: isCozinha, badge: pendingOrders },
+    { key: 'delivery',  label: t('nav.delivery'),   icon: Bike,        path: '/delivery',  show: isDelivery, badge: deliveryOrders },
+    { key: 'learning',  label: t('nav.learning'),   icon: GraduationCap, path: '/learning', show: true },
+    { key: 'info',      label: t('nav.info'),       icon: Info,        path: '/info',      show: true },
+  ].filter(i => i.show);
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/60 border-b border-white/20">
@@ -55,13 +69,12 @@ export function Header() {
             </div>
           </div>
 
-          {/* Direita: ações */}
+          {/* Direita: ações — todas no MESMO tamanho independente da tela */}
           <div className="flex items-center gap-1 flex-shrink-0">
 
-            {/* Idioma — sempre visível */}
             <LanguageSwitcher />
 
-            {/* Cinema/Photocards — sempre visível */}
+            {/* Cinema/Photocards */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/cinema')}
@@ -71,75 +84,7 @@ export function Header() {
               {isKpopMode ? <Sparkles className="w-4 h-4" /> : <Film className="w-4 h-4" />}
             </motion.button>
 
-            {/* Analytics — só admin, só md+ */}
-            {isAdmin && (
-              <motion.button
-                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/analytics')}
-                className="hidden md:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
-                title={t('nav.analytics')}
-              >
-                <BarChart3 className="w-4 h-4" />
-              </motion.button>
-            )}
-
-            {/* Cozinha — só md+ */}
-            {isCozinha && (
-              <motion.button
-                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/cozinha')}
-                className="hidden md:flex relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
-                title={t('nav.kitchen')}
-              >
-                <ChefHat className="w-4 h-4" />
-                {pendingOrders > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
-                    style={{ backgroundColor: 'var(--primary-neon)' }}>
-                    {pendingOrders}
-                  </span>
-                )}
-              </motion.button>
-            )}
-
-            {/* Delivery — só md+ */}
-            {isDelivery && (
-              <motion.button
-                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/delivery')}
-                className="hidden md:flex relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
-                title={t('nav.delivery')}
-              >
-                <Bike className="w-4 h-4" />
-                {deliveryOrders > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
-                    style={{ backgroundColor: 'var(--primary-neon)' }}>
-                    {deliveryOrders}
-                  </span>
-                )}
-              </motion.button>
-            )}
-
-            {/* Learning — só lg+ */}
-            <motion.button
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/learning')}
-              className="hidden lg:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
-              title={t('nav.learning')}
-            >
-              <GraduationCap className="w-4 h-4" />
-            </motion.button>
-
-            {/* Info — só lg+ */}
-            <motion.button
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/info')}
-              className="hidden lg:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
-              title={t('nav.info')}
-            >
-              <Info className="w-4 h-4" />
-            </motion.button>
-
-            {/* Perfil/Login — sempre visível */}
+            {/* Perfil/Login */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate(isAuthenticated ? '/perfil' : '/auth')}
@@ -149,7 +94,7 @@ export function Header() {
               <User className="w-4 h-4" />
             </motion.button>
 
-            {/* Carrinho — sempre visível */}
+            {/* Carrinho */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/carrinho')}
@@ -164,6 +109,53 @@ export function Header() {
                 </span>
               )}
             </motion.button>
+
+            {/* Menu "mais" — sempre disponível, não depende de orientação da tela */}
+            {moreItems.length > 0 && (
+              <div className="relative">
+                <motion.button
+                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                  onClick={() => setMoreOpen(prev => !prev)}
+                  className="relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                  title="Mais opções"
+                >
+                  <MoreVertical className="w-4 h-4" />
+                  {(pendingOrders > 0 || deliveryOrders > 0) && (isCozinha || isDelivery) && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
+                      style={{ backgroundColor: 'var(--primary-neon)' }}>
+                      {pendingOrders + deliveryOrders}
+                    </span>
+                  )}
+                </motion.button>
+
+                {moreOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setMoreOpen(false)} />
+                    <div className="absolute right-0 top-full mt-2 z-50 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[180px]">
+                      {moreItems.map(item => {
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.key}
+                            onClick={() => { navigate(item.path); setMoreOpen(false); }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-all text-left"
+                          >
+                            <Icon className="w-4 h-4 flex-shrink-0" />
+                            <span className="flex-1">{item.label}</span>
+                            {!!item.badge && item.badge > 0 && (
+                              <span className="w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
+                                style={{ backgroundColor: 'var(--primary-neon)' }}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
 
           </div>
         </div>
