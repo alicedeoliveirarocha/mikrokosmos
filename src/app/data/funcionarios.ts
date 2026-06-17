@@ -13,6 +13,9 @@ export interface Funcionario {
   telefone?: string;
   dataAdmissao: string; // 'YYYY-MM-DD'
   status: 'ativo' | 'inativo';
+  // Vínculo opcional com uma conta real do Supabase Auth (tabela `profiles`).
+  // Quando presente, este funcionário também é um usuário autenticado do sistema.
+  profileId?: string;
 }
 
 export const CARGOS: Cargo[] = ['Gerente', 'Cozinha', 'Garçom', 'Caixa', 'Delivery', 'Limpeza'];

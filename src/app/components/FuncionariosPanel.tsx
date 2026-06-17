@@ -2,10 +2,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Users, Plus, Pencil, Trash2, Phone, Calendar, X, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Funcionario, Cargo, CARGOS, AVATAR_EMOJIS, AVATAR_COLORS, funcionariosIniciais,
 } from '../data/funcionarios';
 import { unidades, UnidadeId } from '../data/unidades';
+import { useAuth } from '../context/AuthContext';
+import { supabase, Profile } from '../../lib/supabase';
 
 const STORAGE_KEY = 'mikrokosmos_funcionarios';
 
@@ -33,16 +36,50 @@ const FORM_VAZIO: FormState = {
   avatarColor: AVATAR_COLORS[0],
   telefone: '',
   dataAdmissao: new Date().toISOString().slice(0, 10),
+  profileId: undefined,
 };
 
 export function FuncionariosPanel() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>(loadFuncionarios);
   const [filtroUnidade, setFiltroUnidade] = useState<'todas' | UnidadeId>('todas');
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [form, setForm] = useState<FormState>(FORM_VAZIO);
 
+  // Vínculo opcional com contas reais do Supabase Auth (tabela `profiles`).
+  // Só busca se for admin; se a RLS bloquear a leitura, degrada graciosamente
+  // (o cadastro local de Funcionários continua funcionando 100% sem isso).
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+  const [profilesError, setProfilesError] = useState<string | null>(null);
+
   useEffect(() => { saveFuncionarios(funcionarios); }, [funcionarios]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    let cancelado = false;
+    setProfilesLoading(true);
+    setProfilesError(null);
+    supabase
+      .from('profiles')
+      .select('id, nome, email, role, created_at')
+      .then(({ data, error }) => {
+        if (cancelado) return;
+        if (error) {
+          setProfilesError(error.message);
+        } else {
+          setProfiles((data as Profile[]) || []);
+        }
+        setProfilesLoading(false);
+      });
+    return () => { cancelado = true; };
+  }, [isAdmin]);
+
+  const cargoLabel = (c: Cargo) => t(`funcionarios.cargo.${c}`);
 
   const listaFiltrada = filtroUnidade === 'todas'
     ? funcionarios
@@ -61,6 +98,7 @@ export function FuncionariosPanel() {
       nome: f.nome, cargo: f.cargo, unidade: f.unidade,
       avatarEmoji: f.avatarEmoji, avatarColor: f.avatarColor,
       telefone: f.telefone || '', dataAdmissao: f.dataAdmissao,
+      profileId: f.profileId,
     });
     setEditandoId(f.id);
     setMostrarForm(true);
@@ -97,10 +135,10 @@ export function FuncionariosPanel() {
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <Users className="w-6 h-6" style={{ color: 'var(--primary-neon)' }} />
-            Funcionários
+            {t('funcionarios.title')}
           </h2>
           <p className="text-white/60 text-sm mt-1">
-            {ativos} ativos de {funcionarios.length} cadastrados
+            {t('funcionarios.subtitle', { ativos, total: funcionarios.length })}
           </p>
         </div>
         <button
@@ -108,7 +146,7 @@ export function FuncionariosPanel() {
           className="flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-white text-sm"
           style={{ backgroundColor: 'var(--primary-neon)' }}
         >
-          <Plus className="w-4 h-4" /> Adicionar Funcionário
+          <Plus className="w-4 h-4" /> {t('funcionarios.addButton')}
         </button>
       </div>
 
@@ -119,7 +157,7 @@ export function FuncionariosPanel() {
           className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${filtroUnidade === 'todas' ? 'text-white' : 'text-white/50 bg-white/5 border border-white/10'}`}
           style={filtroUnidade === 'todas' ? { backgroundColor: 'var(--primary-neon)' } : {}}
         >
-          Todas as unidades
+          {t('funcionarios.allUnits')}
         </button>
         {unidades.map(u => (
           <button
@@ -144,7 +182,7 @@ export function FuncionariosPanel() {
           >
             <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-white font-bold">{editandoId ? 'Editar Funcionário' : 'Novo Funcionário'}</h3>
+                <h3 className="text-white font-bold">{editandoId ? t('funcionarios.editTitle') : t('funcionarios.newTitle')}</h3>
                 <button onClick={() => setMostrarForm(false)} className="text-white/50 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
@@ -153,14 +191,14 @@ export function FuncionariosPanel() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input
                   type="text"
-                  placeholder="Nome completo"
+                  placeholder={t('funcionarios.namePlaceholder')}
                   value={form.nome}
                   onChange={e => setForm({ ...form, nome: e.target.value })}
                   className="px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm placeholder:text-white/30"
                 />
                 <input
                   type="text"
-                  placeholder="Telefone"
+                  placeholder={t('funcionarios.phonePlaceholder')}
                   value={form.telefone}
                   onChange={e => setForm({ ...form, telefone: e.target.value })}
                   className="px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm placeholder:text-white/30"
@@ -170,7 +208,7 @@ export function FuncionariosPanel() {
                   onChange={e => setForm({ ...form, cargo: e.target.value as Cargo })}
                   className="px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm"
                 >
-                  {CARGOS.map(c => <option key={c} value={c}>{c}</option>)}
+                  {CARGOS.map(c => <option key={c} value={c}>{cargoLabel(c)}</option>)}
                 </select>
                 <select
                   value={form.unidade}
@@ -188,7 +226,7 @@ export function FuncionariosPanel() {
               </div>
 
               <div>
-                <p className="text-white/50 text-xs mb-2">Avatar</p>
+                <p className="text-white/50 text-xs mb-2">{t('funcionarios.avatarLabel')}</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   {AVATAR_EMOJIS.map(emoji => (
                     <button
@@ -216,19 +254,42 @@ export function FuncionariosPanel() {
                 </div>
               </div>
 
+              {/* Vínculo opcional com conta real do Supabase Auth — só pra admins */}
+              {isAdmin && (
+                <div>
+                  <p className="text-white/50 text-xs mb-2">🔗 {t('funcionarios.linkAccount')}</p>
+                  {profilesLoading ? (
+                    <p className="text-white/40 text-xs">{t('funcionarios.loadingAccounts')}</p>
+                  ) : profilesError ? (
+                    <p className="text-yellow-400/80 text-xs">⚠️ {t('funcionarios.accountsError')}</p>
+                  ) : (
+                    <select
+                      value={form.profileId || ''}
+                      onChange={e => setForm({ ...form, profileId: e.target.value || undefined })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm"
+                    >
+                      <option value="">{t('funcionarios.noAccount')}</option>
+                      {profiles.map(p => (
+                        <option key={p.id} value={p.id}>{p.nome} — {p.email} ({p.role})</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   onClick={salvar}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white text-sm"
                   style={{ backgroundColor: 'var(--primary-neon)' }}
                 >
-                  <Check className="w-4 h-4" /> Salvar
+                  <Check className="w-4 h-4" /> {t('funcionarios.save')}
                 </button>
                 <button
                   onClick={() => setMostrarForm(false)}
                   className="px-5 py-2.5 rounded-xl font-bold text-white/70 text-sm bg-white/10 border border-white/20"
                 >
-                  Cancelar
+                  {t('funcionarios.cancel')}
                 </button>
               </div>
             </div>
@@ -240,6 +301,7 @@ export function FuncionariosPanel() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {listaFiltrada.map((f, i) => {
           const unidade = unidades.find(u => u.id === f.unidade);
+          const profileVinculado = f.profileId ? profiles.find(p => p.id === f.profileId) : undefined;
           return (
             <motion.div
               key={f.id}
@@ -259,7 +321,7 @@ export function FuncionariosPanel() {
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm">{f.nome}</p>
-                    <p className="text-white/50 text-xs">{f.cargo} · {unidade?.bairro}</p>
+                    <p className="text-white/50 text-xs">{cargoLabel(f.cargo)} · {unidade?.bairro}</p>
                   </div>
                 </div>
                 <div className="flex gap-1">
@@ -272,13 +334,19 @@ export function FuncionariosPanel() {
                 </div>
               </div>
 
+              {f.profileId && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 mb-2">
+                  🔗 {t('funcionarios.linkedBadge')}{profileVinculado ? `: ${profileVinculado.role}` : ''}
+                </span>
+              )}
+
               {f.telefone && (
                 <div className="flex items-center gap-1.5 text-white/50 text-xs mb-1">
                   <Phone className="w-3.5 h-3.5" /> {f.telefone}
                 </div>
               )}
               <div className="flex items-center gap-1.5 text-white/50 text-xs mb-3">
-                <Calendar className="w-3.5 h-3.5" /> desde {new Date(f.dataAdmissao + 'T00:00:00').toLocaleDateString('pt-BR')}
+                <Calendar className="w-3.5 h-3.5" /> {t('funcionarios.since')} {new Date(f.dataAdmissao + 'T00:00:00').toLocaleDateString('pt-BR')}
               </div>
 
               <button
@@ -290,7 +358,7 @@ export function FuncionariosPanel() {
                   border: `1px solid ${f.status === 'ativo' ? '#4CAF5060' : '#99999960'}`,
                 }}
               >
-                {f.status === 'ativo' ? 'Ativo' : 'Inativo'} — clique para alternar
+                {f.status === 'ativo' ? t('funcionarios.active') : t('funcionarios.inactive')} — {t('funcionarios.toggleHint')}
               </button>
             </motion.div>
           );

@@ -1,5 +1,6 @@
 // src/app/pages/Analytics.tsx
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
 import { RoleBanner } from '../components/RoleBanner';
@@ -14,6 +15,7 @@ import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Dow
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
 
 export function Analytics() {
+  const { t } = useTranslation();
   const { orders } = useOrders();
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
@@ -87,11 +89,13 @@ export function Analytics() {
     });
   }, [productSales]);
 
+  // Os 4 quadrantes da Matriz BCG, com nome/descrição traduzidos pra exibição.
+  // (o valor interno de "category" em bcgData acima permanece em PT, só usado pra filtrar)
   const bcgCategories = [
-    { name: '⭐ Estrelas', count: bcgData.filter(p => p.category === '⭐ Estrela').length, color: '#FFD700', desc: 'Alto crescimento + Alta participação' },
-    { name: '🐄 Vacas Leiteiras', count: bcgData.filter(p => p.category === '🐄 Vaca Leiteira').length, color: '#4CAF50', desc: 'Baixo crescimento + Alta participação' },
-    { name: '❓ Interrogações', count: bcgData.filter(p => p.category === '❓ Interrogação').length, color: '#FF9800', desc: 'Alto crescimento + Baixa participação' },
-    { name: '🐶 Abacaxis', count: bcgData.filter(p => p.category === '🐶 Abacaxi').length, color: '#F44336', desc: 'Baixo crescimento + Baixa participação' },
+    { name: t('analytics.bcg.starsLabel'), count: bcgData.filter(p => p.category === '⭐ Estrela').length, color: '#FFD700', desc: t('analytics.bcg.starsDesc') },
+    { name: t('analytics.bcg.cowsLabel'), count: bcgData.filter(p => p.category === '🐄 Vaca Leiteira').length, color: '#4CAF50', desc: t('analytics.bcg.cowsDesc') },
+    { name: t('analytics.bcg.questionLabel'), count: bcgData.filter(p => p.category === '❓ Interrogação').length, color: '#FF9800', desc: t('analytics.bcg.questionDesc') },
+    { name: t('analytics.bcg.dogsLabel'), count: bcgData.filter(p => p.category === '🐶 Abacaxi').length, color: '#F44336', desc: t('analytics.bcg.dogsDesc') },
   ];
 
   const topProducts = products
@@ -167,9 +171,9 @@ export function Analytics() {
       return (
         <div className="bg-black/90 backdrop-blur-xl border border-white/20 p-3 rounded-xl">
           <p className="text-white font-bold mb-1">{data.name}</p>
-          <p className="text-white/60 text-sm">Vendidas: {data.quantity}</p>
-          <p className="text-white/60 text-sm">Receita: R$ {data.revenue.toFixed(2)}</p>
-          <p className="text-white/60 text-sm">Categoria: {data.category}</p>
+          <p className="text-white/60 text-sm">{t('analytics.tooltip.sold')} {data.quantity}</p>
+          <p className="text-white/60 text-sm">{t('analytics.tooltip.revenue')} R$ {data.revenue.toFixed(2)}</p>
+          <p className="text-white/60 text-sm">{t('analytics.tooltip.category')} {data.category}</p>
         </div>
       );
     }
@@ -184,8 +188,8 @@ export function Analytics() {
         {/* Banner de Papel */}
         <RoleBanner
           role="admin"
-          title="Analytics & Dashboard"
-          description="Painel Administrativo - Visualize métricas, análises e relatórios completos"
+          title={t('analytics.bannerTitle')}
+          description={t('analytics.bannerDescription')}
         />
 
         {/* Cabeçalho */}
@@ -195,8 +199,8 @@ export function Analytics() {
           className="mb-8"
         >
           <div className="mb-6">
-            <h1 className="text-4xl font-bold text-white neon-text">Analytics & BCG</h1>
-            <p className="text-white/60">Matriz BCG, Estoque e Relatórios de Desempenho</p>
+            <h1 className="text-4xl font-bold text-white neon-text">{t('analytics.heading')}</h1>
+            <p className="text-white/60">{t('analytics.subheading')}</p>
           </div>
 
           {/* Tabs principais: Dashboard / Estoque / Mesas / Funcionários / Unidades */}
@@ -212,7 +216,7 @@ export function Analytics() {
               }`}
               style={activeTab === 'dashboard' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              <BarChart3 className="w-4 h-4" /> Dashboard
+              <BarChart3 className="w-4 h-4" /> {t('analytics.tabs.dashboard')}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -225,7 +229,7 @@ export function Analytics() {
               }`}
               style={activeTab === 'estoque' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              <Warehouse className="w-4 h-4" /> Estoque
+              <Warehouse className="w-4 h-4" /> {t('analytics.tabs.estoque')}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -238,7 +242,7 @@ export function Analytics() {
               }`}
               style={activeTab === 'mesas' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              <Armchair className="w-4 h-4" /> Mesas
+              <Armchair className="w-4 h-4" /> {t('analytics.tabs.mesas')}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -251,7 +255,7 @@ export function Analytics() {
               }`}
               style={activeTab === 'funcionarios' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              <Users className="w-4 h-4" /> Funcionários
+              <Users className="w-4 h-4" /> {t('analytics.tabs.funcionarios')}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -264,7 +268,7 @@ export function Analytics() {
               }`}
               style={activeTab === 'unidades' ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              <Building2 className="w-4 h-4" /> Unidades
+              <Building2 className="w-4 h-4" /> {t('analytics.tabs.unidades')}
             </motion.button>
           </div>
 
@@ -283,7 +287,7 @@ export function Analytics() {
                       : 'bg-white/5 text-white/60 border border-white/10'
                   }`}
                 >
-                  {period === 'hoje' ? 'Hoje' : period === 'semana' ? 'Esta Semana' : period === 'mes' ? 'Este Mês' : 'Tudo'}
+                  {t(`analytics.period.${period}`)}
                 </motion.button>
               ))}
             </div>
@@ -351,7 +355,7 @@ export function Analytics() {
                   </div>
                   <TrendingUp className="w-5 h-5 text-green-400" />
                 </div>
-                <p className="text-white/60 text-sm mb-1">Receita Total</p>
+                <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.totalRevenue')}</p>
                 <p className="text-3xl font-bold text-white">R$ {totalRevenue.toFixed(2)}</p>
               </motion.div>
 
@@ -367,7 +371,7 @@ export function Analytics() {
                   </div>
                   <TrendingUp className="w-5 h-5 text-blue-400" />
                 </div>
-                <p className="text-white/60 text-sm mb-1">Pedidos Concluídos</p>
+                <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.completedOrders')}</p>
                 <p className="text-3xl font-bold text-white">{totalOrders}</p>
               </motion.div>
 
@@ -383,7 +387,7 @@ export function Analytics() {
                   </div>
                   <TrendingUp className="w-5 h-5 text-purple-400" />
                 </div>
-                <p className="text-white/60 text-sm mb-1">Ticket Médio</p>
+                <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.averageTicket')}</p>
                 <p className="text-3xl font-bold text-white">R$ {averageTicket.toFixed(2)}</p>
               </motion.div>
 
@@ -402,7 +406,7 @@ export function Analytics() {
                   </div>
                   <TrendingUp className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
                 </div>
-                <p className="text-white/60 text-sm mb-1">Produtos Vendidos</p>
+                <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.productsSold')}</p>
                 <p className="text-3xl font-bold text-white">{productSales.size}</p>
               </motion.div>
             </div>
@@ -416,8 +420,8 @@ export function Analytics() {
             >
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Matriz BCG</h2>
-                  <p className="text-white/60 text-sm">Boston Consulting Group - Análise de Portfólio</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">{t('analytics.bcg.title')}</h2>
+                  <p className="text-white/60 text-sm">{t('analytics.bcg.subtitle')}</p>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -425,7 +429,7 @@ export function Analytics() {
                   className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white flex items-center gap-2 hover:bg-white/20 transition-all"
                 >
                   <Download className="w-4 h-4" />
-                  Exportar
+                  {t('analytics.bcg.export')}
                 </motion.button>
               </div>
 
@@ -444,7 +448,7 @@ export function Analytics() {
                       <p className="text-white font-medium text-sm">{cat.name}</p>
                     </div>
                     <p className="text-white/60 text-xs mb-1">{cat.desc}</p>
-                    <p className="text-white font-bold">{cat.count} produtos</p>
+                    <p className="text-white font-bold">{t('analytics.bcg.productsSuffix', { count: cat.count })}</p>
                   </div>
                 ))}
               </div>
@@ -458,37 +462,37 @@ export function Analytics() {
                       <XAxis
                         type="number"
                         dataKey="x"
-                        name="Participação de Mercado (%)"
+                        name={t('analytics.chart.marketShareName')}
                         stroke="#fff"
                         tick={{ fill: '#fff' }}
-                        label={{ value: 'Participação de Mercado Relativa (%)', position: 'insideBottom', offset: -10, fill: '#fff' }}
+                        label={{ value: t('analytics.chart.marketShareLabel'), position: 'insideBottom', offset: -10, fill: '#fff' }}
                       />
                       <YAxis
                         type="number"
                         dataKey="y"
-                        name="Taxa de Crescimento (%)"
+                        name={t('analytics.chart.growthRate')}
                         stroke="#fff"
                         tick={{ fill: '#fff' }}
-                        label={{ value: 'Taxa de Crescimento (%)', angle: -90, position: 'insideLeft', fill: '#fff' }}
+                        label={{ value: t('analytics.chart.growthRate'), angle: -90, position: 'insideLeft', fill: '#fff' }}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Scatter
-                        name="⭐ Estrelas"
+                        name={t('analytics.bcg.starsLabel')}
                         data={bcgData.filter(d => d.category === '⭐ Estrela')}
                         fill="#FFD700"
                       />
                       <Scatter
-                        name="🐄 Vacas Leiteiras"
+                        name={t('analytics.bcg.cowsLabel')}
                         data={bcgData.filter(d => d.category === '🐄 Vaca Leiteira')}
                         fill="#4CAF50"
                       />
                       <Scatter
-                        name="❓ Interrogações"
+                        name={t('analytics.bcg.questionLabel')}
                         data={bcgData.filter(d => d.category === '❓ Interrogação')}
                         fill="#FF9800"
                       />
                       <Scatter
-                        name="🐶 Abacaxis"
+                        name={t('analytics.bcg.dogsLabel')}
                         data={bcgData.filter(d => d.category === '🐶 Abacaxi')}
                         fill="#F44336"
                       />
@@ -496,13 +500,13 @@ export function Analytics() {
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-[400px] flex items-center justify-center text-white/60">
-                    Sem dados para exibir
+                    {t('analytics.noData')}
                   </div>
                 )}
               </div>
 
               <p className="text-white/40 text-xs text-center mt-4">
-                Divisão: Eixo Y (50%) = Alto/Baixo Crescimento | Eixo X (100%) = Alta/Baixa Participação
+                {t('analytics.bcg.caption')}
               </p>
             </motion.div>
 
@@ -513,7 +517,7 @@ export function Analytics() {
               transition={{ delay: 0.6 }}
               className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 mb-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">🏆 Top 5 Produtos Mais Vendidos</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">{t('analytics.top5.title')}</h2>
 
               <div className="space-y-3">
                 {topProducts.map((product, index) => (
@@ -535,7 +539,7 @@ export function Analytics() {
                       <p className="text-white/60 text-sm">{product.categoria}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-bold">{product.sales.quantity} vendas</p>
+                      <p className="text-white font-bold">{t('analytics.top5.salesCount', { count: product.sales.quantity })}</p>
                       <p className="text-white/60 text-sm">R$ {product.sales.revenue.toFixed(2)}</p>
                     </div>
                   </div>
@@ -551,7 +555,7 @@ export function Analytics() {
                 transition={{ delay: 0.7 }}
                 className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
               >
-                <h2 className="text-2xl font-bold text-white mb-6">Vendas por Categoria</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">{t('analytics.charts.byCategory')}</h2>
 
                 <div className="bg-black/30 rounded-2xl p-4">
                   {categoryData.length > 0 ? (
@@ -573,7 +577,7 @@ export function Analytics() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-[300px] flex items-center justify-center text-white/60">
-                      Sem dados para exibir
+                      {t('analytics.noData')}
                     </div>
                   )}
                 </div>
@@ -585,7 +589,7 @@ export function Analytics() {
                 transition={{ delay: 0.8 }}
                 className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
               >
-                <h2 className="text-2xl font-bold text-white mb-6">Vendas por Eras & Sagas</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">{t('analytics.charts.byUniverse')}</h2>
 
                 <div className="bg-black/30 rounded-2xl p-4">
                   {universeData.length > 0 ? (
@@ -620,7 +624,7 @@ export function Analytics() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-[300px] flex items-center justify-center text-white/60">
-                      Sem dados para exibir
+                      {t('analytics.noData')}
                     </div>
                   )}
                 </div>
@@ -634,31 +638,31 @@ export function Analytics() {
               transition={{ delay: 0.9 }}
               className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 mb-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">📊 Status dos Pedidos</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">{t('analytics.orderStatus.title')}</h2>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                  <p className="text-yellow-400 text-sm mb-1">⏳ Pendente</p>
+                  <p className="text-yellow-400 text-sm mb-1">{t('analytics.orderStatus.pendente')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus.pendente}</p>
                 </div>
                 <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
-                  <p className="text-orange-400 text-sm mb-1">🔥 Preparando</p>
+                  <p className="text-orange-400 text-sm mb-1">{t('analytics.orderStatus.preparando')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus.preparando}</p>
                 </div>
                 <div className="p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
-                  <p className="text-cyan-400 text-sm mb-1">✅ Pronto</p>
+                  <p className="text-cyan-400 text-sm mb-1">{t('analytics.orderStatus.pronto')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus.pronto}</p>
                 </div>
                 <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                  <p className="text-blue-400 text-sm mb-1">🚀 Em Entrega</p>
+                  <p className="text-blue-400 text-sm mb-1">{t('analytics.orderStatus.emEntrega')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus['saiu-para-entrega']}</p>
                 </div>
                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-                  <p className="text-green-400 text-sm mb-1">🎉 Entregue</p>
+                  <p className="text-green-400 text-sm mb-1">{t('analytics.orderStatus.entregue')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus.entregue}</p>
                 </div>
                 <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-                  <p className="text-red-400 text-sm mb-1">❌ Cancelado</p>
+                  <p className="text-red-400 text-sm mb-1">{t('analytics.orderStatus.cancelado')}</p>
                   <p className="text-white text-2xl font-bold">{ordersByStatus.cancelado}</p>
                 </div>
               </div>
@@ -671,22 +675,22 @@ export function Analytics() {
               transition={{ delay: 1.0 }}
               className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">📝 Resumo Executivo</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">{t('analytics.summary.title')}</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Total de Pedidos:</span>
+                    <span className="text-white/80">{t('analytics.summary.totalOrders')}</span>
                     <span className="text-white font-bold text-lg">{orders.length}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Taxa de Conclusão:</span>
+                    <span className="text-white/80">{t('analytics.summary.completionRate')}</span>
                     <span className="text-green-400 font-bold text-lg">
                       {orders.length > 0 ? ((completedOrders.length / orders.length) * 100).toFixed(1) : 0}%
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Taxa de Cancelamento:</span>
+                    <span className="text-white/80">{t('analytics.summary.cancellationRate')}</span>
                     <span className="text-red-400 font-bold text-lg">
                       {orders.length > 0 ? ((ordersByStatus.cancelado / orders.length) * 100).toFixed(1) : 0}%
                     </span>
@@ -695,7 +699,7 @@ export function Analytics() {
 
                 <div className="space-y-4">
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Categoria Mais Vendida:</span>
+                    <span className="text-white/80">{t('analytics.summary.topCategory')}</span>
                     <span className="text-white font-bold text-lg">
                       {categoryData.length > 0
                         ? categoryData.reduce((max, cat) => cat.value > max.value ? cat : max).name
@@ -703,7 +707,7 @@ export function Analytics() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Universo Mais Popular:</span>
+                    <span className="text-white/80">{t('analytics.summary.topUniverse')}</span>
                     <span className="text-white font-bold text-lg">
                       {universeData.length > 0
                         ? universeData.reduce((max, u) => u.value > max.value ? u : max).name
@@ -711,7 +715,7 @@ export function Analytics() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
-                    <span className="text-white/80">Pedidos Ativos:</span>
+                    <span className="text-white/80">{t('analytics.summary.activeOrders')}</span>
                     <span className="text-white font-bold text-lg">
                       {ordersByStatus.pendente + ordersByStatus.preparando + ordersByStatus.pronto + ordersByStatus['saiu-para-entrega']}
                     </span>

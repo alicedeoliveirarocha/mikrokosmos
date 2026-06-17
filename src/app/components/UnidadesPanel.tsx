@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Building2, ArrowRightLeft, RotateCcw, History, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useInsumos } from '../context/InsumoContext';
 import { unidades, getUnidade, UnidadeId } from '../data/unidades';
 
 export function UnidadesPanel() {
+  const { t } = useTranslation();
   const {
     insumos,
     insumosPinheiros,
@@ -37,7 +39,7 @@ export function UnidadesPanel() {
   const handleTransferir = () => {
     const qtd = parseFloat(quantidade);
     if (!qtd || qtd <= 0) {
-      setFeedback({ tipo: 'erro', texto: 'Digite uma quantidade válida.' });
+      setFeedback({ tipo: 'erro', texto: t('unidades.invalidQty') });
       return;
     }
     const resultado = transferStock(insumoSelecionado, qtd, de, para);
@@ -51,17 +53,17 @@ export function UnidadesPanel() {
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <Building2 className="w-6 h-6" style={{ color: 'var(--primary-neon)' }} />
-            Unidades & Transferência de Estoque
+            {t('unidades.title')}
           </h2>
           <p className="text-white/60 text-sm mt-1">
-            Movimente insumos entre as unidades quando uma tiver sobra e a outra estiver no limite.
+            {t('unidades.subtitle')}
           </p>
         </div>
         <button
           onClick={resetUnidades}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm"
         >
-          <RotateCcw className="w-4 h-4" /> Resetar Unidades
+          <RotateCcw className="w-4 h-4" /> {t('unidades.resetButton')}
         </button>
       </div>
 
@@ -73,13 +75,13 @@ export function UnidadesPanel() {
               <span className="text-white font-bold">{u.nome}</span>
               {u.isMatriz && (
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/20">
-                  Matriz
+                  {t('unidades.matrizBadge')}
                 </span>
               )}
             </div>
             <p className="text-white/40 text-xs mb-3">{u.endereco}</p>
             <p className="text-white/70 text-sm">
-              Valor em estoque: <span className="text-white font-bold">
+              {t('unidades.stockValue')} <span className="text-white font-bold">
                 R$ {(u.id === 'vila-mariana' ? totalStockValue : totalStockValuePinheiros).toFixed(2)}
               </span>
             </p>
@@ -91,7 +93,7 @@ export function UnidadesPanel() {
       <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
         <h3 className="text-white font-bold flex items-center gap-2">
           <ArrowRightLeft className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
-          Transferir Insumo
+          {t('unidades.transferTitle')}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-3 items-center">
@@ -104,13 +106,13 @@ export function UnidadesPanel() {
             }}
             className="w-full px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm"
           >
-            {unidades.map(u => <option key={u.id} value={u.id}>De: {u.nome}</option>)}
+            {unidades.map(u => <option key={u.id} value={u.id}>{t('unidades.from')} {u.nome}</option>)}
           </select>
 
           <button
             onClick={handleSwap}
             className="mx-auto p-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
-            title="Inverter origem/destino"
+            title={t('unidades.swapTitle')}
           >
             <ArrowRightLeft className="w-4 h-4" />
           </button>
@@ -124,7 +126,7 @@ export function UnidadesPanel() {
             }}
             className="w-full px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm"
           >
-            {unidades.map(u => <option key={u.id} value={u.id}>Para: {u.nome}</option>)}
+            {unidades.map(u => <option key={u.id} value={u.id}>{t('unidades.to')} {u.nome}</option>)}
           </select>
         </div>
 
@@ -143,7 +145,7 @@ export function UnidadesPanel() {
             type="number"
             min="0"
             step="0.1"
-            placeholder={`Qtd (${itemOrigem?.unidade || ''})`}
+            placeholder={t('unidades.qtyPlaceholder', { unit: itemOrigem?.unidade || '' })}
             value={quantidade}
             onChange={(e) => { setQuantidade(e.target.value); setFeedback(null); }}
             className="w-full px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm placeholder:text-white/30"
@@ -154,13 +156,13 @@ export function UnidadesPanel() {
             className="px-5 py-2.5 rounded-xl font-bold text-white text-sm whitespace-nowrap"
             style={{ backgroundColor: 'var(--primary-neon)' }}
           >
-            Transferir →
+            {t('unidades.transferButton')}
           </button>
         </div>
 
         {itemOrigem && (
           <p className="text-white/40 text-xs">
-            Disponível em {getUnidade(de).nome.split('—')[1]?.trim()}: <span className="text-white/70 font-semibold">{itemOrigem.quantidadeAtual} {itemOrigem.unidade}</span>
+            {t('unidades.availableIn', { unidade: getUnidade(de).nome.split('—')[1]?.trim() })}: <span className="text-white/70 font-semibold">{itemOrigem.quantidadeAtual} {itemOrigem.unidade}</span>
           </p>
         )}
 
@@ -185,11 +187,11 @@ export function UnidadesPanel() {
 
       {/* Tabela comparativa rápida (onde tem sobra / onde falta) */}
       <div className="p-5 rounded-2xl bg-white/5 border border-white/10 overflow-x-auto">
-        <h3 className="text-white font-bold mb-3 text-sm">Comparativo rápido por insumo</h3>
+        <h3 className="text-white font-bold mb-3 text-sm">{t('unidades.quickComparison')}</h3>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-white/40 text-left text-xs">
-              <th className="pb-2">Insumo</th>
+              <th className="pb-2">{t('unidades.colInsumo')}</th>
               <th className="pb-2 text-right">Vila Mariana</th>
               <th className="pb-2 text-right">Pinheiros</th>
             </tr>
@@ -219,17 +221,17 @@ export function UnidadesPanel() {
         <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
           <h3 className="text-white font-bold mb-3 text-sm flex items-center gap-2">
             <History className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
-            Histórico de Transferências
+            {t('unidades.historyTitle')}
           </h3>
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {transferHistory.map(t => (
-              <div key={t.id} className="flex items-center justify-between text-sm py-1.5 border-b border-white/5 last:border-0">
+            {transferHistory.map(th => (
+              <div key={th.id} className="flex items-center justify-between text-sm py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-white/70">
-                  {t.quantidade} {t.unidadeMedida} de <span className="text-white">{t.nomeInsumo}</span>
-                  {' '}— {getUnidade(t.de).nome.split('—')[1]?.trim()} → {getUnidade(t.para).nome.split('—')[1]?.trim()}
+                  {th.quantidade} {th.unidadeMedida} {t('unidades.of')} <span className="text-white">{th.nomeInsumo}</span>
+                  {' '}— {getUnidade(th.de).nome.split('—')[1]?.trim()} → {getUnidade(th.para).nome.split('—')[1]?.trim()}
                 </span>
                 <span className="text-white/30 text-xs whitespace-nowrap ml-2">
-                  {new Date(t.timestamp).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                  {new Date(th.timestamp).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
             ))}

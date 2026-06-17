@@ -373,5 +373,146 @@
     "themeComeback": "カムバックシーズン",
     "themeHorror": "シネマホラーナイト",
     "cta": "シーズンメニューを見る"
+  },
+  "funcionarios": {
+    "title": "従業員",
+    "subtitle": "登録{{total}}名中{{ativos}}名が稼働中",
+    "addButton": "従業員を追加",
+    "allUnits": "全店舗",
+    "newTitle": "新規従業員",
+    "editTitle": "従業員を編集",
+    "namePlaceholder": "氏名",
+    "phonePlaceholder": "電話番号",
+    "avatarLabel": "アバター",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "since": "入社日",
+    "active": "稼働中",
+    "inactive": "休止中",
+    "toggleHint": "クリックで切り替え",
+    "cargo": {
+      "Gerente": "マネージャー",
+      "Cozinha": "キッチン",
+      "Garçom": "ウェイター",
+      "Caixa": "レジ",
+      "Delivery": "デリバリー",
+      "Limpeza": "清掃"
+    },
+    "linkAccount": "Supabaseアカウントと連携(任意)",
+    "noAccount": "アカウントなし",
+    "loadingAccounts": "アカウントを読み込み中...",
+    "accountsError": "アカウントを読み込めませんでした(RLSポリシーを確認してください)",
+    "linkedBadge": "連携済み"
+  },
+  "unidades": {
+    "title": "店舗と在庫移動",
+    "subtitle": "一方の店舗に余剰があり、もう一方が不足気味のときに食材を移動します。",
+    "resetButton": "店舗をリセット",
+    "matrizBadge": "本店",
+    "stockValue": "在庫価値：",
+    "transferTitle": "食材を移動",
+    "from": "移動元：",
+    "to": "移動先：",
+    "swapTitle": "起点と終点を入れ替え",
+    "qtyPlaceholder": "数量（{{unit}}）",
+    "transferButton": "移動する →",
+    "availableIn": "{{unidade}}の在庫",
+    "invalidQty": "有効な数量を入力してください。",
+    "quickComparison": "食材別クイック比較",
+    "colInsumo": "食材",
+    "historyTitle": "移動履歴",
+    "of": "の"
+  },
+  "mesas": {
+    "title": "利用可能なテーブル",
+    "subtitle": "空席{{livres}}・使用中{{ocupadas}}・予約済み{{reservadas}} — テーブルをクリックしてステータスを変更",
+    "resetButton": "リセット",
+    "status": {
+      "livre": "空席",
+      "ocupada": "使用中",
+      "reservada": "予約済み"
+    },
+    "editTooltip": "席数/時間を編集",
+    "seats": "席",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "since": "開始"
+  },
+  "analytics": {
+    "bannerTitle": "Analytics & Dashboard",
+    "bannerDescription": "管理パネル - 完全な指標、分析、レポートを表示",
+    "heading": "Analytics & BCG",
+    "subheading": "BCGマトリクス、在庫、業績レポート",
+    "tabs": {
+      "dashboard": "ダッシュボード",
+      "estoque": "在庫",
+      "mesas": "テーブル",
+      "funcionarios": "従業員",
+      "unidades": "店舗"
+    },
+    "period": {
+      "hoje": "今日",
+      "semana": "今週",
+      "mes": "今月",
+      "tudo": "すべて"
+    },
+    "metrics": {
+      "totalRevenue": "総収益",
+      "completedOrders": "完了した注文",
+      "averageTicket": "平均単価",
+      "productsSold": "販売された商品"
+    },
+    "bcg": {
+      "title": "BCGマトリクス",
+      "subtitle": "ボストン コンサルティング グループ - ポートフォリオ分析",
+      "export": "エクスポート",
+      "starsLabel": "⭐ スター",
+      "starsDesc": "高成長 + 高シェア",
+      "cowsLabel": "🐄 キャッシュカウ",
+      "cowsDesc": "低成長 + 高シェア",
+      "questionLabel": "❓ クエスチョンマーク",
+      "questionDesc": "高成長 + 低シェア",
+      "dogsLabel": "🐶 ドッグ",
+      "dogsDesc": "低成長 + 低シェア",
+      "productsSuffix": "商品 {{count}}件",
+      "caption": "区分: Y軸(50%) = 高/低成長率 | X軸(100%) = 高/低シェア"
+    },
+    "chart": {
+      "marketShareName": "市場シェア (%)",
+      "marketShareLabel": "相対市場シェア (%)",
+      "growthRate": "成長率 (%)"
+    },
+    "tooltip": {
+      "sold": "販売数:",
+      "revenue": "収益:",
+      "category": "カテゴリー:"
+    },
+    "noData": "表示するデータがありません",
+    "top5": {
+      "title": "🏆 売れ筋商品トップ5",
+      "salesCount": "{{count}}件販売"
+    },
+    "charts": {
+      "byCategory": "カテゴリー別売上",
+      "byUniverse": "エラ&サーガ別売上"
+    },
+    "orderStatus": {
+      "title": "📊 注文状況",
+      "pendente": "⏳ 保留中",
+      "preparando": "🔥 準備中",
+      "pronto": "✅ 準備完了",
+      "emEntrega": "🚀 配達中",
+      "entregue": "🎉 完了",
+      "cancelado": "❌ キャンセル"
+    },
+    "summary": {
+      "title": "📝 エグゼクティブサマリー",
+      "totalOrders": "総注文数:",
+      "completionRate": "完了率:",
+      "cancellationRate": "キャンセル率:",
+      "topCategory": "最も売れたカテゴリー:",
+      "topUniverse": "最も人気のユニバース:",
+      "activeOrders": "進行中の注文:"
+    }
   }
 }

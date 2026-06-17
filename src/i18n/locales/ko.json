@@ -373,5 +373,146 @@
     "themeComeback": "컴백 시즌",
     "themeHorror": "시네마 호러 나이트",
     "cta": "시즌 메뉴 보기"
+  },
+  "funcionarios": {
+    "title": "직원",
+    "subtitle": "등록 {{total}}명 중 {{ativos}}명 활동 중",
+    "addButton": "직원 추가",
+    "allUnits": "전체 지점",
+    "newTitle": "신규 직원",
+    "editTitle": "직원 수정",
+    "namePlaceholder": "이름",
+    "phonePlaceholder": "전화번호",
+    "avatarLabel": "아바타",
+    "save": "저장",
+    "cancel": "취소",
+    "since": "입사일",
+    "active": "활동 중",
+    "inactive": "비활동",
+    "toggleHint": "클릭하여 전환",
+    "cargo": {
+      "Gerente": "매니저",
+      "Cozinha": "주방",
+      "Garçom": "웨이터",
+      "Caixa": "캐셔",
+      "Delivery": "배달",
+      "Limpeza": "청소"
+    },
+    "linkAccount": "Supabase 계정 연결 (선택 사항)",
+    "noAccount": "계정 없음",
+    "loadingAccounts": "계정 불러오는 중...",
+    "accountsError": "계정을 불러올 수 없습니다 (RLS 정책을 확인하세요)",
+    "linkedBadge": "연결됨"
+  },
+  "unidades": {
+    "title": "지점 및 재고 이동",
+    "subtitle": "한 지점에 재고가 남고 다른 지점이 부족할 때 재료를 이동하세요.",
+    "resetButton": "지점 초기화",
+    "matrizBadge": "본점",
+    "stockValue": "재고 가치:",
+    "transferTitle": "재료 이동",
+    "from": "출발:",
+    "to": "도착:",
+    "swapTitle": "출발/도착 바꾸기",
+    "qtyPlaceholder": "수량 ({{unit}})",
+    "transferButton": "이동하기 →",
+    "availableIn": "{{unidade}}의 재고",
+    "invalidQty": "유효한 수량을 입력하세요.",
+    "quickComparison": "재료별 빠른 비교",
+    "colInsumo": "재료",
+    "historyTitle": "이동 내역",
+    "of": "의"
+  },
+  "mesas": {
+    "title": "이용 가능한 테이블",
+    "subtitle": "빈 테이블 {{livres}} · 사용 중 {{ocupadas}} · 예약됨 {{reservadas}} — 테이블을 클릭해 상태 변경",
+    "resetButton": "초기화",
+    "status": {
+      "livre": "빈 테이블",
+      "ocupada": "사용 중",
+      "reservada": "예약됨"
+    },
+    "editTooltip": "좌석 수/시간 수정",
+    "seats": "석",
+    "save": "저장",
+    "cancel": "취소",
+    "since": "시작"
+  },
+  "analytics": {
+    "bannerTitle": "Analytics & Dashboard",
+    "bannerDescription": "관리자 패널 - 전체 지표, 분석 및 보고서 보기",
+    "heading": "Analytics & BCG",
+    "subheading": "BCG 매트릭스, 재고 및 실적 보고서",
+    "tabs": {
+      "dashboard": "대시보드",
+      "estoque": "재고",
+      "mesas": "테이블",
+      "funcionarios": "직원",
+      "unidades": "지점"
+    },
+    "period": {
+      "hoje": "오늘",
+      "semana": "이번 주",
+      "mes": "이번 달",
+      "tudo": "전체"
+    },
+    "metrics": {
+      "totalRevenue": "총 매출",
+      "completedOrders": "완료된 주문",
+      "averageTicket": "평균 객단가",
+      "productsSold": "판매된 상품"
+    },
+    "bcg": {
+      "title": "BCG 매트릭스",
+      "subtitle": "보스턴 컨설팅 그룹 - 포트폴리오 분석",
+      "export": "내보내기",
+      "starsLabel": "⭐ 스타",
+      "starsDesc": "고성장 + 고점유율",
+      "cowsLabel": "🐄 캐시카우",
+      "cowsDesc": "저성장 + 고점유율",
+      "questionLabel": "❓ 물음표",
+      "questionDesc": "고성장 + 저점유율",
+      "dogsLabel": "🐶 도그",
+      "dogsDesc": "저성장 + 저점유율",
+      "productsSuffix": "상품 {{count}}개",
+      "caption": "구분: Y축 (50%) = 고/저 성장률 | X축 (100%) = 고/저 점유율"
+    },
+    "chart": {
+      "marketShareName": "시장 점유율 (%)",
+      "marketShareLabel": "상대적 시장 점유율 (%)",
+      "growthRate": "성장률 (%)"
+    },
+    "tooltip": {
+      "sold": "판매량:",
+      "revenue": "매출:",
+      "category": "카테고리:"
+    },
+    "noData": "표시할 데이터가 없습니다",
+    "top5": {
+      "title": "🏆 베스트셀러 상품 Top 5",
+      "salesCount": "{{count}}건 판매"
+    },
+    "charts": {
+      "byCategory": "카테고리별 판매",
+      "byUniverse": "에라 & 세계관별 판매"
+    },
+    "orderStatus": {
+      "title": "📊 주문 현황",
+      "pendente": "⏳ 대기중",
+      "preparando": "🔥 준비중",
+      "pronto": "✅ 준비완료",
+      "emEntrega": "🚀 배달중",
+      "entregue": "🎉 완료",
+      "cancelado": "❌ 취소됨"
+    },
+    "summary": {
+      "title": "📝 실행 요약",
+      "totalOrders": "총 주문 수:",
+      "completionRate": "완료율:",
+      "cancellationRate": "취소율:",
+      "topCategory": "베스트셀러 카테고리:",
+      "topUniverse": "가장 인기있는 세계관:",
+      "activeOrders": "진행중인 주문:"
+    }
   }
 }

@@ -373,5 +373,146 @@
     "themeComeback": "回归季",
     "themeHorror": "电影恐怖之夜",
     "cta": "查看季节菜单"
+  },
+  "funcionarios": {
+    "title": "员工",
+    "subtitle": "共{{total}}人，{{ativos}}人在职",
+    "addButton": "添加员工",
+    "allUnits": "所有门店",
+    "newTitle": "新员工",
+    "editTitle": "编辑员工",
+    "namePlaceholder": "姓名",
+    "phonePlaceholder": "电话",
+    "avatarLabel": "头像",
+    "save": "保存",
+    "cancel": "取消",
+    "since": "入职于",
+    "active": "在职",
+    "inactive": "离职",
+    "toggleHint": "点击切换",
+    "cargo": {
+      "Gerente": "经理",
+      "Cozinha": "厨房",
+      "Garçom": "服务员",
+      "Caixa": "收银员",
+      "Delivery": "外卖员",
+      "Limpeza": "清洁"
+    },
+    "linkAccount": "关联 Supabase 账户(可选)",
+    "noAccount": "无账户",
+    "loadingAccounts": "正在加载账户...",
+    "accountsError": "无法加载账户(请检查 RLS 策略)",
+    "linkedBadge": "已关联"
+  },
+  "unidades": {
+    "title": "门店与库存调拨",
+    "subtitle": "当一家门店库存过剩而另一家不足时，在门店间调拨食材。",
+    "resetButton": "重置门店",
+    "matrizBadge": "总店",
+    "stockValue": "库存价值：",
+    "transferTitle": "调拨食材",
+    "from": "从：",
+    "to": "到：",
+    "swapTitle": "互换起点/终点",
+    "qtyPlaceholder": "数量（{{unit}}）",
+    "transferButton": "调拨 →",
+    "availableIn": "{{unidade}}库存",
+    "invalidQty": "请输入有效数量。",
+    "quickComparison": "食材快速对比",
+    "colInsumo": "食材",
+    "historyTitle": "调拨记录",
+    "of": "的"
+  },
+  "mesas": {
+    "title": "可用餐桌",
+    "subtitle": "空闲{{livres}} · 占用{{ocupadas}} · 已预订{{reservadas}} — 点击餐桌切换状态",
+    "resetButton": "重置",
+    "status": {
+      "livre": "空闲",
+      "ocupada": "占用",
+      "reservada": "已预订"
+    },
+    "editTooltip": "编辑容量/时间",
+    "seats": "人",
+    "save": "保存",
+    "cancel": "取消",
+    "since": "始于"
+  },
+  "analytics": {
+    "bannerTitle": "Analytics & Dashboard",
+    "bannerDescription": "管理面板 - 查看完整的指标、分析和报告",
+    "heading": "Analytics & BCG",
+    "subheading": "BCG矩阵、库存与业绩报告",
+    "tabs": {
+      "dashboard": "仪表盘",
+      "estoque": "库存",
+      "mesas": "桌台",
+      "funcionarios": "员工",
+      "unidades": "门店"
+    },
+    "period": {
+      "hoje": "今天",
+      "semana": "本周",
+      "mes": "本月",
+      "tudo": "全部"
+    },
+    "metrics": {
+      "totalRevenue": "总收入",
+      "completedOrders": "已完成订单",
+      "averageTicket": "平均客单价",
+      "productsSold": "已售商品"
+    },
+    "bcg": {
+      "title": "BCG矩阵",
+      "subtitle": "波士顿咨询集团 - 产品组合分析",
+      "export": "导出",
+      "starsLabel": "⭐ 明星产品",
+      "starsDesc": "高增长 + 高市场份额",
+      "cowsLabel": "🐄 现金牛",
+      "cowsDesc": "低增长 + 高市场份额",
+      "questionLabel": "❓ 问题产品",
+      "questionDesc": "高增长 + 低市场份额",
+      "dogsLabel": "🐶 瘦狗产品",
+      "dogsDesc": "低增长 + 低市场份额",
+      "productsSuffix": "{{count}} 个产品",
+      "caption": "划分: Y轴 (50%) = 高/低增长率 | X轴 (100%) = 高/低市场份额"
+    },
+    "chart": {
+      "marketShareName": "市场份额 (%)",
+      "marketShareLabel": "相对市场份额 (%)",
+      "growthRate": "增长率 (%)"
+    },
+    "tooltip": {
+      "sold": "销量:",
+      "revenue": "收入:",
+      "category": "分类:"
+    },
+    "noData": "暂无数据",
+    "top5": {
+      "title": "🏆 热销商品 Top 5",
+      "salesCount": "已售 {{count}} 件"
+    },
+    "charts": {
+      "byCategory": "按分类的销售额",
+      "byUniverse": "按时代与宇宙的销售额"
+    },
+    "orderStatus": {
+      "title": "📊 订单状态",
+      "pendente": "⏳ 待处理",
+      "preparando": "🔥 制作中",
+      "pronto": "✅ 已就绪",
+      "emEntrega": "🚀 配送中",
+      "entregue": "🎉 已送达",
+      "cancelado": "❌ 已取消"
+    },
+    "summary": {
+      "title": "📝 执行摘要",
+      "totalOrders": "订单总数:",
+      "completionRate": "完成率:",
+      "cancellationRate": "取消率:",
+      "topCategory": "最热销分类:",
+      "topUniverse": "最受欢迎的宇宙:",
+      "activeOrders": "进行中的订单:"
+    }
   }
 }

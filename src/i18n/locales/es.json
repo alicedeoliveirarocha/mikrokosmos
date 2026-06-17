@@ -373,5 +373,146 @@
     "themeComeback": "Comeback Season",
     "themeHorror": "Noche de Terror en el Cine",
     "cta": "Ver Menú de Temporada"
+  },
+  "funcionarios": {
+    "title": "Empleados",
+    "subtitle": "{{ativos}} activos de {{total}} registrados",
+    "addButton": "Agregar Empleado",
+    "allUnits": "Todas las unidades",
+    "newTitle": "Nuevo Empleado",
+    "editTitle": "Editar Empleado",
+    "namePlaceholder": "Nombre completo",
+    "phonePlaceholder": "Teléfono",
+    "avatarLabel": "Avatar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "since": "desde",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "toggleHint": "clic para alternar",
+    "cargo": {
+      "Gerente": "Gerente",
+      "Cozinha": "Cocina",
+      "Garçom": "Camarero",
+      "Caixa": "Cajero",
+      "Delivery": "Delivery",
+      "Limpeza": "Limpieza"
+    },
+    "linkAccount": "Vincular a una cuenta de Supabase (opcional)",
+    "noAccount": "Ninguna cuenta",
+    "loadingAccounts": "Cargando cuentas...",
+    "accountsError": "No se pudieron cargar las cuentas (verifica las políticas de RLS)",
+    "linkedBadge": "Conectado"
+  },
+  "unidades": {
+    "title": "Unidades y Transferencia de Stock",
+    "subtitle": "Mueve insumos entre las unidades cuando una tenga excedente y la otra esté en el límite.",
+    "resetButton": "Restablecer Unidades",
+    "matrizBadge": "Matriz",
+    "stockValue": "Valor en stock:",
+    "transferTitle": "Transferir Insumo",
+    "from": "De:",
+    "to": "Para:",
+    "swapTitle": "Invertir origen/destino",
+    "qtyPlaceholder": "Cant. ({{unit}})",
+    "transferButton": "Transferir →",
+    "availableIn": "Disponible en {{unidade}}",
+    "invalidQty": "Ingresa una cantidad válida.",
+    "quickComparison": "Comparación rápida por insumo",
+    "colInsumo": "Insumo",
+    "historyTitle": "Historial de Transferencias",
+    "of": "de"
+  },
+  "mesas": {
+    "title": "Mesas Disponibles",
+    "subtitle": "{{livres}} libres · {{ocupadas}} ocupadas · {{reservadas}} reservadas — haz clic en una mesa para cambiar el estado",
+    "resetButton": "Restablecer",
+    "status": {
+      "livre": "Libre",
+      "ocupada": "Ocupada",
+      "reservada": "Reservada"
+    },
+    "editTooltip": "Editar capacidad/horario",
+    "seats": "asientos",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "since": "desde"
+  },
+  "analytics": {
+    "bannerTitle": "Analytics & Dashboard",
+    "bannerDescription": "Panel Administrativo - Visualiza métricas, análisis e informes completos",
+    "heading": "Analytics & BCG",
+    "subheading": "Matriz BCG, Stock e Informes de Desempeño",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "estoque": "Stock",
+      "mesas": "Mesas",
+      "funcionarios": "Empleados",
+      "unidades": "Sucursales"
+    },
+    "period": {
+      "hoje": "Hoy",
+      "semana": "Esta Semana",
+      "mes": "Este Mes",
+      "tudo": "Todo"
+    },
+    "metrics": {
+      "totalRevenue": "Ingresos Totales",
+      "completedOrders": "Pedidos Completados",
+      "averageTicket": "Ticket Promedio",
+      "productsSold": "Productos Vendidos"
+    },
+    "bcg": {
+      "title": "Matriz BCG",
+      "subtitle": "Boston Consulting Group - Análisis de Portafolio",
+      "export": "Exportar",
+      "starsLabel": "⭐ Estrellas",
+      "starsDesc": "Alto crecimiento + Alta participación",
+      "cowsLabel": "🐄 Vacas Lecheras",
+      "cowsDesc": "Bajo crecimiento + Alta participación",
+      "questionLabel": "❓ Incógnitas",
+      "questionDesc": "Alto crecimiento + Baja participación",
+      "dogsLabel": "🐶 Perros",
+      "dogsDesc": "Bajo crecimiento + Baja participación",
+      "productsSuffix": "{{count}} productos",
+      "caption": "División: Eje Y (50%) = Alto/Bajo Crecimiento | Eje X (100%) = Alta/Baja Participación"
+    },
+    "chart": {
+      "marketShareName": "Participación de Mercado (%)",
+      "marketShareLabel": "Participación de Mercado Relativa (%)",
+      "growthRate": "Tasa de Crecimiento (%)"
+    },
+    "tooltip": {
+      "sold": "Vendidas:",
+      "revenue": "Ingresos:",
+      "category": "Categoría:"
+    },
+    "noData": "Sin datos para mostrar",
+    "top5": {
+      "title": "🏆 Top 5 Productos Más Vendidos",
+      "salesCount": "{{count}} ventas"
+    },
+    "charts": {
+      "byCategory": "Ventas por Categoría",
+      "byUniverse": "Ventas por Eras & Sagas"
+    },
+    "orderStatus": {
+      "title": "📊 Estado de los Pedidos",
+      "pendente": "⏳ Pendiente",
+      "preparando": "🔥 Preparando",
+      "pronto": "✅ Listo",
+      "emEntrega": "🚀 En Camino",
+      "entregue": "🎉 Entregado",
+      "cancelado": "❌ Cancelado"
+    },
+    "summary": {
+      "title": "📝 Resumen Ejecutivo",
+      "totalOrders": "Total de Pedidos:",
+      "completionRate": "Tasa de Finalización:",
+      "cancellationRate": "Tasa de Cancelación:",
+      "topCategory": "Categoría Más Vendida:",
+      "topUniverse": "Universo Más Popular:",
+      "activeOrders": "Pedidos Activos:"
+    }
   }
 }

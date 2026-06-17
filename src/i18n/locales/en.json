@@ -373,5 +373,146 @@
     "themeComeback": "Comeback Season",
     "themeHorror": "Cinema Horror Night",
     "cta": "See Seasonal Menu"
+  },
+  "funcionarios": {
+    "title": "Employees",
+    "subtitle": "{{ativos}} active out of {{total}} registered",
+    "addButton": "Add Employee",
+    "allUnits": "All locations",
+    "newTitle": "New Employee",
+    "editTitle": "Edit Employee",
+    "namePlaceholder": "Full name",
+    "phonePlaceholder": "Phone",
+    "avatarLabel": "Avatar",
+    "save": "Save",
+    "cancel": "Cancel",
+    "since": "since",
+    "active": "Active",
+    "inactive": "Inactive",
+    "toggleHint": "click to toggle",
+    "cargo": {
+      "Gerente": "Manager",
+      "Cozinha": "Kitchen",
+      "Garçom": "Waiter",
+      "Caixa": "Cashier",
+      "Delivery": "Delivery",
+      "Limpeza": "Cleaning"
+    },
+    "linkAccount": "Link to Supabase account (optional)",
+    "noAccount": "No account",
+    "loadingAccounts": "Loading accounts...",
+    "accountsError": "Couldn't load accounts (check RLS policies)",
+    "linkedBadge": "Linked"
+  },
+  "unidades": {
+    "title": "Units & Stock Transfer",
+    "subtitle": "Move supplies between units when one has surplus and the other is running low.",
+    "resetButton": "Reset Units",
+    "matrizBadge": "Headquarters",
+    "stockValue": "Stock value:",
+    "transferTitle": "Transfer Supply",
+    "from": "From:",
+    "to": "To:",
+    "swapTitle": "Swap origin/destination",
+    "qtyPlaceholder": "Qty ({{unit}})",
+    "transferButton": "Transfer →",
+    "availableIn": "Available at {{unidade}}",
+    "invalidQty": "Enter a valid quantity.",
+    "quickComparison": "Quick comparison by supply",
+    "colInsumo": "Supply",
+    "historyTitle": "Transfer History",
+    "of": "of"
+  },
+  "mesas": {
+    "title": "Available Tables",
+    "subtitle": "{{livres}} free · {{ocupadas}} occupied · {{reservadas}} reserved — click a table to change its status",
+    "resetButton": "Reset",
+    "status": {
+      "livre": "Free",
+      "ocupada": "Occupied",
+      "reservada": "Reserved"
+    },
+    "editTooltip": "Edit capacity/time",
+    "seats": "seats",
+    "save": "Save",
+    "cancel": "Cancel",
+    "since": "since"
+  },
+  "analytics": {
+    "bannerTitle": "Analytics & Dashboard",
+    "bannerDescription": "Admin Panel - View complete metrics, analytics and reports",
+    "heading": "Analytics & BCG",
+    "subheading": "BCG Matrix, Stock and Performance Reports",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "estoque": "Stock",
+      "mesas": "Tables",
+      "funcionarios": "Staff",
+      "unidades": "Locations"
+    },
+    "period": {
+      "hoje": "Today",
+      "semana": "This Week",
+      "mes": "This Month",
+      "tudo": "All"
+    },
+    "metrics": {
+      "totalRevenue": "Total Revenue",
+      "completedOrders": "Completed Orders",
+      "averageTicket": "Average Ticket",
+      "productsSold": "Products Sold"
+    },
+    "bcg": {
+      "title": "BCG Matrix",
+      "subtitle": "Boston Consulting Group - Portfolio Analysis",
+      "export": "Export",
+      "starsLabel": "⭐ Stars",
+      "starsDesc": "High growth + High market share",
+      "cowsLabel": "🐄 Cash Cows",
+      "cowsDesc": "Low growth + High market share",
+      "questionLabel": "❓ Question Marks",
+      "questionDesc": "High growth + Low market share",
+      "dogsLabel": "🐶 Dogs",
+      "dogsDesc": "Low growth + Low market share",
+      "productsSuffix": "{{count}} products",
+      "caption": "Split: Y Axis (50%) = High/Low Growth | X Axis (100%) = High/Low Market Share"
+    },
+    "chart": {
+      "marketShareName": "Market Share (%)",
+      "marketShareLabel": "Relative Market Share (%)",
+      "growthRate": "Growth Rate (%)"
+    },
+    "tooltip": {
+      "sold": "Sold:",
+      "revenue": "Revenue:",
+      "category": "Category:"
+    },
+    "noData": "No data to display",
+    "top5": {
+      "title": "🏆 Top 5 Best-Selling Products",
+      "salesCount": "{{count}} sales"
+    },
+    "charts": {
+      "byCategory": "Sales by Category",
+      "byUniverse": "Sales by Eras & Sagas"
+    },
+    "orderStatus": {
+      "title": "📊 Order Status",
+      "pendente": "⏳ Pending",
+      "preparando": "🔥 Preparing",
+      "pronto": "✅ Ready",
+      "emEntrega": "🚀 Out for Delivery",
+      "entregue": "🎉 Delivered",
+      "cancelado": "❌ Cancelled"
+    },
+    "summary": {
+      "title": "📝 Executive Summary",
+      "totalOrders": "Total Orders:",
+      "completionRate": "Completion Rate:",
+      "cancellationRate": "Cancellation Rate:",
+      "topCategory": "Best-Selling Category:",
+      "topUniverse": "Most Popular Universe:",
+      "activeOrders": "Active Orders:"
+    }
   }
 }
