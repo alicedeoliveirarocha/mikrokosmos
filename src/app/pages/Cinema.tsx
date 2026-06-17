@@ -1,8 +1,10 @@
+// src/app/pages/Cinema.tsx
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router';
 import { Film, Popcorn, Ticket, Star, Play, ArrowRight, Home, Sparkles, Clock, ShoppingCart } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useCart } from '../context/CartContext';
+import { useTranslation } from 'react-i18next';
 import { CinemaBackground } from '../components/CinemaBackground';
 import { DepthLayers } from '../components/DepthLayers';
 import { useState } from 'react';
@@ -13,6 +15,7 @@ export function Cinema() {
   const navigate = useNavigate();
   const { universeName, primaryColor, categoria } = useUniverse();
   const { items, addToCart, itemCount } = useCart();
+  const { t } = useTranslation();
   const [hoveredSession, setHoveredSession] = useState<string | null>(null);
   const [rarityFilter, setRarityFilter] = useState<Rarity | 'all'>('all');
   const [groupFilter, setGroupFilter] = useState<GroupId | 'all'>('all');
@@ -46,19 +49,19 @@ export function Cinema() {
 
   const handleAddCombo = (combo: typeof combos[0]) => {
     addToCart(combo);
-    toast.success(`${combo.nome} adicionado! 🛒`);
+    toast.success(`${combo.nome} ${t('cinema.addedToCart')}`);
   };
 
   const handleAddTicket = (session: typeof cinemaSessions[0]) => {
     addToCart({
       id: `ticket-${session.id}`,
-      nome: `Ingresso — ${session.title}`,
+      nome: `${t('cinema.ticket')} — ${session.title}`,
       desc: `${session.sala} · ${session.time}`,
       preco: session.price,
       categoria: 'Ingressos',
       imageUrl: 'x-burguer-katsu',
     });
-    toast.success(`Ingresso para ${session.title} adicionado! 🎟️`);
+    toast.success(`${t('cinema.ticketAdded')} ${session.title}! 🎟️`);
   };
 
   return (
@@ -86,16 +89,16 @@ export function Cinema() {
                   ? <Sparkles className="w-8 h-8" style={{ color: primaryColor }} />
                   : <Film className="w-8 h-8" style={{ color: primaryColor }} />
                 }
-                {isKpop ? 'PHOTOCARDS' : 'MIKROKOSMOS CINEMA'}
+                {isKpop ? t('cinema.photocardsTitle') : 'MIKROKOSMOS CINEMA'}
               </motion.h1>
               <p className="text-white/50 text-sm mt-1 tracking-wide">
-                {isKpop ? 'K-POP PHOTOCARD COLLECTION' : 'AN IMMERSIVE CINEMATIC EXPERIENCE'}
+                {isKpop ? t('cinema.kpopSubtitle') : t('cinema.cinemaSubtitle')}
               </p>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <div className="px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white/80 text-sm">
-              {isKpop ? 'Era:' : 'Now Playing:'} <span className="font-bold" style={{ color: primaryColor }}>{universeName}</span>
+              {isKpop ? t('cinema.eraLabel') : t('cinema.nowPlayingLabel')} <span className="font-bold" style={{ color: primaryColor }}>{universeName}</span>
             </div>
             {itemCount > 0 && (
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -129,19 +132,16 @@ export function Cinema() {
                   animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }}
                 >
                   <Sparkles className="w-3 h-3" style={{ color: primaryColor }} />
-                  {isKpop ? 'COLLECT THEM ALL' : 'NOW SHOWING'}
+                  {isKpop ? t('cinema.collectThemAll') : t('cinema.nowShowingBadge')}
                 </motion.div>
                 <h2 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
-                  {isKpop ? 'Exclusive' : 'Premium'}<br />
+                  {isKpop ? t('cinema.exclusive') : t('cinema.premium')}<br />
                   <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
-                    {isKpop ? 'Photocards' : 'Cinema Sessions'}
+                    {isKpop ? t('cinema.photocardsWord') : t('cinema.cinemaSessions')}
                   </span>
                 </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed max-w-xl">
-                  {isKpop
-                    ? 'Colecione photocards exclusivos dos seus grupos favoritos. Common, Rare e Ultra Rare — qual você vai conseguir?'
-                    : 'Experience Hollywood blockbusters and cinematic masterpieces with premium sound, immersive visuals, and gourmet concessions.'
-                  }
+                  {isKpop ? t('cinema.kpopHeroDesc') : t('cinema.cinemaHeroDesc')}
                 </p>
                 <div className="flex items-center gap-6">
                   {isKpop ? (
@@ -149,10 +149,10 @@ export function Cinema() {
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-5 h-5" style={{ color: primaryColor }} />
                         <span className="text-white font-bold text-xl">{photocards.length}</span>
-                        <span className="text-white/40 text-sm">cards</span>
+                        <span className="text-white/40 text-sm">{t('cinema.cards')}</span>
                       </div>
                       <div className="h-8 w-px bg-white/20" />
-                      <div className="text-white/60 text-sm">7 grupos disponíveis</div>
+                      <div className="text-white/60 text-sm">{t('cinema.groupsAvailable')}</div>
                     </>
                   ) : (
                     <>
@@ -162,7 +162,7 @@ export function Cinema() {
                         <span className="text-white/40 text-sm">/5.0</span>
                       </div>
                       <div className="h-8 w-px bg-white/20" />
-                      <div className="text-white/60 text-sm">2.8k reviews</div>
+                      <div className="text-white/60 text-sm">2.8k {t('cinema.reviews')}</div>
                     </>
                   )}
                 </div>
@@ -177,7 +177,9 @@ export function Cinema() {
                   : <Popcorn className="w-16 h-16" style={{ color: primaryColor }} />
                 }
                 <div className="text-white">
-                  <p className="text-sm text-white/50 uppercase tracking-wider">{isKpop ? 'Cards' : 'Itens'}</p>
+                  <p className="text-sm text-white/50 uppercase tracking-wider">
+                    {isKpop ? t('cinema.cards') : t('cinema.items')}
+                  </p>
                   <p className="text-4xl font-bold">{itemCount}</p>
                 </div>
               </motion.div>
@@ -194,31 +196,31 @@ export function Cinema() {
               initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
             >
               <Sparkles className="w-7 h-7" style={{ color: primaryColor }} />
-              PHOTOCARD COLLECTION
+              {t('cinema.photocardCollection')}
             </motion.h3>
             <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white/60 text-sm">
-              {filteredCards.length} cards
+              {filteredCards.length} {t('cinema.cards')}
             </div>
           </div>
 
+          {/* Rarity filters */}
           <div className="flex gap-2 mb-4 flex-wrap">
             {(['all', 'common', 'rare', 'ultra-rare'] as const).map(r => (
               <button key={r} onClick={() => setRarityFilter(r)}
                 className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${rarityFilter === r ? 'text-black border-transparent' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
-                style={rarityFilter === r ? { backgroundColor: primaryColor } : {}}
-              >
-                {r === 'all' ? 'Todos' : r === 'common' ? '🟫 Common' : r === 'rare' ? '🟦 Rare' : '⭐ Ultra Rare'}
+                style={rarityFilter === r ? { backgroundColor: primaryColor } : {}}>
+                {r === 'all' ? t('home.all') : r === 'common' ? `🟫 ${t('photocards.rarity.common')}` : r === 'rare' ? `🟦 ${t('photocards.rarity.rare')}` : `⭐ ${t('photocards.rarity.ultraRare')}`}
               </button>
             ))}
           </div>
 
+          {/* Group filters */}
           <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
             {(['all', 'bts', 'blackpink', 'aespa', 'enhypen', 'redvelvet', 'newjeans', 'illit'] as const).map(g => (
               <button key={g} onClick={() => setGroupFilter(g)}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${groupFilter === g ? 'text-black border-transparent' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
-                style={groupFilter === g ? { backgroundColor: primaryColor } : {}}
-              >
-                {g === 'all' ? 'Todos os Grupos' : g.toUpperCase()}
+                style={groupFilter === g ? { backgroundColor: primaryColor } : {}}>
+                {g === 'all' ? t('cinema.allGroups') : g.toUpperCase()}
               </button>
             ))}
           </div>
@@ -235,96 +237,51 @@ export function Cinema() {
                   whileHover={{ scale: 1.08, y: -6 }}
                   className="cursor-pointer group"
                 >
-                  <div
-                    className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
+                  <div className={`relative overflow-hidden rounded-xl ${isUR ? 'card-ultra-rare' : ''}`}
                     style={{
                       aspectRatio: '2/3',
                       background: !card.imageUrl ? (isUR ? undefined : cfg.gradient) : undefined,
-                      boxShadow: isUR
-                        ? '0 0 30px rgba(255,0,128,0.5), 0 0 60px rgba(64,224,208,0.3)'
-                        : isRare ? `0 0 20px ${cfg.accentColor}60` : '0 4px 15px rgba(0,0,0,0.5)',
-                      border: isUR
-                        ? '2px solid rgba(255,255,255,0.4)'
-                        : isRare ? `1.5px solid ${cfg.accentColor}80` : '1px solid rgba(255,255,255,0.1)',
+                      boxShadow: isUR ? '0 0 30px rgba(255,0,128,0.5), 0 0 60px rgba(64,224,208,0.3)' : isRare ? `0 0 20px ${cfg.accentColor}60` : '0 4px 15px rgba(0,0,0,0.5)',
+                      border: isUR ? '2px solid rgba(255,255,255,0.4)' : isRare ? `1.5px solid ${cfg.accentColor}80` : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
-                    {/* ── Foto real ── */}
-                    {card.imageUrl && (
-                      <img
-                        src={card.imageUrl}
-                        alt={card.member}
-                        className="absolute inset-0 w-full h-full object-cover object-top"
-                        style={{ zIndex: 0 }}
-                      />
-                    )}
-
-                    {/* Overlay escuro para legibilidade */}
-                    <div className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%)',
-                        zIndex: 1,
-                      }}
-                    />
-
+                    {card.imageUrl && <img src={card.imageUrl} alt={card.member} className="absolute inset-0 w-full h-full object-cover object-top" style={{ zIndex: 0 }} />}
+                    <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%)', zIndex: 1 }} />
                     {isUR && <div className="shimmer" style={{ zIndex: 2 }} />}
                     {isUR && ['10%','80%','50%','20%','70%'].map((left, i) => (
                       <div key={i} className="sparkle absolute text-xs text-yellow-300"
-                        style={{ left, top: `${15 + i * 15}%`, '--delay': `${0.3 + i * 0.4}s`, zIndex: 3 } as React.CSSProperties}
-                      >✦</div>
+                        style={{ left, top: `${15 + i * 15}%`, '--delay': `${0.3 + i * 0.4}s`, zIndex: 3 } as React.CSSProperties}>✦</div>
                     ))}
-
-                    {/* Conteúdo do card */}
                     <div className="absolute inset-0 flex flex-col justify-between p-3" style={{ zIndex: 4 }}>
                       <div className="flex items-start justify-between">
                         <div className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.65)',
-                            color: isUR ? '#FFD700' : isRare ? cfg.accentColor : 'rgba(255,255,255,0.9)',
-                            border: isUR ? '1px solid #FFD700' : isRare ? `1px solid ${cfg.accentColor}` : '1px solid rgba(255,255,255,0.3)',
-                          }}
-                        >
+                          style={{ backgroundColor: 'rgba(0,0,0,0.65)', color: isUR ? '#FFD700' : isRare ? cfg.accentColor : 'rgba(255,255,255,0.9)', border: isUR ? '1px solid #FFD700' : isRare ? `1px solid ${cfg.accentColor}` : '1px solid rgba(255,255,255,0.3)' }}>
                           {isUR ? '⭐ UR' : isRare ? '🟦 R' : '🟫 C'}
                         </div>
                         {card.isPreDebut && (
                           <div className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[9px] font-bold">PRÉ</div>
                         )}
                       </div>
-
-                      {/* Círculo com letra só se não tiver foto */}
                       {!card.imageUrl && (
                         <div className="flex items-center justify-center flex-1">
                           <div className="flex items-center justify-center rounded-full font-black text-3xl"
-                            style={{
-                              width: 72, height: 72,
-                              backgroundColor: isUR ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.4)',
-                              border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`,
-                              color: isUR ? '#FFD700' : cfg.accentColor,
-                              textShadow: isUR ? '0 0 20px #FFD700' : `0 0 15px ${cfg.accentColor}`,
-                              boxShadow: isUR ? '0 0 30px rgba(255,215,0,0.4)' : `0 0 20px ${cfg.accentColor}30`,
-                            }}
-                          >
+                            style={{ width: 72, height: 72, backgroundColor: isUR ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.4)', border: isUR ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${cfg.accentColor}60`, color: isUR ? '#FFD700' : cfg.accentColor, textShadow: isUR ? '0 0 20px #FFD700' : `0 0 15px ${cfg.accentColor}`, boxShadow: isUR ? '0 0 30px rgba(255,215,0,0.4)' : `0 0 20px ${cfg.accentColor}30` }}>
                             {card.isGroupPhoto ? '♛' : card.member.charAt(0)}
                           </div>
                         </div>
                       )}
-
                       <div className="rounded-lg p-2" style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}>
                         <p className="font-black text-sm leading-tight truncate" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>{card.member}</p>
                         <p className="text-white/80 text-[10px] truncate">{card.groupName}</p>
                         <p className="text-white/50 text-[9px] truncate">{card.era}</p>
                       </div>
                     </div>
-
-                    {/* Hover overlay */}
                     <div className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 60%)', zIndex: 5 }}
-                    >
+                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 60%)', zIndex: 5 }}>
                       <div className="w-full">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>
-                            🎁 Grátis com pedido
-                          </span>
-                        </div>
+                        <span className="text-[10px] font-bold" style={{ color: isUR ? '#FFD700' : cfg.accentColor }}>
+                          🎁 {t('cinema.freeWithOrder')}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -339,14 +296,13 @@ export function Cinema() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 mb-16">
           <div className="flex items-center justify-between mb-8">
             <motion.h3 className="text-3xl font-bold text-white flex items-center gap-3"
-              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-            >
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <Play className="w-7 h-7" style={{ color: primaryColor }} />
-              NOW PLAYING
+              {t('cinema.nowPlaying')}
             </motion.h3>
             <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white/60 text-sm">
               <Film className="w-4 h-4" />
-              {cinemaSessions.length} Films Available
+              {cinemaSessions.length} {t('cinema.filmsAvailable')}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -359,23 +315,18 @@ export function Cinema() {
                 className="group cursor-pointer"
               >
                 <motion.div className="relative aspect-[2/3] rounded-2xl overflow-hidden mb-4"
-                  whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                >
+                  whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
                   <motion.div className="absolute inset-0 z-10 pointer-events-none"
                     animate={{ opacity: hoveredSession === session.id ? 1 : 0 }}
-                    style={{ background: `radial-gradient(circle at 50% 50%, ${primaryColor}40 0%, transparent 70%)`, mixBlendMode: 'screen' }}
-                  />
+                    style={{ background: `radial-gradient(circle at 50% 50%, ${primaryColor}40 0%, transparent 70%)`, mixBlendMode: 'screen' }} />
                   <motion.div className="absolute inset-0 z-10 rounded-2xl pointer-events-none"
-                    animate={{ boxShadow: hoveredSession === session.id ? `0 0 40px ${primaryColor}60, inset 0 0 40px ${primaryColor}20` : '0 0 0px transparent' }}
-                  />
+                    animate={{ boxShadow: hoveredSession === session.id ? `0 0 40px ${primaryColor}60, inset 0 0 40px ${primaryColor}20` : '0 0 0px transparent' }} />
                   <motion.img src={session.image} alt={session.title} className="w-full h-full object-cover"
-                    animate={{ scale: hoveredSession === session.id ? 1.1 : 1, filter: hoveredSession === session.id ? 'brightness(1.2) saturate(1.3)' : 'brightness(0.9)' }}
-                  />
+                    animate={{ scale: hoveredSession === session.id ? 1.1 : 1, filter: hoveredSession === session.id ? 'brightness(1.2) saturate(1.3)' : 'brightness(0.9)' }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80" />
                   <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-20">
                     <div className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider backdrop-blur-xl border"
-                      style={{ backgroundColor: `${primaryColor}20`, borderColor: `${primaryColor}60`, color: primaryColor }}
-                    >
+                      style={{ backgroundColor: `${primaryColor}20`, borderColor: `${primaryColor}60`, color: primaryColor }}>
                       {session.sala}
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/20">
@@ -384,8 +335,7 @@ export function Cinema() {
                     </div>
                   </div>
                   <motion.div className="absolute bottom-0 left-0 right-0 p-6 z-20"
-                    animate={{ y: hoveredSession === session.id ? 0 : 20, opacity: hoveredSession === session.id ? 1 : 0 }}
-                  >
+                    animate={{ y: hoveredSession === session.id ? 0 : 20, opacity: hoveredSession === session.id ? 1 : 0 }}>
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex items-center gap-1 px-2 py-1 rounded bg-yellow-500/20 border border-yellow-500/40">
                         <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
@@ -400,9 +350,8 @@ export function Cinema() {
                       <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                         onClick={e => { e.stopPropagation(); handleAddTicket(session); }}
                         className="px-4 py-2 rounded-lg text-xs font-bold transition-all text-black"
-                        style={{ backgroundColor: primaryColor }}
-                      >
-                        GET TICKETS
+                        style={{ backgroundColor: primaryColor }}>
+                        {t('cinema.getTickets')}
                       </motion.button>
                     </div>
                   </motion.div>
@@ -411,8 +360,7 @@ export function Cinema() {
                   <div className="flex items-center justify-between">
                     <h4 className="text-white font-bold text-xl group-hover:text-white/80 transition-colors">{session.title}</h4>
                     <motion.span className="text-2xl font-bold"
-                      animate={{ color: hoveredSession === session.id ? primaryColor : '#ffffff' }}
-                    >
+                      animate={{ color: hoveredSession === session.id ? primaryColor : '#ffffff' }}>
                       {session.priceLabel}
                     </motion.span>
                   </div>
@@ -432,7 +380,7 @@ export function Cinema() {
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-3xl font-bold text-white flex items-center gap-3">
             <Popcorn className="w-7 h-7" style={{ color: primaryColor }} />
-            {isKpop ? 'PHOTOCARD COMBOS' : 'CINEMA COMBOS'}
+            {isKpop ? t('cinema.photocardCombos') : t('cinema.cinemaCombos')}
           </h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -444,22 +392,18 @@ export function Cinema() {
               className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-black/60 via-black/40 to-black/60 backdrop-blur-2xl border border-white/10 p-6"
             >
               <motion.div className="absolute inset-0 pointer-events-none" initial={{ opacity: 0 }} whileHover={{ opacity: 1 }}
-                style={{ background: `radial-gradient(circle at 50% 50%, ${primaryColor}10 0%, transparent 70%)` }}
-              />
+                style={{ background: `radial-gradient(circle at 50% 50%, ${primaryColor}10 0%, transparent 70%)` }} />
               <div className="relative z-10">
                 <div className="text-6xl mb-4">{combo.emoji}</div>
                 <h4 className="text-white font-bold text-xl mb-2">{combo.nome}</h4>
                 <p className="text-white/50 text-sm mb-6 leading-relaxed">{combo.desc}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold" style={{ color: primaryColor }}>
-                    R$ {combo.preco.toFixed(2)}
-                  </span>
+                  <span className="text-3xl font-bold" style={{ color: primaryColor }}>R$ {combo.preco.toFixed(2)}</span>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => handleAddCombo(combo)}
                     className="px-5 py-2.5 rounded-full font-bold text-sm text-black transition-all"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    ADD
+                    style={{ backgroundColor: primaryColor }}>
+                    {t('common.add')}
                   </motion.button>
                 </div>
               </div>
@@ -471,17 +415,11 @@ export function Cinema() {
       {/* ═══ CTA ═══ */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
-          className="relative rounded-3xl overflow-hidden"
-        >
+          className="relative rounded-3xl overflow-hidden">
           <div className="absolute inset-0">
             <motion.div className="absolute inset-0"
-              animate={{ background: [
-                `radial-gradient(circle at 20% 50%, ${primaryColor}15 0%, transparent 50%)`,
-                `radial-gradient(circle at 80% 50%, ${primaryColor}15 0%, transparent 50%)`,
-                `radial-gradient(circle at 20% 50%, ${primaryColor}15 0%, transparent 50%)`,
-              ]}}
-              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-            />
+              animate={{ background: [`radial-gradient(circle at 20% 50%, ${primaryColor}15 0%, transparent 50%)`, `radial-gradient(circle at 80% 50%, ${primaryColor}15 0%, transparent 50%)`, `radial-gradient(circle at 20% 50%, ${primaryColor}15 0%, transparent 50%)`] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }} />
           </div>
           <div className="relative bg-gradient-to-br from-black/60 via-black/40 to-black/60 backdrop-blur-2xl border border-white/10 p-12 md:p-16 text-center">
             <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity }}>
@@ -491,34 +429,25 @@ export function Cinema() {
               }
             </motion.div>
             <h3 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {isKpop ? 'Pronto para Colecionar?' : 'Ready for the Show?'}
+              {isKpop ? t('cinema.readyToCollect') : t('cinema.readyForShow')}
             </h3>
             <p className="text-white/50 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-              {isKpop
-                ? 'Faça seu pedido e ganhe 3 photocards exclusivos dos seus grupos favoritos!'
-                : 'Combine cinema, music, and gastronomy in a unique experience.'
-              }
+              {isKpop ? t('cinema.readyToCollectDesc') : t('cinema.readyForShowDesc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/home')}
                 className="group px-10 py-5 rounded-full font-bold text-lg text-black flex items-center gap-3 justify-center relative overflow-hidden"
-                style={{ backgroundColor: primaryColor }}
-              >
-                <motion.div className="absolute inset-0"
-                  animate={{ boxShadow: [`0 0 20px ${primaryColor}40`, `0 0 60px ${primaryColor}80`, `0 0 20px ${primaryColor}40`] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
+                style={{ backgroundColor: primaryColor }}>
                 {isKpop ? <Sparkles className="w-6 h-6" /> : <Ticket className="w-6 h-6 group-hover:rotate-12 transition-transform" />}
-                {isKpop ? 'VER CARDÁPIO' : 'BUY TICKETS'}
+                {isKpop ? t('cinema.seeMenu') : t('cinema.buyTickets')}
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </motion.button>
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/carrinho')}
                 className="px-10 py-5 rounded-full font-bold text-lg text-white flex items-center gap-3 justify-center border-2 hover:bg-white/5 backdrop-blur-xl transition-all"
-                style={{ borderColor: primaryColor }}
-              >
-                Ver Carrinho ({itemCount})
+                style={{ borderColor: primaryColor }}>
+                {t('cinema.viewCart', { count: itemCount })}
               </motion.button>
             </div>
           </div>
