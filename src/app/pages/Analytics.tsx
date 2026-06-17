@@ -4,16 +4,17 @@ import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
 import { RoleBanner } from '../components/RoleBanner';
 import { StockPanel } from '../components/StockPanel';
+import { MesasPanel } from '../components/MesasPanel';
 import { useOrders } from '../context/OrdersContext';
 import { products } from '../data/products';
 import { motion } from 'motion/react';
-import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse } from 'lucide-react';
+import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
 
 export function Analytics() {
   const { orders } = useOrders();
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas'>('dashboard');
 
   // Calcular métricas gerais
   const completedOrders = orders.filter(o => o.status === 'entregue');
@@ -224,6 +225,19 @@ export function Analytics() {
             >
               <Warehouse className="w-4 h-4" /> Estoque
             </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setActiveTab('mesas')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
+                activeTab === 'mesas'
+                  ? 'text-black'
+                  : 'bg-white/5 text-white/60 border border-white/10'
+              }`}
+              style={activeTab === 'mesas' ? { backgroundColor: 'var(--primary-neon)' } : {}}
+            >
+              <Armchair className="w-4 h-4" /> Mesas
+            </motion.button>
           </div>
 
           {/* Filtro de Período — só no Dashboard */}
@@ -256,6 +270,17 @@ export function Analytics() {
             className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
           >
             <StockPanel />
+          </motion.div>
+        )}
+
+        {/* ═══════════ TAB: MESAS ═══════════ */}
+        {activeTab === 'mesas' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
+          >
+            <MesasPanel />
           </motion.div>
         )}
 

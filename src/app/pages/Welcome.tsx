@@ -30,17 +30,18 @@ export function Welcome() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center relative z-10">
 
-        {/* Logo animado */}
+        {/* Logo animado — tamanho e espaçamento de letras agora encolhem
+            no celular, evitando que "MIKROKOSMOS" vaze para fora da tela */}
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, type: 'spring' }}
           className="mb-8"
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-[0.3em] text-white neon-text mb-4">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight sm:tracking-[0.15em] md:tracking-[0.3em] text-white neon-text mb-4 leading-tight break-words">
             MIKROKOSMOS
           </h1>
-          <p className="text-lg md:text-xl text-white/60 tracking-wider mb-2">
+          <p className="text-base sm:text-lg md:text-xl text-white/60 tracking-wider mb-2">
             {t('welcome.tagline')}
           </p>
         </motion.div>

@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useUniverse } from '../context/UniverseContext';
 import { useInsumos } from '../context/InsumoContext';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   Minus, Plus, Trash2, ShoppingBag, User, MapPin, Phone,
   MessageSquare, Sparkles, Check, CreditCard, ChevronDown,
@@ -63,6 +64,7 @@ function saveCustomerData(data: CustomerData, userId?: string) {
 
 export function Cart() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { items, updateQuantity, removeFromCart, total, clearCart } = useCart();
   const { addOrder } = useOrders();
   const { user } = useAuth();
@@ -75,7 +77,6 @@ export function Cart() {
   const [rarityFilter, setRarityFilter] = useState<'all' | 'common' | 'rare' | 'ultra-rare'>('all');
   const [orderDone, setOrderDone] = useState(false);
 
-  // Customer data
   const [customerData, setCustomerData] = useState<CustomerData>({ name: '', phone: '', addresses: [], savedCards: [] });
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -84,7 +85,6 @@ export function Cart() {
   const [showAddresses, setShowAddresses] = useState(false);
   const [newAddressLabel, setNewAddressLabel] = useState('');
 
-  // CEP automático
   const [cep, setCep] = useState('');
   const [cepLoading, setCepLoading] = useState(false);
   const [cepError, setCepError] = useState('');
@@ -95,7 +95,6 @@ export function Cart() {
   const [numero, setNumero] = useState('');
   const [complemento, setComplemento] = useState('');
 
-  // Payment
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'dinheiro' | 'cartao' | 'boleto'>('pix');
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -108,7 +107,6 @@ export function Cart() {
 
   const isKpop = categoria === 'Kpop';
 
-  // Load saved data on mount
   useEffect(() => {
     const data = loadCustomerData(user?.id);
     setCustomerData(data);
@@ -116,7 +114,6 @@ export function Cart() {
     setCustomerPhone(data.phone || '');
   }, [user]);
 
-  // ── CEP automático (ViaCEP) ────────────────────────────────────
   const formatCep = (val: string) =>
     val.replace(/\D/g, '').slice(0, 8).replace(/^(\d{5})(\d)/, '$1-$2');
 
@@ -128,7 +125,7 @@ export function Cart() {
   const buscarCep = async () => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length !== 8) {
-      setCepError('CEP deve ter 8 dígitos');
+      setCepError(t('cart.cepInvalid'));
       return;
     }
     setCepLoading(true);
@@ -137,28 +134,27 @@ export function Cart() {
       const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
       const data = await res.json();
       if (data.erro) {
-        setCepError('CEP não encontrado');
+        setCepError(t('cart.cepNotFound'));
         setRua(''); setBairro(''); setCidade(''); setUf('');
       } else {
         setRua(data.logradouro || '');
         setBairro(data.bairro || '');
         setCidade(data.localidade || '');
         setUf(data.uf || '');
-        toast.success('Endereço encontrado! ✅');
+        toast.success(t('cart.cepFound'));
       }
     } catch {
-      setCepError('Erro ao buscar CEP. Verifique sua conexão.');
+      setCepError(t('cart.cepError'));
     } finally {
       setCepLoading(false);
     }
   };
 
-  // Monta o endereço completo a partir dos campos do CEP
   useEffect(() => {
     if (rua && cidade) {
       const partes = [
         rua,
-        numero && `nº ${numero}`,
+        numero && `${t('cart.numberPlaceholder')} ${numero}`,
         complemento,
         bairro,
         cidade && uf ? `${cidade} - ${uf}` : cidade,
@@ -170,7 +166,7 @@ export function Cart() {
 
   const handleSaveAddress = () => {
     if (!customerAddress.trim()) return;
-    const label = newAddressLabel.trim() || `Endereço ${customerData.addresses.length + 1}`;
+    const label = newAddressLabel.trim() || `${t('cart.savedAddresses')} ${customerData.addresses.length + 1}`;
     const newAddr: SavedAddress = {
       id: Date.now().toString(),
       label,
@@ -181,7 +177,7 @@ export function Cart() {
     setCustomerData(updated);
     saveCustomerData(updated, user?.id);
     setNewAddressLabel('');
-    toast.success(`Endereço "${label}" salvo!`);
+    toast.success(`${t('cart.addressSaved')}: "${label}"`);
   };
 
   const handleRemoveAddress = (id: string) => {
@@ -203,7 +199,7 @@ export function Cart() {
     const updated = { ...customerData, savedCards: [...customerData.savedCards, newCard] };
     setCustomerData(updated);
     saveCustomerData(updated, user?.id);
-    toast.success('Cartão salvo!');
+    toast.success(t('cart.cardSaved'));
     setSaveCard(false);
   };
 
@@ -228,7 +224,6 @@ export function Cart() {
   const formatExpiry = (val: string) =>
     val.replace(/\D/g, '').slice(0, 4).replace(/^(.{2})(.+)/, '$1/$2');
 
-  // Gera um código de boleto fake (formato visual realista)
   const gerarCodigoBoleto = () => {
     const blocks = Array.from({ length: 5 }, () =>
       Math.floor(10000 + Math.random() * 90000).toString()
@@ -252,21 +247,20 @@ export function Cart() {
     } else if (selectedCards.length < CARDS_PER_ORDER) {
       setSelectedCards(prev => [...prev, card]);
     } else {
-      toast.error(`Você já escolheu ${CARDS_PER_ORDER} photocards!`);
+      toast.error(t('cart.photocardsLimit', { count: CARDS_PER_ORDER }));
     }
   };
 
   const handleConfirmOrder = async () => {
     if (!customerName.trim()) {
-      toast.error('Por favor, preencha seu nome');
+      toast.error(t('cart.nameRequired'));
       return;
     }
     if (paymentMethod === 'cartao' && (!cardNumber || !cardName || !cardExpiry || !cardCvv)) {
-      toast.error('Preencha todos os dados do cartão');
+      toast.error(t('cart.cardRequired'));
       return;
     }
 
-    // Save customer info
     const updated: CustomerData = {
       ...customerData,
       name: customerName.trim(),
@@ -275,17 +269,16 @@ export function Cart() {
     saveCustomerData(updated, user?.id);
     setCustomerData(updated);
 
-    // Save card if requested
     if (paymentMethod === 'cartao' && saveCard && cardNumber) {
       handleSaveCard();
     }
 
     try {
       const paymentInfo = paymentMethod === 'cartao'
-        ? ` | Cartão: ••••${cardNumber.replace(/\s/g, '').slice(-4)}`
+        ? ` | ${t('cart.card')}: ••••${cardNumber.replace(/\s/g, '').slice(-4)}`
         : paymentMethod === 'boleto'
-        ? ` | Boleto: ${boletoCode}`
-        : ` | Pagamento: ${paymentMethod.toUpperCase()}`;
+        ? ` | ${t('cart.boleto')}: ${boletoCode}`
+        : ` | ${t('cart.paymentMethod')}: ${paymentMethod.toUpperCase()}`;
 
       const orderId = await addOrder({
         items: items.map(item => ({
@@ -302,9 +295,8 @@ export function Cart() {
       });
 
       if (orderId) {
-        toast.success('Pedido enviado para a cozinha! 🍜');
+        toast.success(t('cart.orderSentKitchen'));
 
-        // 🔗 Liga o pedido ao estoque de insumos — deduz os ingredientes consumidos
         consumeInsumos(
           items.map(item => ({
             nome: item.nome,
@@ -315,10 +307,10 @@ export function Cart() {
 
         setOrderDone(true);
       } else {
-        toast.error('Erro ao enviar pedido. Tente novamente.');
+        toast.error(t('cart.orderError'));
       }
     } catch {
-      toast.error('Erro ao enviar pedido.');
+      toast.error(t('cart.orderError'));
     }
   };
 
@@ -330,22 +322,22 @@ export function Cart() {
         <main className="max-w-4xl mx-auto px-4 py-12 text-center">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold text-white mb-2">Pedido Confirmado!</h2>
+            <h2 className="text-3xl font-bold text-white mb-2">{t('cart.orderConfirmed')}</h2>
             <p className="text-white/60 mb-8">
               {isKpop && selectedCards.length > 0
-                ? 'Sua comanda foi para a cozinha. Aqui estão suas photocards:'
-                : 'Sua comanda foi para a cozinha!'}
+                ? t('cart.orderKitchenWithCards')
+                : t('cart.orderKitchen')}
             </p>
 
             {paymentMethod === 'boleto' && (
               <div className="max-w-md mx-auto mb-8 p-5 rounded-2xl bg-white/5 border border-white/10 text-left">
                 <div className="flex items-center gap-2 mb-3">
                   <FileText className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
-                  <p className="text-white font-bold">Boleto Gerado</p>
+                  <p className="text-white font-bold">{t('cart.boletoGenerated')}</p>
                 </div>
-                <p className="text-white/50 text-xs mb-1">Código de barras:</p>
+                <p className="text-white/50 text-xs mb-1">{t('cart.boletoBarcode')}</p>
                 <p className="text-white font-mono text-sm tracking-wide mb-3 break-all">{boletoCode}</p>
-                <p className="text-white/40 text-xs">Vencimento em 3 dias úteis. Pague em qualquer banco ou lotérica.</p>
+                <p className="text-white/40 text-xs">{t('cart.boletoExpiry')}</p>
               </div>
             )}
 
@@ -391,13 +383,13 @@ export function Cart() {
               </div>
             )}
 
-            <p className="text-white/40 text-sm mb-6">Salve os seus cards com print ou download 📸</p>
+            <p className="text-white/40 text-sm mb-6">{t('cart.saveCardsHint')}</p>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => { clearCart(); navigate('/home'); }}
               className="px-10 py-4 rounded-full font-bold text-black text-lg"
               style={{ backgroundColor: 'var(--primary-neon)' }}
             >
-              VOLTAR AO INÍCIO
+              {t('cart.backToHome')}
             </motion.button>
           </motion.div>
         </main>
@@ -413,14 +405,14 @@ export function Cart() {
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <ShoppingBag className="w-24 h-24 mx-auto mb-6 text-white/20" />
-            <h2 className="text-3xl font-bold text-white mb-4">Carrinho Vazio</h2>
-            <p className="text-white/60 mb-8">Adicione itens do cardápio para começar seu pedido</p>
+            <h2 className="text-3xl font-bold text-white mb-4">{t('cart.emptyTitle')}</h2>
+            <p className="text-white/60 mb-8">{t('cart.emptyDesc')}</p>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/home')}
               className="px-8 py-4 rounded-full font-bold text-black"
               style={{ backgroundColor: 'var(--primary-neon)' }}
             >
-              VER CARDÁPIO
+              {t('cart.seeMenu')}
             </motion.button>
           </motion.div>
         </div>
@@ -438,11 +430,11 @@ export function Cart() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
             <div className="flex items-center gap-3 mb-2">
               <Sparkles className="w-6 h-6" style={{ color: 'var(--primary-neon)' }} />
-              <h2 className="text-2xl font-bold text-white">Escolha suas {CARDS_PER_ORDER} Photocards</h2>
+              <h2 className="text-2xl font-bold text-white">{t('cart.choosePhotocards', { count: CARDS_PER_ORDER })}</h2>
             </div>
             <p className="text-white/50 text-sm">
-              Grátis com seu pedido! {' '}
-              <span style={{ color: 'var(--primary-neon)' }}>{selectedCards.length}/{CARDS_PER_ORDER} selecionadas</span>
+              {t('cart.freeWithOrder')} {' '}
+              <span style={{ color: 'var(--primary-neon)' }}>{selectedCards.length}/{CARDS_PER_ORDER} {t('cart.photocardsSelected')}</span>
             </p>
           </motion.div>
 
@@ -452,7 +444,7 @@ export function Cart() {
                 className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${rarityFilter === r ? 'text-black border-transparent' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
                 style={rarityFilter === r ? { backgroundColor: 'var(--primary-neon)' } : {}}
               >
-                {r === 'all' ? 'Todos' : r === 'common' ? '🟫 Common' : r === 'rare' ? '🟦 Rare' : '⭐ Ultra Rare'}
+                {r === 'all' ? t('home.all') : r === 'common' ? `🟫 ${t('photocards.rarity.common')}` : r === 'rare' ? `🟦 ${t('photocards.rarity.rare')}` : `⭐ ${t('photocards.rarity.ultraRare')}`}
               </button>
             ))}
           </div>
@@ -521,13 +513,13 @@ export function Cart() {
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 onClick={() => setStep('cart')}
                 className="px-5 py-3 rounded-xl font-bold text-white bg-white/10 border border-white/20">
-                Voltar
+                {t('common.back')}
               </motion.button>
               <motion.button whileTap={{ scale: 0.98 }}
                 onClick={() => selectedCards.length === CARDS_PER_ORDER && setStep('checkout')}
                 className="px-6 py-3 rounded-xl font-bold text-black transition-opacity"
                 style={{ backgroundColor: 'var(--primary-neon)', opacity: selectedCards.length === CARDS_PER_ORDER ? 1 : 0.4, cursor: selectedCards.length === CARDS_PER_ORDER ? 'pointer' : 'not-allowed' }}>
-                Continuar ({selectedCards.length}/{CARDS_PER_ORDER})
+                {t('cart.continueBtn', { current: selectedCards.length, total: CARDS_PER_ORDER })}
               </motion.button>
             </div>
           </div>
@@ -542,30 +534,28 @@ export function Cart() {
       <div className="min-h-screen pb-40">
         <Header />
         <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-          <h2 className="text-2xl font-bold text-white">Informações de Entrega</h2>
+          <h2 className="text-2xl font-bold text-white">{t('cart.deliveryInfo')}</h2>
 
-          {/* Dados pessoais */}
           <div className="space-y-3">
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
               <input type="text" value={customerName} onChange={e => setCustomerName(e.target.value)}
-                placeholder="Nome completo *"
+                placeholder={t('cart.namePlaceholder')}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30" />
             </div>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
               <input type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
-                placeholder="Telefone (opcional)"
+                placeholder={t('cart.phonePlaceholder')}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30" />
             </div>
           </div>
 
-          {/* Endereços salvos */}
           <div className="space-y-2">
             <button onClick={() => setShowAddresses(!showAddresses)}
               className="flex items-center gap-2 text-white/60 text-sm hover:text-white transition-colors">
               <MapPin className="w-4 h-4" />
-              {customerData.addresses.length > 0 ? `Endereços salvos (${customerData.addresses.length})` : 'Endereço de entrega'}
+              {customerData.addresses.length > 0 ? t('cart.savedAddressesCount', { count: customerData.addresses.length }) : t('cart.addressDelivery')}
               {showAddresses ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             </button>
 
@@ -591,7 +581,7 @@ export function Cart() {
             {/* ── CEP automático ── */}
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
               <p className="text-white/60 text-xs flex items-center gap-1">
-                <MapPin className="w-3 h-3" /> Buscar endereço por CEP
+                <MapPin className="w-3 h-3" /> {t('cart.cepSearchLabel')}
               </p>
               <div className="flex gap-2">
                 <input
@@ -608,7 +598,7 @@ export function Cart() {
                   className="px-4 py-2.5 rounded-xl text-sm font-bold text-black flex items-center gap-2 disabled:opacity-50"
                   style={{ backgroundColor: 'var(--primary-neon)' }}
                 >
-                  {cepLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Buscar'}
+                  {cepLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('cart.cepSearchBtn')}
                 </button>
               </div>
               {cepError && <p className="text-red-400 text-xs">{cepError}</p>}
@@ -616,19 +606,19 @@ export function Cart() {
               {rua && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2 pt-2">
                   <div className="grid grid-cols-3 gap-2">
-                    <input value={rua} onChange={e => setRua(e.target.value)} placeholder="Rua"
+                    <input value={rua} onChange={e => setRua(e.target.value)} placeholder={t('cart.streetPlaceholder')}
                       className="col-span-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
-                    <input value={numero} onChange={e => setNumero(e.target.value)} placeholder="Nº"
+                    <input value={numero} onChange={e => setNumero(e.target.value)} placeholder={t('cart.numberPlaceholder')}
                       className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
                   </div>
-                  <input value={complemento} onChange={e => setComplemento(e.target.value)} placeholder="Complemento (apto, bloco...)"
+                  <input value={complemento} onChange={e => setComplemento(e.target.value)} placeholder={t('cart.complementPlaceholder')}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
                   <div className="grid grid-cols-3 gap-2">
-                    <input value={bairro} onChange={e => setBairro(e.target.value)} placeholder="Bairro"
+                    <input value={bairro} onChange={e => setBairro(e.target.value)} placeholder={t('cart.neighborhoodPlaceholder')}
                       className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
-                    <input value={cidade} onChange={e => setCidade(e.target.value)} placeholder="Cidade"
+                    <input value={cidade} onChange={e => setCidade(e.target.value)} placeholder={t('cart.cityPlaceholder')}
                       className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
-                    <input value={uf} onChange={e => setUf(e.target.value.toUpperCase().slice(0, 2))} placeholder="UF"
+                    <input value={uf} onChange={e => setUf(e.target.value.toUpperCase().slice(0, 2))} placeholder={t('cart.statePlaceholder')}
                       className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
                   </div>
                 </motion.div>
@@ -638,7 +628,7 @@ export function Cart() {
             <div className="relative">
               <MapPin className="absolute left-3 top-3 w-4 h-4 text-white/40" />
               <textarea value={customerAddress} onChange={e => setCustomerAddress(e.target.value)}
-                placeholder="Ou digite o endereço manualmente"
+                placeholder={t('cart.addressManualPlaceholder')}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 resize-none"
                 rows={2} />
             </div>
@@ -646,48 +636,45 @@ export function Cart() {
             {customerAddress.trim() && (
               <div className="flex gap-2">
                 <input value={newAddressLabel} onChange={e => setNewAddressLabel(e.target.value)}
-                  placeholder="Nome deste endereço (ex: Casa, Trabalho)"
+                  placeholder={t('cart.addressNamePlaceholder')}
                   className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
                 <button onClick={handleSaveAddress}
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-bold text-black"
                   style={{ backgroundColor: 'var(--primary-neon)' }}>
-                  <PlusIcon className="w-4 h-4" /> Salvar
+                  <PlusIcon className="w-4 h-4" /> {t('common.save')}
                 </button>
               </div>
             )}
           </div>
 
-          {/* Observações */}
           <div className="relative">
             <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-white/40" />
             <textarea value={observacoes} onChange={e => setObservacoes(e.target.value)}
-              placeholder="Observações (opcional)"
+              placeholder={t('cart.notesPlaceholder')}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 resize-none"
               rows={2} />
           </div>
 
-          {/* Forma de pagamento */}
           <div>
             <p className="text-white font-bold mb-3 flex items-center gap-2">
               <CreditCard className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
-              Forma de Pagamento
+              {t('cart.paymentMethod')}
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               {(['pix', 'dinheiro', 'cartao', 'boleto'] as const).map(method => (
                 <button key={method} onClick={() => { setPaymentMethod(method); if (method === 'cartao') setShowCardForm(true); }}
                   className={`py-3 rounded-xl font-bold text-sm transition-all border ${paymentMethod === method ? 'text-black border-transparent' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
                   style={paymentMethod === method ? { backgroundColor: 'var(--primary-neon)' } : {}}>
-                  {method === 'pix' ? '🏦 PIX' : method === 'dinheiro' ? '💵 Dinheiro' : method === 'cartao' ? '💳 Cartão' : '📄 Boleto'}
+                  {method === 'pix' ? `🏦 ${t('cart.pix')}` : method === 'dinheiro' ? `💵 ${t('cart.cash')}` : method === 'cartao' ? `💳 ${t('cart.card')}` : `📄 ${t('cart.boleto')}`}
                 </button>
               ))}
             </div>
 
             {paymentMethod === 'cartao' && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-                {/* Cartões salvos */}
                 {customerData.savedCards.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-white/60 text-sm">Cartões salvos:</p>
+                    <p className="text-white/60 text-sm">{t('cart.savedCardsLabel')}</p>
                     {customerData.savedCards.map(card => (
                       <div key={card.id} className="flex items-center gap-2">
                         <button onClick={() => handleSelectSavedCard(card)}
@@ -702,7 +689,7 @@ export function Cart() {
                     ))}
                     <button onClick={() => { setSelectedCardId(null); setCardNumber(''); setCardName(''); setCardExpiry(''); setCardCvv(''); setShowCardForm(true); }}
                       className="text-sm text-white/60 hover:text-white flex items-center gap-1 transition-colors">
-                      <PlusIcon className="w-3 h-3" /> Usar outro cartão
+                      <PlusIcon className="w-3 h-3" /> {t('cart.useAnotherCard')}
                     </button>
                   </div>
                 )}
@@ -712,26 +699,26 @@ export function Cart() {
                     <input
                       value={cardNumber}
                       onChange={e => setCardNumber(formatCardNumber(e.target.value))}
-                      placeholder="Número do cartão"
+                      placeholder={t('cart.cardNumber')}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 tracking-widest"
                     />
                     <input
                       value={cardName}
                       onChange={e => setCardName(e.target.value.toUpperCase())}
-                      placeholder="Nome no cartão"
+                      placeholder={t('cart.cardName')}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                     />
                     <div className="grid grid-cols-2 gap-3">
                       <input
                         value={cardExpiry}
                         onChange={e => setCardExpiry(formatExpiry(e.target.value))}
-                        placeholder="MM/AA"
+                        placeholder={t('cart.cardExpiry')}
                         className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                       />
                       <input
                         value={cardCvv}
                         onChange={e => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                        placeholder="CVV"
+                        placeholder={t('cart.cardCvv')}
                         type="password"
                         className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                       />
@@ -739,7 +726,7 @@ export function Cart() {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={saveCard} onChange={e => setSaveCard(e.target.checked)}
                         className="w-4 h-4 rounded" />
-                      <span className="text-white/60 text-sm">Salvar cartão para próximos pedidos</span>
+                      <span className="text-white/60 text-sm">{t('cart.saveCard')}</span>
                     </label>
                   </div>
                 )}
@@ -751,22 +738,20 @@ export function Cart() {
                 className="p-4 rounded-xl bg-white/5 border border-white/10">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
-                  <p className="text-white text-sm font-bold">Pagamento via Boleto Bancário</p>
+                  <p className="text-white text-sm font-bold">{t('cart.boletoTitle')}</p>
                 </div>
                 <p className="text-white/50 text-xs leading-relaxed">
-                  O boleto será gerado após confirmar o pedido, com vencimento em 3 dias úteis.
-                  Pode ser pago em qualquer banco, lotérica ou app bancário.
+                  {t('cart.boletoDesc')}
                 </p>
               </motion.div>
             )}
           </div>
 
-          {/* Photocards selecionados */}
           {isKpop && selectedCards.length > 0 && (
             <div className="p-4 rounded-xl bg-white/5 border border-white/10">
               <p className="text-white/60 text-sm mb-3 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
-                Suas photocards grátis:
+                {t('cart.freePhotocards')}
               </p>
               <div className="flex gap-3 flex-wrap">
                 {selectedCards.map(card => {
@@ -791,20 +776,20 @@ export function Cart() {
         <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-xl border-t border-white/10 p-4 z-30">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-white/80">Total:</span>
+              <span className="text-white/80">{t('cart.totalLabel')}</span>
               <span className="text-2xl font-bold" style={{ color: 'var(--primary-neon)' }}>R$ {total.toFixed(2)}</span>
             </div>
             <div className="flex gap-2">
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 onClick={() => setStep(isKpop && wantPhotocards ? 'photocards' : 'cart')}
                 className="flex-1 py-3 rounded-xl font-bold text-white bg-white/10 border border-white/20">
-                Voltar
+                {t('common.back')}
               </motion.button>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 onClick={handleConfirmOrder}
                 className="flex-1 py-3 rounded-xl font-bold text-black"
                 style={{ backgroundColor: 'var(--primary-neon)' }}>
-                Confirmar Pedido
+                {t('cart.confirmOrder')}
               </motion.button>
             </div>
           </div>
@@ -820,7 +805,7 @@ export function Cart() {
       <main className="max-w-4xl mx-auto px-4 py-8 pb-40">
         <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
           className="text-3xl font-bold text-white mb-8">
-          Seu Carrinho
+          {t('cart.title')}
         </motion.h1>
 
         <div className="space-y-4 mb-8">
@@ -869,7 +854,6 @@ export function Cart() {
           ))}
         </div>
 
-        {/* Photocards — opcional */}
         {isKpop && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             className="mb-6 p-4 rounded-2xl border"
@@ -882,9 +866,9 @@ export function Cart() {
                 </div>
               </div>
               <div>
-                <p className="text-white font-bold">🎁 Ganhe {CARDS_PER_ORDER} Photocards Grátis!</p>
+                <p className="text-white font-bold">🎁 {t('cart.winPhotocards', { count: CARDS_PER_ORDER })}</p>
                 <p className="text-white/50 text-sm">
-                  {wantPhotocards ? 'Você vai escolher seus cards favoritos' : 'Desativado — finalizar sem photocards'}
+                  {wantPhotocards ? t('cart.photocardsOn') : t('cart.photocardsOff')}
                 </p>
               </div>
               <Sparkles className="w-6 h-6 ml-auto flex-shrink-0" style={{ color: wantPhotocards ? 'var(--primary-neon)' : 'rgba(255,255,255,0.2)' }} />
@@ -896,17 +880,17 @@ export function Cart() {
       <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-white/10 p-4 z-30">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-white/80 text-lg">Total da Comanda:</span>
+            <span className="text-white/80 text-lg">{t('cart.orderTotal')}</span>
             <span className="text-4xl font-bold" style={{ color: 'var(--primary-neon)' }}>R$ {total.toFixed(2)}</span>
           </div>
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={() => setStep(isKpop && wantPhotocards ? 'photocards' : 'checkout')}
             className="w-full py-5 rounded-2xl font-bold text-lg text-black shadow-lg"
             style={{ backgroundColor: 'var(--primary-neon)' }}>
-            {isKpop && wantPhotocards ? '✨ ESCOLHER PHOTOCARDS' : 'FINALIZAR PEDIDO'}
+            {isKpop && wantPhotocards ? `✨ ${t('cart.choosePhotocardsBtn')}` : t('cart.finishOrder')}
           </motion.button>
           <button onClick={clearCart} className="w-full mt-3 py-3 text-red-400 hover:text-red-300 transition-colors text-sm">
-            Limpar Carrinho
+            {t('cart.clearCart')}
           </button>
         </div>
       </div>
