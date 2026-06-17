@@ -363,5 +363,15 @@
     "ja": "日本語",
     "es": "Español",
     "zh": "中文"
+  },
+  "sazonal": {
+    "eyebrow": "Edição Especial",
+    "title": "Cardápio Sazonal",
+    "subtitle": "Combos exclusivos por tempo limitado",
+    "themeCopa": "Copa do Mundo",
+    "themeNamorados": "Dia dos Namorados",
+    "themeComeback": "Comeback Season",
+    "themeHorror": "Cinema Horror Night",
+    "cta": "Ver Cardápio Sazonal"
   }
 }

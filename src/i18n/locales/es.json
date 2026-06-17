@@ -363,5 +363,15 @@
     "ja": "日本語",
     "es": "Español",
     "zh": "中文"
+  },
+  "sazonal": {
+    "eyebrow": "Edición Especial",
+    "title": "Menú de Temporada",
+    "subtitle": "Combos exclusivos por tiempo limitado",
+    "themeCopa": "Copa del Mundo",
+    "themeNamorados": "Día de San Valentín",
+    "themeComeback": "Comeback Season",
+    "themeHorror": "Noche de Terror en el Cine",
+    "cta": "Ver Menú de Temporada"
   }
 }

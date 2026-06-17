@@ -363,5 +363,15 @@
     "ja": "日本語",
     "es": "Español",
     "zh": "中文"
+  },
+  "sazonal": {
+    "eyebrow": "Special Edition",
+    "title": "Seasonal Menu",
+    "subtitle": "Limited-time exclusive combos",
+    "themeCopa": "World Cup",
+    "themeNamorados": "Valentine's Day",
+    "themeComeback": "Comeback Season",
+    "themeHorror": "Cinema Horror Night",
+    "cta": "See Seasonal Menu"
   }
 }

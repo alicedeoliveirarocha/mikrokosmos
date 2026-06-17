@@ -363,5 +363,15 @@
     "ja": "日本語",
     "es": "Español",
     "zh": "中文"
+  },
+  "sazonal": {
+    "eyebrow": "特别版",
+    "title": "季节菜单",
+    "subtitle": "限时专属套餐",
+    "themeCopa": "世界杯",
+    "themeNamorados": "情人节",
+    "themeComeback": "回归季",
+    "themeHorror": "电影恐怖之夜",
+    "cta": "查看季节菜单"
   }
 }

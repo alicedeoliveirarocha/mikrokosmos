@@ -363,5 +363,15 @@
     "ja": "日本語",
     "es": "Español",
     "zh": "中文"
+  },
+  "sazonal": {
+    "eyebrow": "스페셜 에디션",
+    "title": "시즌 메뉴",
+    "subtitle": "기간 한정 특별 콤보",
+    "themeCopa": "월드컵",
+    "themeNamorados": "발렌타인데이",
+    "themeComeback": "컴백 시즌",
+    "themeHorror": "시네마 호러 나이트",
+    "cta": "시즌 메뉴 보기"
   }
 }

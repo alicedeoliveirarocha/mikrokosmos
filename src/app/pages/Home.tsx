@@ -4,6 +4,7 @@ import { Header } from '../components/Header';
 import { ProductCard } from '../components/ProductCard';
 import { UniverseToggle } from '../components/UniverseToggle';
 import { StatsBar } from '../components/StatsBar';
+import { SazonalBanner } from '../components/SazonalBanner';
 import { products } from '../data/products';
 import { useUniverse } from '../context/UniverseContext';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +71,9 @@ export function Home() {
             </div>
           </div>
         </motion.div>
+
+        {/* Banner Sazonal — Copa do Mundo / Dia dos Namorados / Comeback Season / Cinema Horror Night */}
+        <SazonalBanner onVerCardapio={() => setSelectedCategory('Sazonal')} />
 
         {/* Filtros de Categoria */}
         <motion.div
