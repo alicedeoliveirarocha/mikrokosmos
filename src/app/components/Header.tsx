@@ -32,72 +32,68 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-black/60 border-b border-white/20">
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="max-w-6xl mx-auto px-3 py-3">
+        <div className="flex items-center justify-between gap-2">
+
+          {/* Esquerda: botão voltar + logo */}
+          <div className="flex items-center gap-2 min-w-0">
             {!isHome && !isCinema && (
               <button
                 onClick={() => navigate(-1)}
-                className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                className="w-9 h-9 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </button>
             )}
-            <div onClick={() => navigate('/home')} className="cursor-pointer">
-              <h1 className={`text-2xl md:text-3xl font-bold tracking-[0.3em] text-white neon-text ${isCinemaMode ? 'font-serif' : ''}`}>
+            <div onClick={() => navigate('/home')} className="cursor-pointer min-w-0">
+              <h1 className={`text-lg sm:text-2xl md:text-3xl font-bold tracking-[0.2em] sm:tracking-[0.3em] text-white neon-text truncate ${isCinemaMode ? 'font-serif' : ''}`}>
                 MIKROKOSMOS
               </h1>
-              <p className="text-xs text-white/60 tracking-wider">
+              <p className="text-[10px] sm:text-xs text-white/60 tracking-wider hidden sm:block">
                 {isCinemaMode ? 'Cinematic Experience System' : 'Themed-Sync System'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Seletor de idioma */}
+          {/* Direita: ações */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+
+            {/* Idioma — sempre visível */}
             <LanguageSwitcher />
 
-            {/* Cinema / Photocards */}
+            {/* Cinema/Photocards — sempre visível */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/cinema')}
-              className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
-              title={isKpopMode ? t('nav.photocards', 'Photocards') : t('nav.cinema')}
+              className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              title={isKpopMode ? t('photocards.title') : t('nav.cinema')}
             >
-              {isKpopMode
-                ? <Sparkles className="w-5 h-5" />
-                : <Film className="w-5 h-5" />
-              }
-              <span className="hidden xl:inline text-sm">
-                {isKpopMode ? t('photocards.title') : t('nav.cinema')}
-              </span>
+              {isKpopMode ? <Sparkles className="w-4 h-4" /> : <Film className="w-4 h-4" />}
             </motion.button>
 
-            {/* Analytics — só admin */}
+            {/* Analytics — só admin, só md+ */}
             {isAdmin && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/analytics')}
-                className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+                className="hidden md:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
                 title={t('nav.analytics')}
               >
-                <BarChart3 className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">{t('nav.analytics')}</span>
+                <BarChart3 className="w-4 h-4" />
               </motion.button>
             )}
 
-            {/* Cozinha */}
+            {/* Cozinha — só md+ */}
             {isCozinha && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/cozinha')}
-                className="relative w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+                className="hidden md:flex relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
                 title={t('nav.kitchen')}
               >
-                <ChefHat className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">{t('nav.kitchen')}</span>
+                <ChefHat className="w-4 h-4" />
                 {pendingOrders > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-black"
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}>
                     {pendingOrders}
                   </span>
@@ -105,18 +101,17 @@ export function Header() {
               </motion.button>
             )}
 
-            {/* Delivery */}
+            {/* Delivery — só md+ */}
             {isDelivery && (
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/delivery')}
-                className="relative w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+                className="hidden md:flex relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
                 title={t('nav.delivery')}
               >
-                <Bike className="w-5 h-5" />
-                <span className="hidden lg:inline text-sm">{t('nav.delivery')}</span>
+                <Bike className="w-4 h-4" />
                 {deliveryOrders > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-black"
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
                     style={{ backgroundColor: 'var(--primary-neon)' }}>
                     {deliveryOrders}
                   </span>
@@ -124,56 +119,52 @@ export function Header() {
               </motion.button>
             )}
 
-            {/* Learning */}
+            {/* Learning — só lg+ */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/learning')}
-              className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+              className="hidden lg:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
               title={t('nav.learning')}
             >
-              <GraduationCap className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">{t('nav.learning')}</span>
+              <GraduationCap className="w-4 h-4" />
             </motion.button>
 
-            {/* Sobre */}
+            {/* Info — só lg+ */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/info')}
-              className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+              className="hidden lg:flex w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm items-center justify-center text-white hover:bg-white/20 transition-colors"
               title={t('nav.info')}
             >
-              <Info className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">{t('nav.info')}</span>
+              <Info className="w-4 h-4" />
             </motion.button>
 
-            {/* Perfil/Login */}
+            {/* Perfil/Login — sempre visível */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate(isAuthenticated ? '/perfil' : '/auth')}
-              className="w-10 h-10 md:w-auto md:px-3 md:py-2 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center gap-2 text-white hover:bg-white/20 transition-colors"
+              className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
               title={isAuthenticated ? t('nav.profile') : t('nav.login')}
             >
-              <User className="w-5 h-5" />
-              <span className="hidden xl:inline text-sm">
-                {isAuthenticated ? t('nav.profile') : t('nav.login')}
-              </span>
+              <User className="w-4 h-4" />
             </motion.button>
 
-            {/* Carrinho */}
+            {/* Carrinho — sempre visível */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/carrinho')}
-              className="relative w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              className="relative w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
               title={t('nav.cart')}
             >
-              <ShoppingCart className="w-6 h-6" />
+              <ShoppingCart className="w-4 h-4" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center text-black"
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-black"
                   style={{ backgroundColor: 'var(--primary-neon)' }}>
                   {itemCount}
                 </span>
               )}
             </motion.button>
+
           </div>
         </div>
       </div>
