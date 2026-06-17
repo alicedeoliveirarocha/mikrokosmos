@@ -7,10 +7,21 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { getProductImage } from '../utils/productImages';
 import { Minus, Plus, Trash2, Heart, Flame, Apple } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { StarRating } from '../components/StarRating';
 import { toast } from 'sonner';
+
+// Tema festivo por evento sazonal, identificado pelo emoji no início do nome do produto.
+// 🌎 Copa do Mundo -> confete | 💕 Dia dos Namorados -> corações
+// 🎤 Comeback Season -> brilho/sparkles | 🎃 Cinema Horror Night -> sangue/spooky
+function getSeasonalCelebration(nome: string): string[] | null {
+  if (nome.startsWith('🌎')) return ['🎉', '⚽', '🟡', '🟢', '🎊'];
+  if (nome.startsWith('💕')) return ['💕', '❤️', '💖', '✨'];
+  if (nome.startsWith('🎤')) return ['✨', '🌟', '💫', '🎤'];
+  if (nome.startsWith('🎃')) return ['🩸', '💀', '🎃', '🦇'];
+  return null;
+}
 
 export function ProductDetail() {
   const { id } = useParams();
@@ -22,6 +33,7 @@ export function ProductDetail() {
   const [userRating, setUserRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
+  const [celebration, setCelebration] = useState<string[] | null>(null);
 
   const product = products.find(p => p.id === id);
 
@@ -64,10 +76,23 @@ export function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    if (quantity > 0) {
+    if (quantity === 0) return;
+
+    const theme = product.categoria === 'Sazonal' ? getSeasonalCelebration(product.nome) : null;
+
+    const finish = () => {
       addToCart(product, quantity);
       toast.success(`${quantity}x ${product.nome} adicionado ao carrinho!`);
       navigate('/home');
+    };
+
+    if (theme) {
+      // Dispara o efeito festivo e só navega depois de um instante,
+      // para a pessoa ver a celebração antes de ir pra Home.
+      setCelebration(theme);
+      setTimeout(finish, 900);
+    } else {
+      finish();
     }
   };
 
@@ -124,6 +149,34 @@ export function ProductDetail() {
   return (
     <div className="min-h-screen">
       <Header />
+
+      {/* Overlay de celebração sazonal (confete / corações / brilho / spooky) */}
+      <AnimatePresence>
+        {celebration && (
+          <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+            {Array.from({ length: 28 }).map((_, i) => {
+              const emoji = celebration[i % celebration.length];
+              const startX = Math.random() * 100;
+              const delay = Math.random() * 0.25;
+              const duration = 1.1 + Math.random() * 0.6;
+              const spin = Math.random() > 0.5 ? 220 : -220;
+              const size = 22 + Math.random() * 18;
+              return (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 1, top: '100vh', left: `${startX}vw`, rotate: 0, scale: 0.7 + Math.random() * 0.6 }}
+                  animate={{ opacity: 0, top: '-10vh', rotate: spin }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration, delay, ease: 'easeOut' }}
+                  style={{ position: 'absolute', fontSize: size }}
+                >
+                  {emoji}
+                </motion.span>
+              );
+            })}
+          </div>
+        )}
+      </AnimatePresence>
       
       <main className="max-w-4xl mx-auto px-4 py-8 pb-32">
         {/* Imagem do Produto */}
