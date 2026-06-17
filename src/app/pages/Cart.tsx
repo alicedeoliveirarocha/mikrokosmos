@@ -1,3 +1,4 @@
+// src/app/pages/Cart.tsx
 import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
@@ -5,11 +6,12 @@ import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrdersContext';
 import { useAuth } from '../context/AuthContext';
 import { useUniverse } from '../context/UniverseContext';
+import { useInsumos } from '../context/InsumoContext';
 import { useNavigate } from 'react-router';
 import {
   Minus, Plus, Trash2, ShoppingBag, User, MapPin, Phone,
   MessageSquare, Sparkles, Check, CreditCard, ChevronDown,
-  ChevronUp, Plus as PlusIcon, X
+  ChevronUp, Plus as PlusIcon, X, FileText, Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getProductImage } from '../utils/productImages';
@@ -23,6 +25,7 @@ interface SavedAddress {
   id: string;
   label: string;
   value: string;
+  cep?: string;
 }
 
 interface SavedCard {
@@ -64,6 +67,7 @@ export function Cart() {
   const { addOrder } = useOrders();
   const { user } = useAuth();
   const { categoria } = useUniverse();
+  const { consumeInsumos } = useInsumos();
 
   const [step, setStep] = useState<'cart' | 'photocards' | 'checkout'>('cart');
   const [wantPhotocards, setWantPhotocards] = useState(true);
@@ -80,8 +84,19 @@ export function Cart() {
   const [showAddresses, setShowAddresses] = useState(false);
   const [newAddressLabel, setNewAddressLabel] = useState('');
 
+  // CEP automático
+  const [cep, setCep] = useState('');
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepError, setCepError] = useState('');
+  const [rua, setRua] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [uf, setUf] = useState('');
+  const [numero, setNumero] = useState('');
+  const [complemento, setComplemento] = useState('');
+
   // Payment
-  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'dinheiro' | 'cartao'>('pix');
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'dinheiro' | 'cartao' | 'boleto'>('pix');
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
@@ -89,6 +104,7 @@ export function Cart() {
   const [cardCvv, setCardCvv] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [saveCard, setSaveCard] = useState(false);
+  const [boletoCode, setBoletoCode] = useState('');
 
   const isKpop = categoria === 'Kpop';
 
@@ -100,6 +116,58 @@ export function Cart() {
     setCustomerPhone(data.phone || '');
   }, [user]);
 
+  // ── CEP automático (ViaCEP) ────────────────────────────────────
+  const formatCep = (val: string) =>
+    val.replace(/\D/g, '').slice(0, 8).replace(/^(\d{5})(\d)/, '$1-$2');
+
+  const handleCepChange = (val: string) => {
+    setCep(formatCep(val));
+    setCepError('');
+  };
+
+  const buscarCep = async () => {
+    const cleanCep = cep.replace(/\D/g, '');
+    if (cleanCep.length !== 8) {
+      setCepError('CEP deve ter 8 dígitos');
+      return;
+    }
+    setCepLoading(true);
+    setCepError('');
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        setCepError('CEP não encontrado');
+        setRua(''); setBairro(''); setCidade(''); setUf('');
+      } else {
+        setRua(data.logradouro || '');
+        setBairro(data.bairro || '');
+        setCidade(data.localidade || '');
+        setUf(data.uf || '');
+        toast.success('Endereço encontrado! ✅');
+      }
+    } catch {
+      setCepError('Erro ao buscar CEP. Verifique sua conexão.');
+    } finally {
+      setCepLoading(false);
+    }
+  };
+
+  // Monta o endereço completo a partir dos campos do CEP
+  useEffect(() => {
+    if (rua && cidade) {
+      const partes = [
+        rua,
+        numero && `nº ${numero}`,
+        complemento,
+        bairro,
+        cidade && uf ? `${cidade} - ${uf}` : cidade,
+        cep && `CEP: ${cep}`,
+      ].filter(Boolean);
+      setCustomerAddress(partes.join(', '));
+    }
+  }, [rua, numero, complemento, bairro, cidade, uf, cep]);
+
   const handleSaveAddress = () => {
     if (!customerAddress.trim()) return;
     const label = newAddressLabel.trim() || `Endereço ${customerData.addresses.length + 1}`;
@@ -107,6 +175,7 @@ export function Cart() {
       id: Date.now().toString(),
       label,
       value: customerAddress.trim(),
+      cep: cep || undefined,
     };
     const updated = { ...customerData, addresses: [...customerData.addresses, newAddr] };
     setCustomerData(updated);
@@ -159,6 +228,20 @@ export function Cart() {
   const formatExpiry = (val: string) =>
     val.replace(/\D/g, '').slice(0, 4).replace(/^(.{2})(.+)/, '$1/$2');
 
+  // Gera um código de boleto fake (formato visual realista)
+  const gerarCodigoBoleto = () => {
+    const blocks = Array.from({ length: 5 }, () =>
+      Math.floor(10000 + Math.random() * 90000).toString()
+    );
+    return blocks.join('.');
+  };
+
+  useEffect(() => {
+    if (paymentMethod === 'boleto' && !boletoCode) {
+      setBoletoCode(gerarCodigoBoleto());
+    }
+  }, [paymentMethod]);
+
   const filteredCards = photocards.filter(c =>
     rarityFilter === 'all' || c.rarity === rarityFilter
   );
@@ -200,6 +283,8 @@ export function Cart() {
     try {
       const paymentInfo = paymentMethod === 'cartao'
         ? ` | Cartão: ••••${cardNumber.replace(/\s/g, '').slice(-4)}`
+        : paymentMethod === 'boleto'
+        ? ` | Boleto: ${boletoCode}`
         : ` | Pagamento: ${paymentMethod.toUpperCase()}`;
 
       const orderId = await addOrder({
@@ -218,6 +303,16 @@ export function Cart() {
 
       if (orderId) {
         toast.success('Pedido enviado para a cozinha! 🍜');
+
+        // 🔗 Liga o pedido ao estoque de insumos — deduz os ingredientes consumidos
+        consumeInsumos(
+          items.map(item => ({
+            nome: item.nome,
+            categoria: item.categoria || 'geral',
+            quantidade: item.quantidade,
+          }))
+        );
+
         setOrderDone(true);
       } else {
         toast.error('Erro ao enviar pedido. Tente novamente.');
@@ -241,6 +336,18 @@ export function Cart() {
                 ? 'Sua comanda foi para a cozinha. Aqui estão suas photocards:'
                 : 'Sua comanda foi para a cozinha!'}
             </p>
+
+            {paymentMethod === 'boleto' && (
+              <div className="max-w-md mx-auto mb-8 p-5 rounded-2xl bg-white/5 border border-white/10 text-left">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
+                  <p className="text-white font-bold">Boleto Gerado</p>
+                </div>
+                <p className="text-white/50 text-xs mb-1">Código de barras:</p>
+                <p className="text-white font-mono text-sm tracking-wide mb-3 break-all">{boletoCode}</p>
+                <p className="text-white/40 text-xs">Vencimento em 3 dias úteis. Pague em qualquer banco ou lotérica.</p>
+              </div>
+            )}
 
             {isKpop && selectedCards.length > 0 && (
               <div className="flex flex-wrap justify-center gap-4 mb-10">
@@ -481,10 +588,57 @@ export function Cart() {
               )}
             </AnimatePresence>
 
+            {/* ── CEP automático ── */}
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+              <p className="text-white/60 text-xs flex items-center gap-1">
+                <MapPin className="w-3 h-3" /> Buscar endereço por CEP
+              </p>
+              <div className="flex gap-2">
+                <input
+                  value={cep}
+                  onChange={e => handleCepChange(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && buscarCep()}
+                  placeholder="00000-000"
+                  maxLength={9}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                />
+                <button
+                  onClick={buscarCep}
+                  disabled={cepLoading}
+                  className="px-4 py-2.5 rounded-xl text-sm font-bold text-black flex items-center gap-2 disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--primary-neon)' }}
+                >
+                  {cepLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Buscar'}
+                </button>
+              </div>
+              {cepError && <p className="text-red-400 text-xs">{cepError}</p>}
+
+              {rua && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2 pt-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    <input value={rua} onChange={e => setRua(e.target.value)} placeholder="Rua"
+                      className="col-span-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                    <input value={numero} onChange={e => setNumero(e.target.value)} placeholder="Nº"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                  </div>
+                  <input value={complemento} onChange={e => setComplemento(e.target.value)} placeholder="Complemento (apto, bloco...)"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                  <div className="grid grid-cols-3 gap-2">
+                    <input value={bairro} onChange={e => setBairro(e.target.value)} placeholder="Bairro"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                    <input value={cidade} onChange={e => setCidade(e.target.value)} placeholder="Cidade"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                    <input value={uf} onChange={e => setUf(e.target.value.toUpperCase().slice(0, 2))} placeholder="UF"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30" />
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
             <div className="relative">
               <MapPin className="absolute left-3 top-3 w-4 h-4 text-white/40" />
               <textarea value={customerAddress} onChange={e => setCustomerAddress(e.target.value)}
-                placeholder="Digite um endereço (opcional)"
+                placeholder="Ou digite o endereço manualmente"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 resize-none"
                 rows={2} />
             </div>
@@ -518,12 +672,12 @@ export function Cart() {
               <CreditCard className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
               Forma de Pagamento
             </p>
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {(['pix', 'dinheiro', 'cartao'] as const).map(method => (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              {(['pix', 'dinheiro', 'cartao', 'boleto'] as const).map(method => (
                 <button key={method} onClick={() => { setPaymentMethod(method); if (method === 'cartao') setShowCardForm(true); }}
                   className={`py-3 rounded-xl font-bold text-sm transition-all border ${paymentMethod === method ? 'text-black border-transparent' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'}`}
                   style={paymentMethod === method ? { backgroundColor: 'var(--primary-neon)' } : {}}>
-                  {method === 'pix' ? '🏦 PIX' : method === 'dinheiro' ? '💵 Dinheiro' : '💳 Cartão'}
+                  {method === 'pix' ? '🏦 PIX' : method === 'dinheiro' ? '💵 Dinheiro' : method === 'cartao' ? '💳 Cartão' : '📄 Boleto'}
                 </button>
               ))}
             </div>
@@ -589,6 +743,20 @@ export function Cart() {
                     </label>
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {paymentMethod === 'boleto' && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4" style={{ color: 'var(--primary-neon)' }} />
+                  <p className="text-white text-sm font-bold">Pagamento via Boleto Bancário</p>
+                </div>
+                <p className="text-white/50 text-xs leading-relaxed">
+                  O boleto será gerado após confirmar o pedido, com vencimento em 3 dias úteis.
+                  Pode ser pago em qualquer banco, lotérica ou app bancário.
+                </p>
               </motion.div>
             )}
           </div>

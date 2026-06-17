@@ -1,8 +1,13 @@
 // src/app/App.tsx
 import { RouterProvider } from 'react-router';
 import { router } from './routes';
-import '../i18n/config'; // inicializa o i18n — não remover!
+import { InsumoProvider } from './context/InsumoContext';
+import '../i18n/config';
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <InsumoProvider>
+      <RouterProvider router={router} />
+    </InsumoProvider>
+  );
 }
