@@ -396,7 +396,7 @@ export function Cinema() {
               <div className="relative z-10">
                 <div className="text-6xl mb-4">{combo.emoji}</div>
                 <h4 className="text-white font-bold text-xl mb-2">{combo.nome}</h4>
-                <p className="text-white/50 text-sm mb-6 leading-relaxed">{combo.desc}</p>
+                <p className="text-white/50 text-sm mb-6 leading-relaxed">{t(`products.${combo.id}`, { defaultValue: combo.desc })}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-3xl font-bold" style={{ color: primaryColor }}>R$ {combo.preco.toFixed(2)}</span>
                   <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}

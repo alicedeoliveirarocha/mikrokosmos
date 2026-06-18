@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Product } from '../data/products';
 import { getProductImage } from '../utils/productImages';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -14,6 +15,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index }: ProductCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { categoria } = useUniverse();
   const [averageRating, setAverageRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
@@ -98,7 +100,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             text-sm text-white/60 mb-2 line-clamp-2
             ${isCinema ? 'font-serif italic' : ''}
           `}>
-            {product.desc}
+            {t(`products.${product.id}`, { defaultValue: product.desc })}
           </p>
           
           {isKpop && totalRatings > 0 && (
@@ -132,7 +134,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
                 className="px-4 py-2 text-black font-bold text-sm tracking-wider uppercase rounded-sm"
                 style={{ backgroundColor: 'var(--primary-neon)' }}
               >
-                Ver
+                {t('common.view', { defaultValue: 'Ver' })}
               </motion.div>
             )}
           </div>
