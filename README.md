@@ -152,7 +152,7 @@ src/
 | Nome | GitHub |
 |------|--------|
 | **Alice de Oliveira Rocha** | [@alicedeolivirarocha](https://github.com/alicedeolivirarocha) |
-| **Giovanna** | — |
+| **Giovanna** | [giovannadias071@gmail.com] |
 
 ---
 
