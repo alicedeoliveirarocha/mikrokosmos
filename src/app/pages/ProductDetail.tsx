@@ -1,3 +1,4 @@
+// src/app/pages/ProductDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Header } from '../components/Header';
@@ -11,10 +12,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { StarRating } from '../components/StarRating';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 // Tema festivo por evento sazonal, identificado pelo emoji no início do nome do produto.
-// 🌎 Copa do Mundo -> confete | 💕 Dia dos Namorados -> corações
-// 🎤 Comeback Season -> brilho/sparkles | 🎃 Cinema Horror Night -> sangue/spooky
 function getSeasonalCelebration(nome: string): string[] | null {
   if (nome.startsWith('🌎')) return ['🎉', '⚽', '🟡', '🟢', '🎊'];
   if (nome.startsWith('💕')) return ['💕', '❤️', '💖', '✨'];
@@ -28,6 +28,7 @@ export function ProductDetail() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user, isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [userRating, setUserRating] = useState(0);
@@ -37,29 +38,23 @@ export function ProductDetail() {
 
   const product = products.find(p => p.id === id);
 
-  // Carregar rating e favoritos do localStorage
   useEffect(() => {
     if (!product) return;
 
-    // Carregar ratings
     const allRatings = JSON.parse(localStorage.getItem('mikrokosmos_product_ratings') || '{}');
     const productRatings = allRatings[product.id] || [];
-    
+
     if (productRatings.length > 0) {
       const sum = productRatings.reduce((acc: number, r: any) => acc + r.rating, 0);
       setAverageRating(sum / productRatings.length);
       setTotalRatings(productRatings.length);
     }
 
-    // Carregar rating do usuário
     if (isAuthenticated && user) {
       const userRatingData = productRatings.find((r: any) => r.userId === user.id);
-      if (userRatingData) {
-        setUserRating(userRatingData.rating);
-      }
+      if (userRatingData) setUserRating(userRatingData.rating);
     }
 
-    // Carregar favoritos
     if (isAuthenticated && user) {
       const favorites = JSON.parse(localStorage.getItem('mikrokosmos_favorites') || '{}');
       const userFavorites = favorites[user.id] || [];
@@ -70,7 +65,7 @@ export function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-white text-xl">Produto não encontrado</p>
+        <p className="text-white text-xl">{t('productDetail.notFound')}</p>
       </div>
     );
   }
@@ -82,13 +77,11 @@ export function ProductDetail() {
 
     const finish = () => {
       addToCart(product, quantity);
-      toast.success(`${quantity}x ${product.nome} adicionado ao carrinho!`);
+      toast.success(t('productDetail.toastAdded', { quantity, nome: product.nome }));
       navigate('/home');
     };
 
     if (theme) {
-      // Dispara o efeito festivo e só navega depois de um instante,
-      // para a pessoa ver a celebração antes de ir pra Home.
       setCelebration(theme);
       setTimeout(finish, 900);
     } else {
@@ -98,50 +91,45 @@ export function ProductDetail() {
 
   const handleRatingChange = (rating: number) => {
     if (!isAuthenticated || !user) {
-      toast.error('Faça login para avaliar produtos');
+      toast.error(t('productDetail.loginToRate'));
       navigate('/auth');
       return;
     }
 
     const allRatings = JSON.parse(localStorage.getItem('mikrokosmos_product_ratings') || '{}');
     const productRatings = allRatings[product.id] || [];
-    
-    // Remover rating antigo do usuário se existir
     const filteredRatings = productRatings.filter((r: any) => r.userId !== user.id);
-    
-    // Adicionar novo rating
     filteredRatings.push({ userId: user.id, rating, date: new Date().toISOString() });
     allRatings[product.id] = filteredRatings;
-    
     localStorage.setItem('mikrokosmos_product_ratings', JSON.stringify(allRatings));
-    
+
     setUserRating(rating);
     const sum = filteredRatings.reduce((acc: number, r: any) => acc + r.rating, 0);
     setAverageRating(sum / filteredRatings.length);
     setTotalRatings(filteredRatings.length);
-    
-    toast.success(`Avaliação de ${rating} estrelas salva!`);
+
+    toast.success(t('productDetail.ratedSuccess', { rating }));
   };
 
   const handleToggleFavorite = () => {
     if (!isAuthenticated || !user) {
-      toast.error('Faça login para adicionar favoritos');
+      toast.error(t('productDetail.loginToFavorite'));
       navigate('/auth');
       return;
     }
 
     const favorites = JSON.parse(localStorage.getItem('mikrokosmos_favorites') || '{}');
     const userFavorites = favorites[user.id] || [];
-    
+
     if (isFavorite) {
       favorites[user.id] = userFavorites.filter((fav: string) => fav !== product.id);
-      toast.success('Removido dos favoritos');
+      toast.success(t('productDetail.removedFavorite'));
     } else {
       userFavorites.push(product.id);
       favorites[user.id] = userFavorites;
-      toast.success('Adicionado aos favoritos');
+      toast.success(t('productDetail.addedFavorite'));
     }
-    
+
     localStorage.setItem('mikrokosmos_favorites', JSON.stringify(favorites));
     setIsFavorite(!isFavorite);
   };
@@ -150,7 +138,7 @@ export function ProductDetail() {
     <div className="min-h-screen">
       <Header />
 
-      {/* Overlay de celebração sazonal (confete / corações / brilho / spooky) */}
+      {/* Overlay de celebração sazonal */}
       <AnimatePresence>
         {celebration && (
           <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
@@ -177,7 +165,7 @@ export function ProductDetail() {
           </div>
         )}
       </AnimatePresence>
-      
+
       <main className="max-w-4xl mx-auto px-4 py-8 pb-32">
         {/* Imagem do Produto */}
         <motion.div
@@ -191,15 +179,12 @@ export function ProductDetail() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          
-          {/* Botão Favorito */}
+
           <button
             onClick={handleToggleFavorite}
             className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110"
           >
-            <Heart
-              className={`w-6 h-6 transition-all ${isFavorite ? 'fill-red-500 text-red-500' : 'text-white'}`}
-            />
+            <Heart className={`w-6 h-6 transition-all ${isFavorite ? 'fill-red-500 text-red-500' : 'text-white'}`} />
           </button>
         </motion.div>
 
@@ -210,21 +195,17 @@ export function ProductDetail() {
           transition={{ delay: 0.1 }}
           className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-8 mb-6"
         >
-          {/* Nome e Preço */}
           <div className="mb-6">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{product.nome}</h1>
-            <p 
-              className="text-4xl md:text-5xl font-bold mb-4"
-              style={{ color: 'var(--primary-neon)' }}
-            >
+            <p className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--primary-neon)' }}>
               R$ {product.preco.toFixed(2)}
             </p>
             <p className="text-white/80 text-lg leading-relaxed mb-4">{product.descLonga}</p>
-            
+
             {/* Rating */}
             <div className="flex flex-col gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
               <div className="flex items-center justify-between">
-                <span className="text-white/80">Avaliação Média:</span>
+                <span className="text-white/80">{t('productDetail.avgRating')}</span>
                 <div className="flex items-center gap-2">
                   <StarRating rating={averageRating} readonly size={20} />
                   <span className="text-white/60 text-sm">
@@ -232,15 +213,11 @@ export function ProductDetail() {
                   </span>
                 </div>
               </div>
-              
+
               {isAuthenticated && (
                 <div className="flex items-center justify-between pt-3 border-t border-white/10">
-                  <span className="text-white/80">Sua Avaliação:</span>
-                  <StarRating 
-                    rating={userRating} 
-                    onRatingChange={handleRatingChange}
-                    size={24}
-                  />
+                  <span className="text-white/80">{t('productDetail.yourRating')}</span>
+                  <StarRating rating={userRating} onRatingChange={handleRatingChange} size={24} />
                 </div>
               )}
             </div>
@@ -248,11 +225,10 @@ export function ProductDetail() {
 
           {/* Controle de Quantidade */}
           <div className="mb-6">
-            <p className="text-white/60 text-sm mb-3">Quantidade</p>
+            <p className="text-white/60 text-sm mb-3">{t('productDetail.quantity')}</p>
             <div className="flex items-center gap-4">
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                 onClick={() => setQuantity(Math.max(0, quantity - 1))}
                 className="w-14 h-14 rounded-full border-2 flex items-center justify-center text-white transition-all hover:bg-white/10"
                 style={{ borderColor: 'var(--primary-neon)' }}
@@ -264,8 +240,7 @@ export function ProductDetail() {
               <span className="text-3xl font-bold text-white w-16 text-center">{quantity}</span>
 
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                 onClick={() => setQuantity(quantity + 1)}
                 className="w-14 h-14 rounded-full border-2 flex items-center justify-center text-white transition-all hover:bg-white/10"
                 style={{ borderColor: 'var(--primary-neon)' }}
@@ -275,10 +250,8 @@ export function ProductDetail() {
 
               {quantity > 0 && (
                 <motion.button
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   onClick={() => setQuantity(0)}
                   className="w-14 h-14 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center text-red-500 transition-all hover:bg-red-500/30"
                 >
@@ -290,28 +263,24 @@ export function ProductDetail() {
 
           {/* Valor Total */}
           <div className="flex items-center justify-between py-4 border-t border-white/10 mb-6">
-            <span className="text-white/80 text-lg">Valor Total:</span>
-            <span 
-              className="text-3xl font-bold"
-              style={{ color: 'var(--primary-neon)' }}
-            >
+            <span className="text-white/80 text-lg">{t('productDetail.totalValue')}</span>
+            <span className="text-3xl font-bold" style={{ color: 'var(--primary-neon)' }}>
               R$ {(product.preco * quantity).toFixed(2)}
             </span>
           </div>
 
           {/* Botão Adicionar */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={handleAddToCart}
             disabled={quantity === 0}
             className="w-full py-5 rounded-2xl font-bold text-lg text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-            style={{ 
+            style={{
               backgroundColor: quantity > 0 ? 'var(--primary-neon)' : '#666',
               boxShadow: quantity > 0 ? '0 10px 30px rgba(0, 255, 255, 0.3)' : 'none'
             }}
           >
-            {quantity > 0 ? 'ADICIONAR AO CARRINHO' : 'SELECIONE A QUANTIDADE'}
+            {quantity > 0 ? t('productDetail.addToCart') : t('productDetail.selectQuantity')}
           </motion.button>
         </motion.div>
 
@@ -323,54 +292,35 @@ export function ProductDetail() {
           className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-8 mb-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: 'var(--primary-neon)' }}
-            >
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--primary-neon)' }}>
               <Flame className="w-5 h-5 text-black" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Informações Nutricionais</h2>
+            <h2 className="text-2xl font-bold text-white">{t('productDetail.nutrition')}</h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-2xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {product.nutricao.calorias}
-              </p>
-              <p className="text-white/60 text-sm">Calorias</p>
-            </div>
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-2xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {product.nutricao.proteinas}
-              </p>
-              <p className="text-white/60 text-sm">Proteínas</p>
-            </div>
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-2xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {product.nutricao.carboidratos}
-              </p>
-              <p className="text-white/60 text-sm">Carboidratos</p>
-            </div>
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-2xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {product.nutricao.gorduras}
-              </p>
-              <p className="text-white/60 text-sm">Gorduras</p>
-            </div>
+            {[
+              { value: product.nutricao.calorias,     key: 'calories' },
+              { value: product.nutricao.proteinas,    key: 'protein' },
+              { value: product.nutricao.carboidratos, key: 'carbs' },
+              { value: product.nutricao.gorduras,     key: 'fat' },
+            ].map(({ value, key }) => (
+              <div key={key} className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
+                <p className="text-2xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>{value}</p>
+                <p className="text-white/60 text-sm">{t(`productDetail.${key}`)}</p>
+              </div>
+            ))}
           </div>
 
           {/* Ingredientes */}
           <div className="mt-6">
             <div className="flex items-center gap-2 mb-3">
               <Apple className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
-              <h3 className="text-lg font-bold text-white">Ingredientes</h3>
+              <h3 className="text-lg font-bold text-white">{t('productDetail.ingredients')}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {product.ingredientes.map((ingrediente, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 rounded-full text-sm bg-white/10 text-white border border-white/20"
-                >
+                <span key={index} className="px-3 py-1 rounded-full text-sm bg-white/10 text-white border border-white/20">
                   {ingrediente}
                 </span>
               ))}
@@ -379,9 +329,9 @@ export function ProductDetail() {
 
           {product.alergenos && product.alergenos.length > 0 && (
             <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl">
-              <p className="text-yellow-400 font-bold mb-2">⚠️ Alerta de Alérgenos</p>
+              <p className="text-yellow-400 font-bold mb-2">⚠️ {t('productDetail.allergenAlert')}</p>
               <p className="text-white/80 text-sm">
-                Contém: {product.alergenos.join(', ')}
+                {t('productDetail.contains')} {product.alergenos.join(', ')}
               </p>
             </div>
           )}

@@ -37,7 +37,8 @@
     "kitchen": "Cocina",
     "delivery": "Delivery",
     "analytics": "Análisis",
-    "menu": "Menú"
+    "menu": "Menú",
+    "moreOptions": "Más opciones"
   },
   "welcome": {
     "title": "Mikrokosmos",
@@ -578,5 +579,28 @@
     "cc1": "Palomitas G + Refresco G",
     "cc2": "Palomitas XL + 2 refrescos + nachos + chocolate",
     "cc3": "Hot dog + jugo + papas en hilo"
+  },
+  "productDetail": {
+    "notFound": "Producto no encontrado",
+    "loginToRate": "Inicia sesión para valorar productos",
+    "ratedSuccess": "¡Valoración de {{rating}} estrellas guardada!",
+    "loginToFavorite": "Inicia sesión para agregar favoritos",
+    "removedFavorite": "Eliminado de favoritos",
+    "addedFavorite": "Añadido a favoritos",
+    "toastAdded": "{{quantity}}x {{nome}} añadido al carrito!",
+    "avgRating": "Valoración Media:",
+    "yourRating": "Tu Valoración:",
+    "quantity": "Cantidad",
+    "totalValue": "Valor Total:",
+    "addToCart": "AÑADIR AL CARRITO",
+    "selectQuantity": "SELECCIONA LA CANTIDAD",
+    "nutrition": "Información Nutricional",
+    "calories": "Calorías",
+    "protein": "Proteínas",
+    "carbs": "Carbohidratos",
+    "fat": "Grasas",
+    "ingredients": "Ingredientes",
+    "allergenAlert": "Alerta de Alérgenos",
+    "contains": "Contiene:"
   }
 }

@@ -115,7 +115,7 @@ export function Header() {
                   whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   onClick={() => setMoreOpen(prev => !prev)}
                   className={`${btnSize} relative rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors`}
-                  title="Mais opções"
+                  {...{title: t('nav.moreOptions')}}
                 >
                   <MoreVertical className={iconSize} />
                   {(pendingOrders > 0 || deliveryOrders > 0) && (isCozinha || isDelivery) && (

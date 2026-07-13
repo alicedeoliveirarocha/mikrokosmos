@@ -12,7 +12,7 @@ import { Package, CheckCircle, Navigation, X, Map, Clock, ChefHat, Bike } from '
 export function OrderTracking() {
   const { orders } = useOrders();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
 
   const myOrders = orders.filter(o =>
@@ -31,7 +31,12 @@ export function OrderTracking() {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString.replace(' ', 'T'));
-    return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const localeMap: Record<string, string> = {
+      'pt-BR': 'pt-BR', 'en': 'en-US', 'es': 'es-ES',
+      'ko': 'ko-KR', 'ja': 'ja-JP', 'zh': 'zh-CN',
+    };
+    const locale = localeMap[i18n.language] || 'pt-BR';
+    return date.toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   };
 
   if (myOrders.length === 0) {

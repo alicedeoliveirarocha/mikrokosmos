@@ -37,7 +37,8 @@
     "kitchen": "주방",
     "delivery": "배달",
     "analytics": "분석",
-    "menu": "메뉴"
+    "menu": "메뉴",
+    "moreOptions": "더 보기"
   },
   "welcome": {
     "title": "미크로코스모스",
@@ -578,5 +579,28 @@
     "cc1": "라지 팝콘 + 라지 음료",
     "cc2": "XL 팝콘 + 음료 2개 + 나초 + 초콜릿",
     "cc3": "핫도그 + 주스 + 가늘게 썬 감자튀김"
+  },
+  "productDetail": {
+    "notFound": "상품을 찾을 수 없습니다",
+    "loginToRate": "상품을 평가하려면 로그인하세요",
+    "ratedSuccess": "{{rating}}점 평가가 저장되었습니다!",
+    "loginToFavorite": "즐겨찾기를 추가하려면 로그인하세요",
+    "removedFavorite": "즐겨찾기에서 제거되었습니다",
+    "addedFavorite": "즐겨찾기에 추가되었습니다",
+    "toastAdded": "{{quantity}}x {{nome}} 장바구니에 담겼습니다!",
+    "avgRating": "평균 평점:",
+    "yourRating": "내 평점:",
+    "quantity": "수량",
+    "totalValue": "합계:",
+    "addToCart": "장바구니에 담기",
+    "selectQuantity": "수량을 선택하세요",
+    "nutrition": "영양 정보",
+    "calories": "칼로리",
+    "protein": "단백질",
+    "carbs": "탄수화물",
+    "fat": "지방",
+    "ingredients": "재료",
+    "allergenAlert": "알레르기 주의",
+    "contains": "함유:"
   }
 }

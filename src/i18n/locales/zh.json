@@ -37,7 +37,8 @@
     "kitchen": "厨房",
     "delivery": "外卖",
     "analytics": "数据分析",
-    "menu": "菜单"
+    "menu": "菜单",
+    "moreOptions": "更多选项"
   },
   "welcome": {
     "title": "微宇宙",
@@ -578,5 +579,28 @@
     "cc1": "大爆米花+大汽水",
     "cc2": "超大爆米花+2杯汽水+玉米片+巧克力",
     "cc3": "热狗+果汁+细薯条"
+  },
+  "productDetail": {
+    "notFound": "找不到该商品",
+    "loginToRate": "请登录后评价商品",
+    "ratedSuccess": "{{rating}}星评价已保存！",
+    "loginToFavorite": "请登录后添加收藏",
+    "removedFavorite": "已从收藏中移除",
+    "addedFavorite": "已添加到收藏",
+    "toastAdded": "{{quantity}}x {{nome}} 已加入购物车！",
+    "avgRating": "平均评分:",
+    "yourRating": "我的评分:",
+    "quantity": "数量",
+    "totalValue": "总计:",
+    "addToCart": "加入购物车",
+    "selectQuantity": "请选择数量",
+    "nutrition": "营养信息",
+    "calories": "卡路里",
+    "protein": "蛋白质",
+    "carbs": "碳水化合物",
+    "fat": "脂肪",
+    "ingredients": "食材",
+    "allergenAlert": "过敏原警告",
+    "contains": "含有:"
   }
 }

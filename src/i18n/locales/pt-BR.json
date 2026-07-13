@@ -37,7 +37,8 @@
     "kitchen": "Cozinha",
     "delivery": "Delivery",
     "analytics": "Analytics",
-    "menu": "Cardápio"
+    "menu": "Cardápio",
+    "moreOptions": "Mais opções"
   },
   "welcome": {
     "title": "Mikrokosmos",
@@ -578,5 +579,28 @@
     "cc1": "Pipoca G + Refri G",
     "cc2": "Pipoca XL + 2 Refris + Nachos + Chocolate",
     "cc3": "Hot Dog + Suco + Batata Palha"
+  },
+  "productDetail": {
+    "notFound": "Produto não encontrado",
+    "loginToRate": "Faça login para avaliar produtos",
+    "ratedSuccess": "Avaliação de {{rating}} estrelas salva!",
+    "loginToFavorite": "Faça login para adicionar favoritos",
+    "removedFavorite": "Removido dos favoritos",
+    "addedFavorite": "Adicionado aos favoritos",
+    "toastAdded": "{{quantity}}x {{nome}} adicionado ao carrinho!",
+    "avgRating": "Avaliação Média:",
+    "yourRating": "Sua Avaliação:",
+    "quantity": "Quantidade",
+    "totalValue": "Valor Total:",
+    "addToCart": "ADICIONAR AO CARRINHO",
+    "selectQuantity": "SELECIONE A QUANTIDADE",
+    "nutrition": "Informações Nutricionais",
+    "calories": "Calorias",
+    "protein": "Proteínas",
+    "carbs": "Carboidratos",
+    "fat": "Gorduras",
+    "ingredients": "Ingredientes",
+    "allergenAlert": "Alerta de Alérgenos",
+    "contains": "Contém:"
   }
 }

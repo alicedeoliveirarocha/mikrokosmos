@@ -37,7 +37,8 @@
     "kitchen": "キッチン",
     "delivery": "デリバリー",
     "analytics": "分析",
-    "menu": "メニュー"
+    "menu": "メニュー",
+    "moreOptions": "その他"
   },
   "welcome": {
     "title": "ミクロコスモス",
@@ -578,5 +579,28 @@
     "cc1": "Lポップコーン+Lドリンク",
     "cc2": "XLポップコーン+ドリンク2個+ナチョス+チョコレート",
     "cc3": "ホットドッグ+ジュース+シューストリングポテト"
+  },
+  "productDetail": {
+    "notFound": "商品が見つかりません",
+    "loginToRate": "評価するにはログインしてください",
+    "ratedSuccess": "{{rating}}つ星の評価を保存しました！",
+    "loginToFavorite": "お気に入りに追加するにはログインしてください",
+    "removedFavorite": "お気に入りから削除しました",
+    "addedFavorite": "お気に入りに追加しました",
+    "toastAdded": "{{quantity}}x {{nome}} をカートに追加しました！",
+    "avgRating": "平均評価:",
+    "yourRating": "あなたの評価:",
+    "quantity": "数量",
+    "totalValue": "合計金額:",
+    "addToCart": "カートに追加",
+    "selectQuantity": "数量を選択してください",
+    "nutrition": "栄養情報",
+    "calories": "カロリー",
+    "protein": "タンパク質",
+    "carbs": "炭水化物",
+    "fat": "脂質",
+    "ingredients": "材料",
+    "allergenAlert": "アレルゲン警告",
+    "contains": "含有:"
   }
 }

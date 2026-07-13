@@ -820,7 +820,7 @@ export function Cart() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold text-white mb-1 truncate">{item.nome}</h3>
-                  <p className="text-sm text-white/60 mb-3">{item.desc}</p>
+                  <p className="text-sm text-white/60 mb-3">{t(`products.${item.id}`, { defaultValue: item.desc })}</p>
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}

@@ -37,7 +37,8 @@
     "kitchen": "Kitchen",
     "delivery": "Delivery",
     "analytics": "Analytics",
-    "menu": "Menu"
+    "menu": "Menu",
+    "moreOptions": "More options"
   },
   "welcome": {
     "title": "Mikrokosmos",
@@ -578,5 +579,28 @@
     "cc1": "Large popcorn + large soda",
     "cc2": "XL popcorn + 2 sodas + nachos + chocolate",
     "cc3": "Hot dog + juice + shoestring fries"
+  },
+  "productDetail": {
+    "notFound": "Product not found",
+    "loginToRate": "Log in to rate products",
+    "ratedSuccess": "{{rating}}-star rating saved!",
+    "loginToFavorite": "Log in to add favorites",
+    "removedFavorite": "Removed from favorites",
+    "addedFavorite": "Added to favorites",
+    "toastAdded": "{{quantity}}x {{nome}} added to cart!",
+    "avgRating": "Average Rating:",
+    "yourRating": "Your Rating:",
+    "quantity": "Quantity",
+    "totalValue": "Total Value:",
+    "addToCart": "ADD TO CART",
+    "selectQuantity": "SELECT QUANTITY",
+    "nutrition": "Nutritional Information",
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbohydrates",
+    "fat": "Fat",
+    "ingredients": "Ingredients",
+    "allergenAlert": "Allergen Warning",
+    "contains": "Contains:"
   }
 }
