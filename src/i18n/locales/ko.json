@@ -602,5 +602,159 @@
     "ingredients": "재료",
     "allergenAlert": "알레르기 주의",
     "contains": "함유:"
+  },
+  "kitchen": {
+    "bannerTitle": "주방",
+    "bannerDesc": "주문 관리 패널 - 모든 주문을 관리하고 추적하세요",
+    "status": {
+      "pending": "대기중",
+      "preparing": "준비중",
+      "ready": "준비완료",
+      "cancelled": "취소됨"
+    },
+    "orderNumber": "주문 #",
+    "customer": "고객: ",
+    "notes": "메모:",
+    "startPrep": "준비 시작",
+    "markReady": "준비완료 표시",
+    "sendDelivery": "배달로 보내기",
+    "cancel": "취소",
+    "noOrders": "{{status}} 주문 없음",
+    "updated": "주문이 {{label}}(으)로 업데이트되었습니다"
+  },
+  "delivery": {
+    "bannerTitle": "배달",
+    "bannerDesc": "배달원 패널 - 배달을 관리하고 수령을 확인하세요",
+    "status": {
+      "onRoute": "배달중",
+      "delivered": "배달완료",
+      "ready": "준비완료"
+    },
+    "orderNumber": "주문 #",
+    "items": "상품 ({{count}}개):",
+    "pickupOrder": "🚀 주문 수령",
+    "track": "추적",
+    "confirm": "✅ 확인",
+    "noReadyOrders": "수령 대기 중인 주문이 없습니다",
+    "noOrders": "{{status}} 주문 없음",
+    "updated": "주문 업데이트: {{label}}",
+    "defaultCustomer": "고객",
+    "defaultAddress": "주소 미제공"
+  },
+  "roleSwitcher": {
+    "title": "역할 변경",
+    "subtitle": "RBAC 데모 시스템",
+    "roles": {
+      "cliente": {
+        "label": "고객",
+        "desc": "주문하고 메뉴 탐색하기"
+      },
+      "cozinha": {
+        "label": "주방",
+        "desc": "주문 준비 관리"
+      },
+      "delivery": {
+        "label": "배달",
+        "desc": "배달 관리"
+      },
+      "admin": {
+        "label": "관리자",
+        "desc": "전체 시스템 접근"
+      }
+    },
+    "demoNote": "💡 데모 모드: 이 스위처를 통해 다양한 접근 권한을 테스트할 수 있습니다. 실제 운영에서는 역할이 자동으로 부여됩니다."
+  },
+  "stock": {
+    "title": "재고 관리",
+    "totalValue": "총 재고 가치:",
+    "resetBtn": "재고 초기화",
+    "alerts": {
+      "outTitle": "🚨 재고 소진!",
+      "lowTitle": "⚠️ 재고 부족"
+    },
+    "status": {
+      "ok": "정상",
+      "low": "부족",
+      "critical": "위험",
+      "out": "소진"
+    },
+    "categories": {
+      "all": "전체",
+      "proteina": "🥩 단백질",
+      "vegetal": "🥦 채소",
+      "grao": "🌾 곡물",
+      "molho": "🫙 소스",
+      "bebida": "🍹 음료",
+      "embalagem": "📦 포장재",
+      "outro": "➕ 기타"
+    },
+    "restockBtn": "보충",
+    "discardBtn": "폐기",
+    "restockPlaceholder": "+ 수량 ({{unit}})",
+    "discardPlaceholder": "- 수량 ({{unit}})",
+    "reasons": {
+      "perda": "손실",
+      "vencido": "유통기한만료",
+      "quebra": "파손",
+      "outro": "기타"
+    }
+  },
+  "quickActions": {
+    "switchEra": "시대 변경",
+    "switchEraDesc": "테마 변경",
+    "about": "소개",
+    "aboutDesc": "프로젝트 알아보기",
+    "learning": "학습",
+    "learningDesc": "적용된 개념들"
+  },
+  "statsBar": {
+    "ordersToday": "오늘 주문",
+    "avgTime": "평균 시간",
+    "rating": "평점"
+  },
+  "learning": {
+    "title": "학습 대시보드",
+    "subtitle": "프로젝트에 적용된 교육과정 개념",
+    "period": "기간: 03/03/26 - 24/06/26 • 프론트엔드 개발",
+    "scheduleTopics": "교육과정 주제",
+    "implemented": "Mikrokosmos에 구현됨",
+    "techStack": "사용된 기술 스택",
+    "features": "프로젝트 기능"
+  },
+  "info": {
+    "heroDesc": "K-pop 음악 유니버스와의 동기화를 통해 미식 경험을 혁신하는 SaaS입니다.",
+    "features": {
+      "themedSync": {
+        "title": "Themed-Sync System",
+        "desc": "K-pop 음악 시대에 맞춰 레스토랑 비주얼을 동기화하는 시스템"
+      },
+      "gastronomy": {
+        "title": "내러티브 미식학",
+        "desc": "그룹의 음악과 콘셉트에서 영감을 받은 테마 요리"
+      },
+      "universes": {
+        "title": "4가지 유니버스",
+        "desc": "독자적인 비주얼 아이덴티티를 가진 AESPA, ENHYPEN, BTS, BLACKPINK"
+      },
+      "immersive": {
+        "title": "몰입형 경험",
+        "desc": "글래스모피즘과 부드러운 애니메이션이 있는 갤럭시 디자인"
+      },
+      "education": {
+        "title": "지속적인 교육",
+        "desc": "시스템 효율성 보장을 위한 교육 및 지원"
+      }
+    },
+    "universesTitle": "우리의 유니버스",
+    "colors": "컬러:",
+    "tracks": "트랙:",
+    "concept": {
+      "title": "개념",
+      "p1": "<strong style=\"color:white\">Mikrokosmos</strong>는 단순한 디지털 주문 시스템이 아닙니다. 디자인을 통해 <strong style=\"color:white\">레스토랑 또는 카페 내에서 팬 경험</strong>을 만들어내는 SaaS입니다.",
+      "p2": "<strong style=\"color:white\">Themed-Sync System</strong>을 통해 매장은 클릭 한 번으로 비주얼 아이덴티티를 완전히 바꿔 한국 음악 산업의 최신 릴리스를 따라갈 수 있습니다.",
+      "p3": "메뉴의 각 요리는 <strong style=\"color:white\">미식 내러티브</strong>로, 테마 이름과 독특한 비주얼 프레젠테이션을 통해 고객과 좋아하는 아티스트를 연결합니다.",
+      "tagline": "고객이 가장 좋아하는 아티스트의 뮤직비디오를 미식 경험으로 확장한 것입니다."
+    },
+    "tech": "기술"
   }
 }

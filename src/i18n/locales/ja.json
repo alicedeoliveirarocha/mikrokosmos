@@ -602,5 +602,159 @@
     "ingredients": "材料",
     "allergenAlert": "アレルゲン警告",
     "contains": "含有:"
+  },
+  "kitchen": {
+    "bannerTitle": "キッチン",
+    "bannerDesc": "注文管理パネル - すべての注文を管理・追跡",
+    "status": {
+      "pending": "保留中",
+      "preparing": "準備中",
+      "ready": "準備完了",
+      "cancelled": "キャンセル"
+    },
+    "orderNumber": "注文 #",
+    "customer": "お客様: ",
+    "notes": "備考:",
+    "startPrep": "準備を開始",
+    "markReady": "準備完了にする",
+    "sendDelivery": "配達に送る",
+    "cancel": "キャンセル",
+    "noOrders": "{{status}}の注文はありません",
+    "updated": "注文を{{label}}に更新しました"
+  },
+  "delivery": {
+    "bannerTitle": "デリバリー",
+    "bannerDesc": "配達員パネル - 配達を管理し受領を確認",
+    "status": {
+      "onRoute": "配達中",
+      "delivered": "配達完了",
+      "ready": "準備完了"
+    },
+    "orderNumber": "注文 #",
+    "items": "アイテム ({{count}}個):",
+    "pickupOrder": "🚀 注文を受け取る",
+    "track": "追跡",
+    "confirm": "✅ 確認",
+    "noReadyOrders": "受け取り待ちの注文はありません",
+    "noOrders": "{{status}}の注文はありません",
+    "updated": "注文を更新しました: {{label}}",
+    "defaultCustomer": "お客様",
+    "defaultAddress": "住所未提供"
+  },
+  "roleSwitcher": {
+    "title": "役割を切り替える",
+    "subtitle": "RBACデモシステム",
+    "roles": {
+      "cliente": {
+        "label": "お客様",
+        "desc": "注文してメニューを探索する"
+      },
+      "cozinha": {
+        "label": "キッチン",
+        "desc": "注文の準備を管理する"
+      },
+      "delivery": {
+        "label": "配達",
+        "desc": "配達を管理する"
+      },
+      "admin": {
+        "label": "管理者",
+        "desc": "システム全体へのアクセス"
+      }
+    },
+    "demoNote": "💡 デモモード: このスイッチャーでさまざまなアクセス権限をテストできます。本番環境では役割が自動的に割り当てられます。"
+  },
+  "stock": {
+    "title": "在庫管理",
+    "totalValue": "総在庫価値:",
+    "resetBtn": "在庫をリセット",
+    "alerts": {
+      "outTitle": "🚨 在庫切れ!",
+      "lowTitle": "⚠️ 在庫不足"
+    },
+    "status": {
+      "ok": "OK",
+      "low": "少ない",
+      "critical": "危険",
+      "out": "切れ"
+    },
+    "categories": {
+      "all": "すべて",
+      "proteina": "🥩 タンパク質",
+      "vegetal": "🥦 野菜",
+      "grao": "🌾 穀物",
+      "molho": "🫙 ソース",
+      "bebida": "🍹 飲料",
+      "embalagem": "📦 包装",
+      "outro": "➕ その他"
+    },
+    "restockBtn": "補充",
+    "discardBtn": "廃棄",
+    "restockPlaceholder": "+ 数量 ({{unit}})",
+    "discardPlaceholder": "- 数量 ({{unit}})",
+    "reasons": {
+      "perda": "損失",
+      "vencido": "期限切れ",
+      "quebra": "破損",
+      "outro": "その他"
+    }
+  },
+  "quickActions": {
+    "switchEra": "エラを切替",
+    "switchEraDesc": "テーマを変更",
+    "about": "情報",
+    "aboutDesc": "プロジェクトについて",
+    "learning": "学習",
+    "learningDesc": "適用された概念"
+  },
+  "statsBar": {
+    "ordersToday": "今日の注文",
+    "avgTime": "平均時間",
+    "rating": "評価"
+  },
+  "learning": {
+    "title": "学習ダッシュボード",
+    "subtitle": "プロジェクトに適用されたカリキュラムの概念",
+    "period": "期間: 03/03/26 - 24/06/26 • フロントエンド開発",
+    "scheduleTopics": "カリキュラムのトピック",
+    "implemented": "Mikrokosmosでの実装",
+    "techStack": "使用技術スタック",
+    "features": "プロジェクトの機能"
+  },
+  "info": {
+    "heroDesc": "K-popの音楽ユニバースとの同期を通じて、食の体験を革新するSaaSです。",
+    "features": {
+      "themedSync": {
+        "title": "Themed-Sync System",
+        "desc": "K-popの音楽エラに合わせてレストランのビジュアルを同期するシステム"
+      },
+      "gastronomy": {
+        "title": "ナラティブ・ガストロノミー",
+        "desc": "グループの楽曲とコンセプトにインスパイアされたテーマ料理"
+      },
+      "universes": {
+        "title": "4つのユニバース",
+        "desc": "AESPA、ENHYPEN、BTS、BLACKPINKの独自ビジュアルアイデンティティ"
+      },
+      "immersive": {
+        "title": "没入型体験",
+        "desc": "グラスモーフィズムとスムーズなアニメーションによるギャラクシーデザイン"
+      },
+      "education": {
+        "title": "継続的な教育",
+        "desc": "システムの効率性を確保するためのトレーニングとサポート"
+      }
+    },
+    "universesTitle": "私たちのユニバース",
+    "colors": "カラー:",
+    "tracks": "トラック:",
+    "concept": {
+      "title": "コンセプト",
+      "p1": "<strong style=\"color:white\">Mikrokosmos</strong>は単なるデジタル注文システムではありません。デザインを通じて<strong style=\"color:white\">レストランやカフェ内でファン体験</strong>を生み出すSaaSです。",
+      "p2": "<strong style=\"color:white\">Themed-Sync System</strong>を通じて、施設はワンクリックでビジュアルアイデンティティを完全に変更でき、韓国音楽業界のリリースに合わせることができます。",
+      "p3": "メニューの各料理は<strong style=\"color:white\">ガストロノミック・ナラティブ</strong>であり、テーマ名とユニークなビジュアルプレゼンテーションを通じて顧客とお気に入りのアーティストをつなぎます。",
+      "tagline": "お気に入りのアーティストのミュージックビデオを料理体験として拡張したものです。"
+    },
+    "tech": "テクノロジー"
   }
 }

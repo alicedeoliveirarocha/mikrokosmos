@@ -602,5 +602,159 @@
     "ingredients": "Ingredientes",
     "allergenAlert": "Alerta de Alérgenos",
     "contains": "Contém:"
+  },
+  "kitchen": {
+    "bannerTitle": "Cozinha",
+    "bannerDesc": "Painel de Controle de Pedidos - Gerencie e acompanhe todos os pedidos",
+    "status": {
+      "pending": "Pendentes",
+      "preparing": "Em Preparo",
+      "ready": "Prontos",
+      "cancelled": "Cancelados"
+    },
+    "orderNumber": "Pedido #",
+    "customer": "Cliente: ",
+    "notes": "Observações:",
+    "startPrep": "Iniciar Preparo",
+    "markReady": "Marcar como Pronto",
+    "sendDelivery": "Enviar para Entrega",
+    "cancel": "Cancelar",
+    "noOrders": "Nenhum pedido {{status}}",
+    "updated": "Pedido atualizado para: {{label}}"
+  },
+  "delivery": {
+    "bannerTitle": "Delivery",
+    "bannerDesc": "Painel do Motoboy - Gerencie entregas e confirme recebimentos",
+    "status": {
+      "onRoute": "Em Entrega",
+      "delivered": "Entregues",
+      "ready": "Prontos"
+    },
+    "orderNumber": "Pedido #",
+    "items": "Itens ({{count}}):",
+    "pickupOrder": "🚀 Retirar Pedido",
+    "track": "Track",
+    "confirm": "✅ Confirmar",
+    "noReadyOrders": "Nenhum pedido pronto para retirada",
+    "noOrders": "Nenhum pedido {{status}}",
+    "updated": "Pedido atualizado: {{label}}",
+    "defaultCustomer": "Cliente",
+    "defaultAddress": "Endereço não informado"
+  },
+  "roleSwitcher": {
+    "title": "Trocar Papel",
+    "subtitle": "Sistema de Demonstração RBAC",
+    "roles": {
+      "cliente": {
+        "label": "Cliente",
+        "desc": "Fazer pedidos e explorar o cardápio"
+      },
+      "cozinha": {
+        "label": "Cozinha",
+        "desc": "Gerenciar preparo de pedidos"
+      },
+      "delivery": {
+        "label": "Delivery",
+        "desc": "Controlar entregas"
+      },
+      "admin": {
+        "label": "Admin",
+        "desc": "Acesso total ao sistema"
+      }
+    },
+    "demoNote": "💡 Modo Demo: Este switcher permite testar diferentes níveis de acesso. Em produção, os papéis são atribuídos automaticamente."
+  },
+  "stock": {
+    "title": "Gestão de Estoque",
+    "totalValue": "Valor total em estoque:",
+    "resetBtn": "Resetar Estoque",
+    "alerts": {
+      "outTitle": "🚨 Estoque Esgotado!",
+      "lowTitle": "⚠️ Estoque Baixo"
+    },
+    "status": {
+      "ok": "OK",
+      "low": "Baixo",
+      "critical": "Crítico",
+      "out": "Esgotado"
+    },
+    "categories": {
+      "all": "Todos",
+      "proteina": "🥩 Proteínas",
+      "vegetal": "🥦 Vegetais",
+      "grao": "🌾 Grãos",
+      "molho": "🫙 Molhos",
+      "bebida": "🍹 Bebidas",
+      "embalagem": "📦 Embalagens",
+      "outro": "➕ Outros"
+    },
+    "restockBtn": "Repor",
+    "discardBtn": "Retirar",
+    "restockPlaceholder": "+ Qtd ({{unit}})",
+    "discardPlaceholder": "- Qtd ({{unit}})",
+    "reasons": {
+      "perda": "Perda",
+      "vencido": "Vencido",
+      "quebra": "Quebra",
+      "outro": "Outro"
+    }
+  },
+  "quickActions": {
+    "switchEra": "Trocar Era",
+    "switchEraDesc": "Mude o tema",
+    "about": "Sobre",
+    "aboutDesc": "Conheça o projeto",
+    "learning": "Learning",
+    "learningDesc": "Conceitos aplicados"
+  },
+  "statsBar": {
+    "ordersToday": "Pedidos Hoje",
+    "avgTime": "Tempo Médio",
+    "rating": "Avaliação"
+  },
+  "learning": {
+    "title": "Learning Dashboard",
+    "subtitle": "Conceitos do Cronograma Aplicados no Projeto",
+    "period": "Período: 03/03/26 - 24/06/26 • Desenvolvimento Front-End",
+    "scheduleTopics": "Tópicos do Cronograma",
+    "implemented": "Implementado no Mikrokosmos",
+    "techStack": "Stack Tecnológica Utilizada",
+    "features": "Features do Projeto"
+  },
+  "info": {
+    "heroDesc": "Um SaaS revolucionário que transforma a experiência gastronômica através da sincronização com universos musicais K-pop.",
+    "features": {
+      "themedSync": {
+        "title": "Themed-Sync System",
+        "desc": "Sistema que sincroniza o visual do restaurante com eras musicais K-pop"
+      },
+      "gastronomy": {
+        "title": "Gastronomia Narrativa",
+        "desc": "Pratos temáticos inspirados em músicas e conceitos dos grupos"
+      },
+      "universes": {
+        "title": "4 Universos",
+        "desc": "AESPA, ENHYPEN, BTS e BLACKPINK com identidades visuais únicas"
+      },
+      "immersive": {
+        "title": "Experiência Imersiva",
+        "desc": "Design galaxy com glassmorphism e animações suaves"
+      },
+      "education": {
+        "title": "Educação Continuada",
+        "desc": "Treinamento e suporte para garantir a eficiência do sistema"
+      }
+    },
+    "universesTitle": "Nossos Universos",
+    "colors": "Cores:",
+    "tracks": "Faixas:",
+    "concept": {
+      "title": "O Conceito",
+      "p1": "<strong style=\"color:white\">Mikrokosmos</strong> não é apenas uma comanda digital comum - é um SaaS (Software as a Service) que utiliza o design para criar uma <strong style=\"color:white\">experiência de fã dentro de um restaurante ou café</strong>.",
+      "p2": "Através do nosso <strong style=\"color:white\">Themed-Sync System</strong>, o estabelecimento pode mudar completamente sua identidade visual com um clique, acompanhando os lançamentos da indústria musical coreana.",
+      "p3": "Cada prato no cardápio é uma <strong style=\"color:white\">narrativa gastronômica</strong>, conectando os clientes aos seus artistas favoritos através de nomes temáticos e apresentações visuais únicas.",
+      "tagline": "É uma extensão do videoclipe do artista favorito do cliente, transformada em experiência culinária."
+    },
+    "tech": "Tecnologias"
   }
 }

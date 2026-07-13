@@ -602,5 +602,159 @@
     "ingredients": "食材",
     "allergenAlert": "过敏原警告",
     "contains": "含有:"
+  },
+  "kitchen": {
+    "bannerTitle": "厨房",
+    "bannerDesc": "订单控制面板 - 管理和跟踪所有订单",
+    "status": {
+      "pending": "待处理",
+      "preparing": "准备中",
+      "ready": "已就绪",
+      "cancelled": "已取消"
+    },
+    "orderNumber": "订单 #",
+    "customer": "客户: ",
+    "notes": "备注:",
+    "startPrep": "开始准备",
+    "markReady": "标记为就绪",
+    "sendDelivery": "送出配送",
+    "cancel": "取消",
+    "noOrders": "没有{{status}}的订单",
+    "updated": "订单已更新为: {{label}}"
+  },
+  "delivery": {
+    "bannerTitle": "配送",
+    "bannerDesc": "配送员面板 - 管理配送并确认收货",
+    "status": {
+      "onRoute": "配送中",
+      "delivered": "已送达",
+      "ready": "已就绪"
+    },
+    "orderNumber": "订单 #",
+    "items": "商品 ({{count}}件):",
+    "pickupOrder": "🚀 领取订单",
+    "track": "追踪",
+    "confirm": "✅ 确认",
+    "noReadyOrders": "没有待领取的订单",
+    "noOrders": "没有{{status}}的订单",
+    "updated": "订单已更新: {{label}}",
+    "defaultCustomer": "客户",
+    "defaultAddress": "未提供地址"
+  },
+  "roleSwitcher": {
+    "title": "切换角色",
+    "subtitle": "RBAC演示系统",
+    "roles": {
+      "cliente": {
+        "label": "客户",
+        "desc": "下单并浏览菜单"
+      },
+      "cozinha": {
+        "label": "厨房",
+        "desc": "管理订单准备"
+      },
+      "delivery": {
+        "label": "配送",
+        "desc": "管理配送"
+      },
+      "admin": {
+        "label": "管理员",
+        "desc": "完整系统访问权限"
+      }
+    },
+    "demoNote": "💡 演示模式：此切换器允许测试不同访问级别。在生产环境中，角色会自动分配。"
+  },
+  "stock": {
+    "title": "库存管理",
+    "totalValue": "库存总价值:",
+    "resetBtn": "重置库存",
+    "alerts": {
+      "outTitle": "🚨 库存不足!",
+      "lowTitle": "⚠️ 库存偏低"
+    },
+    "status": {
+      "ok": "正常",
+      "low": "偏低",
+      "critical": "危险",
+      "out": "耗尽"
+    },
+    "categories": {
+      "all": "全部",
+      "proteina": "🥩 蛋白质",
+      "vegetal": "🥦 蔬菜",
+      "grao": "🌾 谷物",
+      "molho": "🫙 酱料",
+      "bebida": "🍹 饮料",
+      "embalagem": "📦 包装",
+      "outro": "➕ 其他"
+    },
+    "restockBtn": "补货",
+    "discardBtn": "废弃",
+    "restockPlaceholder": "+ 数量 ({{unit}})",
+    "discardPlaceholder": "- 数量 ({{unit}})",
+    "reasons": {
+      "perda": "损耗",
+      "vencido": "过期",
+      "quebra": "破损",
+      "outro": "其他"
+    }
+  },
+  "quickActions": {
+    "switchEra": "切换时代",
+    "switchEraDesc": "更改主题",
+    "about": "关于",
+    "aboutDesc": "了解项目",
+    "learning": "学习",
+    "learningDesc": "应用的概念"
+  },
+  "statsBar": {
+    "ordersToday": "今日订单",
+    "avgTime": "平均时间",
+    "rating": "评分"
+  },
+  "learning": {
+    "title": "学习仪表盘",
+    "subtitle": "项目中应用的课程概念",
+    "period": "期间: 03/03/26 - 24/06/26 • 前端开发",
+    "scheduleTopics": "课程主题",
+    "implemented": "在Mikrokosmos中实现",
+    "techStack": "使用的技术栈",
+    "features": "项目功能"
+  },
+  "info": {
+    "heroDesc": "一款革命性的SaaS，通过与K-pop音乐宇宙同步来变革美食体验。",
+    "features": {
+      "themedSync": {
+        "title": "Themed-Sync System",
+        "desc": "将餐厅视觉与K-pop音乐时代同步的系统"
+      },
+      "gastronomy": {
+        "title": "叙事美食学",
+        "desc": "受组合音乐和概念启发的主题菜品"
+      },
+      "universes": {
+        "title": "4个宇宙",
+        "desc": "AESPA、ENHYPEN、BTS和BLACKPINK，各具独特视觉身份"
+      },
+      "immersive": {
+        "title": "沉浸式体验",
+        "desc": "融合玻璃拟态和流畅动画的银河系设计"
+      },
+      "education": {
+        "title": "持续教育",
+        "desc": "培训和支持以确保系统效率"
+      }
+    },
+    "universesTitle": "我们的宇宙",
+    "colors": "颜色:",
+    "tracks": "曲目:",
+    "concept": {
+      "title": "概念",
+      "p1": "<strong style=\"color:white\">Mikrokosmos</strong>不只是一个普通的数字点餐系统——它是一款SaaS(软件即服务)，通过设计在<strong style=\"color:white\">餐厅或咖啡馆内创造粉丝体验</strong>。",
+      "p2": "通过我们的<strong style=\"color:white\">Themed-Sync System</strong>，商家只需一键就能完全改变视觉身份，紧跟韩国音乐产业的最新发布。",
+      "p3": "菜单上的每道菜都是一个<strong style=\"color:white\">美食叙事</strong>，通过主题名称和独特的视觉呈现，将顾客与他们喜爱的艺人连接起来。",
+      "tagline": "这是顾客最喜欢的艺人MV的延伸，转化为烹饪体验。"
+    },
+    "tech": "技术"
   }
 }

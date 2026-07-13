@@ -602,5 +602,159 @@
     "ingredients": "Ingredients",
     "allergenAlert": "Allergen Warning",
     "contains": "Contains:"
+  },
+  "kitchen": {
+    "bannerTitle": "Kitchen",
+    "bannerDesc": "Order Control Panel - Manage and track all orders",
+    "status": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "cancelled": "Cancelled"
+    },
+    "orderNumber": "Order #",
+    "customer": "Customer: ",
+    "notes": "Notes:",
+    "startPrep": "Start Preparing",
+    "markReady": "Mark as Ready",
+    "sendDelivery": "Send for Delivery",
+    "cancel": "Cancel",
+    "noOrders": "No {{status}} orders",
+    "updated": "Order updated to: {{label}}"
+  },
+  "delivery": {
+    "bannerTitle": "Delivery",
+    "bannerDesc": "Courier Panel - Manage deliveries and confirm receipts",
+    "status": {
+      "onRoute": "On Route",
+      "delivered": "Delivered",
+      "ready": "Ready"
+    },
+    "orderNumber": "Order #",
+    "items": "Items ({{count}}):",
+    "pickupOrder": "🚀 Pick Up Order",
+    "track": "Track",
+    "confirm": "✅ Confirm",
+    "noReadyOrders": "No orders ready for pickup",
+    "noOrders": "No {{status}} orders",
+    "updated": "Order updated: {{label}}",
+    "defaultCustomer": "Customer",
+    "defaultAddress": "Address not provided"
+  },
+  "roleSwitcher": {
+    "title": "Switch Role",
+    "subtitle": "RBAC Demo System",
+    "roles": {
+      "cliente": {
+        "label": "Customer",
+        "desc": "Place orders and explore the menu"
+      },
+      "cozinha": {
+        "label": "Kitchen",
+        "desc": "Manage order preparation"
+      },
+      "delivery": {
+        "label": "Delivery",
+        "desc": "Control deliveries"
+      },
+      "admin": {
+        "label": "Admin",
+        "desc": "Full system access"
+      }
+    },
+    "demoNote": "💡 Demo Mode: This switcher lets you test different access levels. In production, roles are assigned automatically."
+  },
+  "stock": {
+    "title": "Stock Management",
+    "totalValue": "Total stock value:",
+    "resetBtn": "Reset Stock",
+    "alerts": {
+      "outTitle": "🚨 Out of Stock!",
+      "lowTitle": "⚠️ Low Stock"
+    },
+    "status": {
+      "ok": "OK",
+      "low": "Low",
+      "critical": "Critical",
+      "out": "Out"
+    },
+    "categories": {
+      "all": "All",
+      "proteina": "🥩 Protein",
+      "vegetal": "🥦 Vegetables",
+      "grao": "🌾 Grains",
+      "molho": "🫙 Sauces",
+      "bebida": "🍹 Drinks",
+      "embalagem": "📦 Packaging",
+      "outro": "➕ Other"
+    },
+    "restockBtn": "Restock",
+    "discardBtn": "Discard",
+    "restockPlaceholder": "+ Qty ({{unit}})",
+    "discardPlaceholder": "- Qty ({{unit}})",
+    "reasons": {
+      "perda": "Loss",
+      "vencido": "Expired",
+      "quebra": "Breakage",
+      "outro": "Other"
+    }
+  },
+  "quickActions": {
+    "switchEra": "Switch Era",
+    "switchEraDesc": "Change theme",
+    "about": "About",
+    "aboutDesc": "Learn about the project",
+    "learning": "Learning",
+    "learningDesc": "Concepts applied"
+  },
+  "statsBar": {
+    "ordersToday": "Orders Today",
+    "avgTime": "Avg Time",
+    "rating": "Rating"
+  },
+  "learning": {
+    "title": "Learning Dashboard",
+    "subtitle": "Schedule Concepts Applied in the Project",
+    "period": "Period: 03/03/26 - 24/06/26 • Front-End Development",
+    "scheduleTopics": "Schedule Topics",
+    "implemented": "Implemented in Mikrokosmos",
+    "techStack": "Technology Stack Used",
+    "features": "Project Features"
+  },
+  "info": {
+    "heroDesc": "A revolutionary SaaS that transforms the gastronomic experience through synchronization with K-pop musical universes.",
+    "features": {
+      "themedSync": {
+        "title": "Themed-Sync System",
+        "desc": "System that synchronizes the restaurant visual with K-pop musical eras"
+      },
+      "gastronomy": {
+        "title": "Narrative Gastronomy",
+        "desc": "Themed dishes inspired by songs and group concepts"
+      },
+      "universes": {
+        "title": "4 Universes",
+        "desc": "AESPA, ENHYPEN, BTS and BLACKPINK with unique visual identities"
+      },
+      "immersive": {
+        "title": "Immersive Experience",
+        "desc": "Galaxy design with glassmorphism and smooth animations"
+      },
+      "education": {
+        "title": "Ongoing Education",
+        "desc": "Training and support to ensure system efficiency"
+      }
+    },
+    "universesTitle": "Our Universes",
+    "colors": "Colors:",
+    "tracks": "Tracks:",
+    "concept": {
+      "title": "The Concept",
+      "p1": "<strong style=\"color:white\">Mikrokosmos</strong> is not just a regular digital menu — it is a SaaS (Software as a Service) that uses design to create a <strong style=\"color:white\">fan experience inside a restaurant or café</strong>.",
+      "p2": "Through our <strong style=\"color:white\">Themed-Sync System</strong>, the establishment can completely change its visual identity with one click, keeping up with releases from the Korean music industry.",
+      "p3": "Each dish on the menu is a <strong style=\"color:white\">gastronomic narrative</strong>, connecting customers to their favorite artists through themed names and unique visual presentations.",
+      "tagline": "It is an extension of the favorite artist's music video, transformed into a culinary experience."
+    },
+    "tech": "Technologies"
   }
 }
