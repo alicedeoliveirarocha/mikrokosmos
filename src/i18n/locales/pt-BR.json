@@ -644,6 +644,10 @@
   "roleSwitcher": {
     "title": "Trocar Papel",
     "subtitle": "Sistema de Demonstração RBAC",
+    "viewingBadge": "Visualizando",
+    "realRoleBadge": "Seu papel",
+    "backToReal": "Voltar para Admin",
+    "backToRealToast": "Você voltou ao seu papel de Admin!",
     "roles": {
       "cliente": {
         "label": "Cliente",

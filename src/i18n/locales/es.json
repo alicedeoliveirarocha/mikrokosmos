@@ -644,6 +644,10 @@
   "roleSwitcher": {
     "title": "Cambiar Rol",
     "subtitle": "Sistema de Demostración RBAC",
+    "viewingBadge": "Visualizando",
+    "realRoleBadge": "Tu rol",
+    "backToReal": "Volver a Admin",
+    "backToRealToast": "¡Has vuelto a tu rol de Admin!",
     "roles": {
       "cliente": {
         "label": "Cliente",

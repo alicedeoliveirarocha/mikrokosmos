@@ -644,6 +644,10 @@
   "roleSwitcher": {
     "title": "役割を切り替える",
     "subtitle": "RBACデモシステム",
+    "viewingBadge": "プレビュー中",
+    "realRoleBadge": "あなたの役割",
+    "backToReal": "管理者に戻る",
+    "backToRealToast": "管理者の役割に戻りました！",
     "roles": {
       "cliente": {
         "label": "お客様",

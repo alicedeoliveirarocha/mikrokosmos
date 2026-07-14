@@ -1,20 +1,25 @@
 // src/app/components/RoleSwitcher.tsx
+// FIX: visibilidade baseada no realRole (papel verdadeiro), não no papel efetivo.
+// Assim o admin continua vendo o switcher mesmo "vestido" de delivery/cozinha/cliente.
+// Novo: badge de "modo visualização" + botão para voltar ao papel real.
 import { useState } from 'react';
 import { useAuth, UserRole } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserCircle, ChefHat, Bike, Shield, X } from 'lucide-react';
+import { UserCircle, ChefHat, Bike, Shield, X, Eye, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCustomResponse } from '../utils/customResponses';
 
 const ADMIN_EMAILS = ['admin@mikrokosmos.com'];
 
 export function RoleSwitcher() {
-  const { user, switchRole } = useAuth();
+  const { user, realRole, isViewingAs, switchRole, resetViewRole } = useAuth();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isAdminAccount = !!user && (user.role === 'admin' || ADMIN_EMAILS.includes(user.email));
+  // ⚠️ Antes checava user.role — que muda ao trocar de visão e escondia o switcher.
+  // Agora checa o papel REAL: só a conta admin de verdade vê este componente.
+  const isAdminAccount = !!user && (realRole === 'admin' || ADMIN_EMAILS.includes(user.email));
   if (!isAdminAccount) return null;
 
   const roles: { value: UserRole; icon: any; color: string }[] = [
@@ -31,6 +36,13 @@ export function RoleSwitcher() {
     setIsOpen(false);
   };
 
+  const handleReset = () => {
+    resetViewRole();
+    toast.success(t('roleSwitcher.backToRealToast'));
+    setIsOpen(false);
+  };
+
+  // user.role aqui é o papel EFETIVO (visualização aplicada) — perfeito para exibição
   const currentRole = roles.find(r => r.value === user!.role) || roles[3];
 
   return (
@@ -43,6 +55,12 @@ export function RoleSwitcher() {
       >
         <currentRole.icon className="w-5 h-5" style={{ color: currentRole.color }} />
         <span className="font-bold text-sm">{t(`roleSwitcher.roles.${currentRole.value}.label`)}</span>
+        {isViewingAs && (
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30">
+            <Eye className="w-3 h-3" />
+            {t('roleSwitcher.viewingBadge')}
+          </span>
+        )}
       </motion.button>
 
       <AnimatePresence>
@@ -69,10 +87,23 @@ export function RoleSwitcher() {
                   </button>
                 </div>
 
+                {isViewingAs && (
+                  <motion.button
+                    initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    onClick={handleReset}
+                    className="w-full mb-4 p-3 rounded-xl border border-amber-400/30 bg-amber-400/10 hover:bg-amber-400/20 transition-all flex items-center justify-center gap-2 text-amber-300 font-bold text-sm"
+                  >
+                    <Undo2 className="w-4 h-4" />
+                    {t('roleSwitcher.backToReal')}
+                  </motion.button>
+                )}
+
                 <div className="space-y-3">
                   {roles.map((role) => {
                     const Icon = role.icon;
                     const isActive = user!.role === role.value;
+                    const isRealRole = realRole === role.value;
                     return (
                       <motion.button key={role.value}
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -87,7 +118,15 @@ export function RoleSwitcher() {
                             <Icon className="w-6 h-6" style={{ color: role.color }} />
                           </div>
                           <div className="flex-1 text-left">
-                            <p className="font-bold text-white">{t(`roleSwitcher.roles.${role.value}.label`)}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold text-white">{t(`roleSwitcher.roles.${role.value}.label`)}</p>
+                              {isRealRole && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                  style={{ backgroundColor: `${role.color}20`, color: role.color, border: `1px solid ${role.color}40` }}>
+                                  {t('roleSwitcher.realRoleBadge')}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-xs text-white/60 mt-1">{t(`roleSwitcher.roles.${role.value}.desc`)}</p>
                           </div>
                           {isActive && <div className="w-3 h-3 rounded-full" style={{ backgroundColor: role.color }} />}

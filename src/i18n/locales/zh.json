@@ -644,6 +644,10 @@
   "roleSwitcher": {
     "title": "切换角色",
     "subtitle": "RBAC演示系统",
+    "viewingBadge": "预览中",
+    "realRoleBadge": "你的角色",
+    "backToReal": "返回管理员",
+    "backToRealToast": "已返回管理员角色！",
     "roles": {
       "cliente": {
         "label": "客户",
