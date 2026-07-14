@@ -760,5 +760,122 @@
       "tagline": "这是顾客最喜欢的艺人MV的延伸，转化为烹饪体验。"
     },
     "tech": "技术"
+  },
+  "customResponses": {
+    "cliente": {
+      "welcome": {
+        "title": "✨ 欢迎来到Mikrokosmos！",
+        "message": "浏览我们的主题菜单并下单吧。"
+      },
+      "orderPlaced": {
+        "title": "🎉 下单成功！",
+        "message": "您的订单已确认，正在用心准备中。"
+      },
+      "orderCanceled": {
+        "title": "❌ 订单已取消",
+        "message": "您的订单已取消。期待您再次光临！"
+      },
+      "cartEmpty": {
+        "title": "🛒 购物车是空的",
+        "message": "把精彩的商品加入购物车开始吧。"
+      },
+      "noAccess": {
+        "title": "🚫 拒绝访问",
+        "message": "您没有权限访问此区域。"
+      }
+    },
+    "cozinha": {
+      "welcome": {
+        "title": "👨‍🍳 欢迎来到厨房！",
+        "message": "管理订单，保持Mikrokosmos的品质。"
+      },
+      "orderReceived": {
+        "title": "🔔 新订单！",
+        "message": "新订单来了！用心准备吧。"
+      },
+      "orderReady": {
+        "title": "✅ 订单已备好！",
+        "message": "订单已完成，随时可以配送。"
+      },
+      "orderStarted": {
+        "title": "🔥 制作中",
+        "message": "订单已标记为\"准备中\"。加油，主厨！"
+      },
+      "noOrders": {
+        "title": "😌 一切平静",
+        "message": "目前没有待处理的订单。"
+      }
+    },
+    "delivery": {
+      "welcome": {
+        "title": "🚴 配送中心！",
+        "message": "管理配送，让顾客满意。"
+      },
+      "orderPicked": {
+        "title": "📦 已取货！",
+        "message": "订单已取货，正在送往顾客途中。"
+      },
+      "orderDelivered": {
+        "title": "🎊 配送完成！",
+        "message": "订单已成功送达。干得漂亮！"
+      },
+      "noDeliveries": {
+        "title": "✌️ 暂无配送",
+        "message": "目前没有待处理的配送。"
+      }
+    },
+    "admin": {
+      "welcome": {
+        "title": "👑 管理面板",
+        "message": "对Mikrokosmos系统的完全访问权限。"
+      },
+      "systemUpdate": {
+        "title": "🔄 系统已更新",
+        "message": "系统设置已成功更新。"
+      },
+      "userCreated": {
+        "title": "👤 用户已创建",
+        "message": "新用户已添加到系统。"
+      },
+      "dataExported": {
+        "title": "📊 导出完成",
+        "message": "数据导出成功。"
+      }
+    },
+    "universal": {
+      "error": {
+        "title": "⚠️ 错误",
+        "message": "出了点问题。请重试。"
+      },
+      "success": {
+        "title": "✅ 成功！",
+        "message": "操作已成功完成。"
+      },
+      "loading": {
+        "title": "⏳ 加载中...",
+        "message": "正在处理您的请求。"
+      },
+      "saved": {
+        "title": "💾 已保存！",
+        "message": "您的更改已保存。"
+      }
+    },
+    "fallback": {
+      "title": "通知",
+      "message": "操作已完成。"
+    },
+    "greetings": {
+      "morning": "早上好",
+      "afternoon": "下午好",
+      "evening": "晚上好"
+    },
+    "defaultName": "用户",
+    "welcomeByRole": {
+      "cliente": "{{greeting}}，{{name}}！🌟 探索我们的K-pop美食宇宙。",
+      "cozinha": "{{greeting}}，{{name}}主厨！👨‍🍳 准备好创作美味佳肴了吗？",
+      "delivery": "{{greeting}}，{{name}}！🚴 今天也来传递幸福吧！",
+      "admin": "{{greeting}}，{{name}}！👑 Mikrokosmos系统听候您的指挥。",
+      "generic": "{{greeting}}，{{name}}！"
+    }
   }
 }

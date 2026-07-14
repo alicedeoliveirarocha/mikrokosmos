@@ -760,5 +760,122 @@
       "tagline": "お気に入りのアーティストのミュージックビデオを料理体験として拡張したものです。"
     },
     "tech": "テクノロジー"
+  },
+  "customResponses": {
+    "cliente": {
+      "welcome": {
+        "title": "✨ ミクロコスモスへようこそ！",
+        "message": "テーマメニューを見て注文してみましょう。"
+      },
+      "orderPlaced": {
+        "title": "🎉 ご注文完了！",
+        "message": "ご注文が確認され、心を込めて準備しています。"
+      },
+      "orderCanceled": {
+        "title": "❌ 注文キャンセル",
+        "message": "ご注文はキャンセルされました。またのご利用をお待ちしております！"
+      },
+      "cartEmpty": {
+        "title": "🛒 カートが空です",
+        "message": "素敵な商品をカートに追加して始めましょう。"
+      },
+      "noAccess": {
+        "title": "🚫 アクセス拒否",
+        "message": "このエリアへのアクセス権限がありません。"
+      }
+    },
+    "cozinha": {
+      "welcome": {
+        "title": "👨‍🍳 キッチンへようこそ！",
+        "message": "注文を管理し、ミクロコスモスの品質を保ちましょう。"
+      },
+      "orderReceived": {
+        "title": "🔔 新しい注文！",
+        "message": "新しい注文が届きました！最高の腕前で準備しましょう。"
+      },
+      "orderReady": {
+        "title": "✅ 注文準備完了！",
+        "message": "注文が完成し、配達の準備ができました。"
+      },
+      "orderStarted": {
+        "title": "🔥 調理中",
+        "message": "注文が「準備中」になりました。頑張れ、シェフ！"
+      },
+      "noOrders": {
+        "title": "😌 落ち着いています",
+        "message": "現在、保留中の注文はありません。"
+      }
+    },
+    "delivery": {
+      "welcome": {
+        "title": "🚴 デリバリーセンター！",
+        "message": "配達を管理して、お客様を笑顔にしましょう。"
+      },
+      "orderPicked": {
+        "title": "📦 ピックアップ完了！",
+        "message": "注文を受け取り、お客様のもとへ向かっています。"
+      },
+      "orderDelivered": {
+        "title": "🎊 配達完了！",
+        "message": "注文が無事に配達されました。お疲れさまでした！"
+      },
+      "noDeliveries": {
+        "title": "✌️ 配達なし",
+        "message": "現在、保留中の配達はありません。"
+      }
+    },
+    "admin": {
+      "welcome": {
+        "title": "👑 管理者パネル",
+        "message": "ミクロコスモスシステムへのフルアクセス。"
+      },
+      "systemUpdate": {
+        "title": "🔄 システム更新済み",
+        "message": "システム設定が正常に更新されました。"
+      },
+      "userCreated": {
+        "title": "👤 ユーザー作成済み",
+        "message": "新しいユーザーがシステムに追加されました。"
+      },
+      "dataExported": {
+        "title": "📊 エクスポート完了",
+        "message": "データが正常にエクスポートされました。"
+      }
+    },
+    "universal": {
+      "error": {
+        "title": "⚠️ エラー",
+        "message": "問題が発生しました。もう一度お試しください。"
+      },
+      "success": {
+        "title": "✅ 成功！",
+        "message": "操作が正常に完了しました。"
+      },
+      "loading": {
+        "title": "⏳ 読み込み中...",
+        "message": "リクエストを処理しています。"
+      },
+      "saved": {
+        "title": "💾 保存済み！",
+        "message": "変更内容が保存されました。"
+      }
+    },
+    "fallback": {
+      "title": "通知",
+      "message": "操作が完了しました。"
+    },
+    "greetings": {
+      "morning": "おはようございます",
+      "afternoon": "こんにちは",
+      "evening": "こんばんは"
+    },
+    "defaultName": "ユーザー",
+    "welcomeByRole": {
+      "cliente": "{{name}}さん、{{greeting}}！🌟 K-popグルメユニバースを探検しましょう。",
+      "cozinha": "{{name}}シェフ、{{greeting}}！👨‍🍳 素晴らしい料理を作る準備はできましたか？",
+      "delivery": "{{name}}さん、{{greeting}}！🚴 今日も幸せを届けましょう！",
+      "admin": "{{name}}さん、{{greeting}}！👑 ミクロコスモスシステムはあなたの指揮下にあります。",
+      "generic": "{{name}}さん、{{greeting}}！"
+    }
   }
 }

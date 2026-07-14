@@ -760,5 +760,122 @@
       "tagline": "It is an extension of the favorite artist's music video, transformed into a culinary experience."
     },
     "tech": "Technologies"
+  },
+  "customResponses": {
+    "cliente": {
+      "welcome": {
+        "title": "✨ Welcome to Mikrokosmos!",
+        "message": "Explore our themed menu and place your order."
+      },
+      "orderPlaced": {
+        "title": "🎉 Order Placed!",
+        "message": "Your order has been confirmed and is being prepared with care."
+      },
+      "orderCanceled": {
+        "title": "❌ Order Canceled",
+        "message": "Your order has been canceled. We hope to see you again soon!"
+      },
+      "cartEmpty": {
+        "title": "🛒 Empty Cart",
+        "message": "Add amazing products to your cart to get started."
+      },
+      "noAccess": {
+        "title": "🚫 Access Denied",
+        "message": "You don't have permission to access this area."
+      }
+    },
+    "cozinha": {
+      "welcome": {
+        "title": "👨‍🍳 Welcome to the Kitchen!",
+        "message": "Manage orders and keep up the Mikrokosmos quality."
+      },
+      "orderReceived": {
+        "title": "🔔 New Order!",
+        "message": "A new order has arrived! Prepare it with excellence."
+      },
+      "orderReady": {
+        "title": "✅ Order Ready!",
+        "message": "Order finished and ready for delivery."
+      },
+      "orderStarted": {
+        "title": "🔥 Order in Progress",
+        "message": "Order marked as \"preparing\". Let's go, chef!"
+      },
+      "noOrders": {
+        "title": "😌 All Quiet",
+        "message": "No pending orders at the moment."
+      }
+    },
+    "delivery": {
+      "welcome": {
+        "title": "🚴 Delivery Hub!",
+        "message": "Manage deliveries and keep customers happy."
+      },
+      "orderPicked": {
+        "title": "📦 Order Picked Up!",
+        "message": "Order collected and on its way to the customer."
+      },
+      "orderDelivered": {
+        "title": "🎊 Delivery Complete!",
+        "message": "Order delivered successfully. Great job!"
+      },
+      "noDeliveries": {
+        "title": "✌️ No Deliveries",
+        "message": "No pending deliveries at the moment."
+      }
+    },
+    "admin": {
+      "welcome": {
+        "title": "👑 Admin Panel",
+        "message": "Full access to the Mikrokosmos system."
+      },
+      "systemUpdate": {
+        "title": "🔄 System Updated",
+        "message": "System settings updated successfully."
+      },
+      "userCreated": {
+        "title": "👤 User Created",
+        "message": "New user added to the system."
+      },
+      "dataExported": {
+        "title": "📊 Export Complete",
+        "message": "Data exported successfully."
+      }
+    },
+    "universal": {
+      "error": {
+        "title": "⚠️ Error",
+        "message": "Something went wrong. Please try again."
+      },
+      "success": {
+        "title": "✅ Success!",
+        "message": "Operation completed successfully."
+      },
+      "loading": {
+        "title": "⏳ Loading...",
+        "message": "Processing your request."
+      },
+      "saved": {
+        "title": "💾 Saved!",
+        "message": "Your changes have been saved."
+      }
+    },
+    "fallback": {
+      "title": "Notification",
+      "message": "Action completed."
+    },
+    "greetings": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "defaultName": "user",
+    "welcomeByRole": {
+      "cliente": "{{greeting}}, {{name}}! 🌟 Explore our K-pop gastronomic universe.",
+      "cozinha": "{{greeting}}, Chef {{name}}! 👨‍🍳 Ready to create amazing dishes?",
+      "delivery": "{{greeting}}, {{name}}! 🚴 Let's deliver happiness today!",
+      "admin": "{{greeting}}, {{name}}! 👑 Mikrokosmos system at your command.",
+      "generic": "{{greeting}}, {{name}}!"
+    }
   }
 }
