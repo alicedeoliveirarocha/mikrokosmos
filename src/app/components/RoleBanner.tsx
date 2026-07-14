@@ -1,5 +1,10 @@
+// src/app/components/RoleBanner.tsx
+// FIX i18n: o badge mostrava o slug cru do role ("cozinha", "delivery"...).
+// Agora usa a chave roleSwitcher.roles.<role>.label que já existe nos 6 locales —
+// em japonês vira キッチン, em coreano 주방, etc.
 import { motion } from 'motion/react';
 import { UserRole } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { ChefHat, Bike, LineChart, User } from 'lucide-react';
 
 interface RoleBannerProps {
@@ -36,6 +41,7 @@ const roleConfig = {
 };
 
 export function RoleBanner({ role, title, description }: RoleBannerProps) {
+  const { t } = useTranslation();
   const config = roleConfig[role];
   const Icon = config.icon;
 
@@ -80,7 +86,7 @@ export function RoleBanner({ role, title, description }: RoleBannerProps) {
                 border: `1px solid ${config.color}40`,
               }}
             >
-              {role}
+              {t(`roleSwitcher.roles.${role}.label`)}
             </span>
           </div>
           <p className="text-white/70">{description}</p>
