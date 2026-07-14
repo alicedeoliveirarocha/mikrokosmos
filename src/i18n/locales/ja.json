@@ -310,7 +310,7 @@
     "viewCart": "カートを見る ({{count}})",
     "addedToCart": "追加！ 🛒",
     "ticketAdded": "チケット",
-    "preDebut": "プリデビュー",
+    "preDebut": "プレ",
     "comboPhotocard": "フォトカードラバーコンボ",
     "comboPcDesc": "Lポップコーン + Lドリンク + フォトカード1枚無料",
     "comboStanPack": "スタンパックコンボ",
@@ -342,7 +342,11 @@
     "readyToCollect": "コレクション準備OK？",
     "readyForShow": "ショーの準備はOK？",
     "readyToCollectDesc": "注文してお気に入りのグループの限定フォトカード3枚をゲット！",
-    "readyForShowDesc": "シネマ、音楽、グルメを一つのユニークな体験に。"
+    "readyForShowDesc": "シネマ、音楽、グルメを一つのユニークな体験に。",
+    "room": "シアター",
+    "genreActionAdventure": "アクションアドベンチャー",
+    "genreSciFiDrama": "SFドラマ",
+    "genreComedyMusical": "コメディミュージカル"
   },
   "photocards": {
     "title": "フォトカード",
@@ -877,5 +881,11 @@
       "admin": "{{name}}さん、{{greeting}}！👑 ミクロコスモスシステムはあなたの指揮下にあります。",
       "generic": "{{name}}さん、{{greeting}}！"
     }
+  },
+  "universeToggle": {
+    "kpopSection": "K-popエラ",
+    "cinemaSection": "シネマサーガ",
+    "era": "エラ",
+    "saga": "サーガ"
   }
 }

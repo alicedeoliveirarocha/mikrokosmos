@@ -342,7 +342,11 @@
     "readyToCollect": "Pronto para Colecionar?",
     "readyForShow": "Pronto para o Show?",
     "readyToCollectDesc": "Faça seu pedido e ganhe 3 photocards exclusivos dos seus grupos favoritos!",
-    "readyForShowDesc": "Combine cinema, música e gastronomia em uma experiência única."
+    "readyForShowDesc": "Combine cinema, música e gastronomia em uma experiência única.",
+    "room": "Sala",
+    "genreActionAdventure": "Ação e Aventura",
+    "genreSciFiDrama": "Ficção Científica",
+    "genreComedyMusical": "Comédia Musical"
   },
   "photocards": {
     "title": "Photocards",
@@ -877,5 +881,11 @@
       "admin": "{{greeting}}, {{name}}! 👑 Sistema Mikrokosmos ao seu comando.",
       "generic": "{{greeting}}, {{name}}!"
     }
+  },
+  "universeToggle": {
+    "kpopSection": "Eras K-pop",
+    "cinemaSection": "Sagas de Cinema",
+    "era": "Era",
+    "saga": "Saga"
   }
 }

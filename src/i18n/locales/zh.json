@@ -310,7 +310,7 @@
     "viewCart": "查看购物车 ({{count}})",
     "addedToCart": "已添加！ 🛒",
     "ticketAdded": "票",
-    "preDebut": "出道前",
+    "preDebut": "预",
     "comboPhotocard": "写真卡爱好者套餐",
     "comboPcDesc": "大爆米花 + 大饮料 + 1张免费写真卡",
     "comboStanPack": "粉丝套餐",
@@ -342,7 +342,11 @@
     "readyToCollect": "准备好收集了吗？",
     "readyForShow": "准备好看演出了吗？",
     "readyToCollectDesc": "下单即可获得您最喜爱组合的3张独家写真卡！",
-    "readyForShowDesc": "将电影、音乐和美食融为独特体验。"
+    "readyForShowDesc": "将电影、音乐和美食融为独特体验。",
+    "room": "影厅",
+    "genreActionAdventure": "动作冒险",
+    "genreSciFiDrama": "科幻剧情",
+    "genreComedyMusical": "喜剧音乐剧"
   },
   "photocards": {
     "title": "写真卡",
@@ -877,5 +881,11 @@
       "admin": "{{greeting}}，{{name}}！👑 Mikrokosmos系统听候您的指挥。",
       "generic": "{{greeting}}，{{name}}！"
     }
+  },
+  "universeToggle": {
+    "kpopSection": "K-pop时代",
+    "cinemaSection": "电影系列",
+    "era": "时代",
+    "saga": "系列"
   }
 }

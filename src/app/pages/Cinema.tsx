@@ -22,10 +22,13 @@ export function Cinema() {
 
   const isKpop = categoria === 'Kpop';
 
+  // Títulos de filmes, nomes de estúdios e nomes de combos são identidade de marca — não traduzem.
+  // "sala" guarda só o tipo (IMAX 1, PREMIUM 2...); a palavra "Sala" vem de t('cinema.room').
+  // Gêneros usam chave de tradução (genreKey).
   const cinemaSessions = [
-    { id: 'spiderman',    title: 'Spider-Man',   subtitle: 'No Way Home',      group: 'MARVEL STUDIOS',      time: '19:30', sala: 'SALA IMAX 1',    price: 55.00, priceLabel: 'R$ 55,00', image: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=600&fit=crop', rating: '8.7', genre: 'Action Adventure', duration: '2h 28min' },
-    { id: 'interstellar', title: 'Interstellar',  subtitle: 'A Journey Beyond', group: 'CHRISTOPHER NOLAN',   time: '21:00', sala: 'SALA PREMIUM 2',  price: 60.00, priceLabel: 'R$ 60,00', image: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=600&fit=crop', rating: '9.3', genre: 'Sci-Fi Drama',      duration: '2h 49min' },
-    { id: 'meangirls',    title: 'Mean Girls',    subtitle: 'The Musical',      group: 'PARAMOUNT PICTURES',  time: '18:15', sala: 'SALA VIP 3',     price: 48.00, priceLabel: 'R$ 48,00', image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop', rating: '8.5', genre: 'Comedy Musical',    duration: '1h 52min' },
+    { id: 'spiderman',    title: 'Spider-Man',   subtitle: 'No Way Home',      group: 'MARVEL STUDIOS',      time: '19:30', sala: 'IMAX 1',    price: 55.00, priceLabel: 'R$ 55,00', image: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=600&fit=crop', rating: '8.7', genreKey: 'cinema.genreActionAdventure', duration: '2h 28min' },
+    { id: 'interstellar', title: 'Interstellar',  subtitle: 'A Journey Beyond', group: 'CHRISTOPHER NOLAN',   time: '21:00', sala: 'PREMIUM 2', price: 60.00, priceLabel: 'R$ 60,00', image: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=600&fit=crop', rating: '9.3', genreKey: 'cinema.genreSciFiDrama',      duration: '2h 49min' },
+    { id: 'meangirls',    title: 'Mean Girls',    subtitle: 'The Musical',      group: 'PARAMOUNT PICTURES',  time: '18:15', sala: 'VIP 3',     price: 48.00, priceLabel: 'R$ 48,00', image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop', rating: '8.5', genreKey: 'cinema.genreComedyMusical',    duration: '1h 52min' },
   ];
 
   const kpopCombos = [
@@ -56,7 +59,7 @@ export function Cinema() {
     addToCart({
       id: `ticket-${session.id}`,
       nome: `${t('cinema.ticket')} — ${session.title}`,
-      desc: `${session.sala} · ${session.time}`,
+      desc: `${t('cinema.room')} ${session.sala} · ${session.time}`,
       preco: session.price,
       categoria: 'Ingressos',
       imageUrl: 'x-burguer-katsu',
@@ -259,7 +262,7 @@ export function Cinema() {
                           {isUR ? '⭐ UR' : isRare ? '🟦 R' : '🟫 C'}
                         </div>
                         {card.isPreDebut && (
-                          <div className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[9px] font-bold">PRÉ</div>
+                          <div className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[9px] font-bold">{t('cinema.preDebut')}</div>
                         )}
                       </div>
                       {!card.imageUrl && (
@@ -327,7 +330,7 @@ export function Cinema() {
                   <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-20">
                     <div className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider backdrop-blur-xl border"
                       style={{ backgroundColor: `${primaryColor}20`, borderColor: `${primaryColor}60`, color: primaryColor }}>
-                      {session.sala}
+                      {t('cinema.room')} {session.sala}
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/20">
                       <Clock className="w-3 h-3 text-white" />
@@ -341,7 +344,7 @@ export function Cinema() {
                         <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                         <span className="text-yellow-500 text-xs font-bold">{session.rating}</span>
                       </div>
-                      <span className="text-white/60 text-xs uppercase tracking-wider">{session.genre}</span>
+                      <span className="text-white/60 text-xs uppercase tracking-wider">{t(session.genreKey)}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-white/80 text-xs">

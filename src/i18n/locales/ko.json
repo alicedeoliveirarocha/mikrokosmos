@@ -310,7 +310,7 @@
     "viewCart": "장바구니 보기 ({{count}})",
     "addedToCart": "추가됨! 🛒",
     "ticketAdded": "티켓",
-    "preDebut": "프리데뷔",
+    "preDebut": "프리",
     "comboPhotocard": "포토카드 러버 콤보",
     "comboPcDesc": "L 팝콘 + L 음료 + 무료 포토카드 1장",
     "comboStanPack": "스탠 팩 콤보",
@@ -342,7 +342,11 @@
     "readyToCollect": "수집 준비 되셨나요?",
     "readyForShow": "쇼 준비 되셨나요?",
     "readyToCollectDesc": "주문하고 좋아하는 그룹의 독점 포토카드 3장을 받아가세요!",
-    "readyForShowDesc": "시네마, 음악, 미식을 하나의 독특한 경험으로 결합하세요."
+    "readyForShowDesc": "시네마, 음악, 미식을 하나의 독특한 경험으로 결합하세요.",
+    "room": "상영관",
+    "genreActionAdventure": "액션 어드벤처",
+    "genreSciFiDrama": "SF 드라마",
+    "genreComedyMusical": "코미디 뮤지컬"
   },
   "photocards": {
     "title": "포토카드",
@@ -877,5 +881,11 @@
       "admin": "{{name}}님, {{greeting}}! 👑 미크로코스모스 시스템이 명령을 기다립니다.",
       "generic": "{{name}}님, {{greeting}}!"
     }
+  },
+  "universeToggle": {
+    "kpopSection": "K-pop 에라",
+    "cinemaSection": "시네마 사가",
+    "era": "에라",
+    "saga": "사가"
   }
 }

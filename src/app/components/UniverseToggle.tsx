@@ -2,6 +2,7 @@ import { Sparkles, TrendingUp, Volume2 } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useAccessTracking } from '../context/AccessTrackingContext';
 import { useSounds } from '../hooks/useSounds';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useMemo } from 'react';
 
@@ -9,9 +10,11 @@ export function UniverseToggle() {
   const { universeActive, setUniverse, universeName, categoria } = useUniverse();
   const { getSortedUniverses, getAccessCount } = useAccessTracking();
   const { playSound, soundDescriptions } = useSounds();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   // Definição completa de todos os universos
+  // Nomes e descrições de era são identidade de marca — permanecem em inglês em todos os idiomas
   const universeInfo = {
     aespa: { name: 'AESPA', desc: 'Cyberpunk Era', categoria: 'Kpop' },
     enhypen: { name: 'ENHYPEN', desc: 'Dark Fantasy', categoria: 'Kpop' },
@@ -58,7 +61,7 @@ export function UniverseToggle() {
           >
             {/* Eras K-pop */}
             <p className="text-white/60 text-xs uppercase tracking-wider mb-3 px-2">
-              🎤 Eras K-pop
+              🎤 {t('universeToggle.kpopSection')}
             </p>
             <div className="space-y-2 mb-4">
               {kpopUniverses.map((universe, index) => (
@@ -113,7 +116,7 @@ export function UniverseToggle() {
             {/* Sagas Cinema */}
             <div className="border-t border-white/10 pt-4">
               <p className="text-white/60 text-xs uppercase tracking-wider mb-3 px-2">
-                🎬 Sagas Cinema
+                🎬 {t('universeToggle.cinemaSection')}
               </p>
               <div className="space-y-2">
                 {cinemaSagas.map((saga, index) => (
@@ -190,7 +193,7 @@ export function UniverseToggle() {
       >
         <Sparkles className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
         <span className="font-semibold">
-          {categoria === 'Cinema' ? '🎬 Saga' : '🎤 Era'}: {universeName}
+          {categoria === 'Cinema' ? `🎬 ${t('universeToggle.saga')}` : `🎤 ${t('universeToggle.era')}`}: {universeName}
         </span>
       </motion.button>
     </div>
