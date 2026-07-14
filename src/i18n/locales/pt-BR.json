@@ -43,8 +43,8 @@
   "welcome": {
     "title": "Mikrokosmos",
     "tagline": "Sabores que atravessam dimensões",
-    "description": "Bem-vindo ao futuro da gastronomia K-POP!\nUma experiência imersiva que sincroniza sabor e música.",
-    "kpopUniverses": "7 Universos K-POP",
+    "description": "Bem-vindo ao futuro da gastronomia K-pop!\nUma experiência imersiva que sincroniza sabor e música.",
+    "kpopUniverses": "7 Universos K-pop",
     "groups": "BTS, BLACKPINK, AESPA, ENHYPEN, RED VELVET, NEWJEANS, ILLIT",
     "featuredMenu": "Cardápio Temático",
     "featuredMenuDesc": "Pratos inspirados em hits K-pop",
@@ -169,7 +169,8 @@
     "boletoDesc": "O boleto será gerado após confirmar o pedido, com vencimento em 3 dias úteis. Pode ser pago em qualquer banco, lotérica ou app bancário.",
     "boletoGenerated": "Boleto Gerado",
     "boletoBarcode": "Código de barras:",
-    "boletoExpiry": "Vencimento em 3 dias úteis. Pague em qualquer banco ou lotérica."
+    "boletoExpiry": "Vencimento em 3 dias úteis. Pague em qualquer banco ou lotérica.",
+    "addressDuplicate": "Este endereço já está salvo"
   },
   "auth": {
     "login": "Entrar",
@@ -887,5 +888,27 @@
     "cinemaSection": "Sagas de Cinema",
     "era": "Era",
     "saga": "Saga"
+  },
+  "categories": {
+    "Pratos Principais": "Pratos Principais",
+    "Entradas": "Entradas",
+    "Bebidas": "Bebidas",
+    "Sobremesas": "Sobremesas",
+    "Combos": "Combos",
+    "Sazonal": "Sazonal",
+    "Ingressos": "Ingressos"
+  },
+  "deliveryMap": {
+    "estimatedArrival": "Chegada Estimada",
+    "customer": "Cliente",
+    "orderId": "Nº do Pedido",
+    "progressTitle": "Progresso da Entrega",
+    "stepConfirmed": "Pedido Confirmado",
+    "stepOutForDelivery": "Saiu para Entrega",
+    "stepNearDestination": "Perto do Destino",
+    "stepDelivered": "Entregue",
+    "minAgo": "há {{count}} min",
+    "inProgress": "Em andamento",
+    "pending": "Pendente"
   }
 }

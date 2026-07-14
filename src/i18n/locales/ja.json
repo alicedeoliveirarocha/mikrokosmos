@@ -43,8 +43,8 @@
   "welcome": {
     "title": "ミクロコスモス",
     "tagline": "次元を超える味わい",
-    "description": "K-POPグルメの未来へようこそ！\n味と音楽を融合させた没入体験。",
-    "kpopUniverses": "7つのK-POPユニバース",
+    "description": "K-popグルメの未来へようこそ！\n味と音楽を融合させた没入体験。",
+    "kpopUniverses": "7つのK-popユニバース",
     "groups": "BTS, BLACKPINK, AESPA, ENHYPEN, RED VELVET, NEWJEANS, ILLIT",
     "featuredMenu": "テーマメニュー",
     "featuredMenuDesc": "K-popヒット曲からインスパイアされた料理",
@@ -169,7 +169,8 @@
     "boletoDesc": "注文確定後にボレートが発行され、3営業日以内が期限です。銀行、宝くじ販売店、銀行アプリで支払い可能です。",
     "boletoGenerated": "ボレート発行済み",
     "boletoBarcode": "バーコード：",
-    "boletoExpiry": "3営業日以内が期限です。銀行または宝くじ販売店でお支払いください。"
+    "boletoExpiry": "3営業日以内が期限です。銀行または宝くじ販売店でお支払いください。",
+    "addressDuplicate": "この住所はすでに保存されています"
   },
   "auth": {
     "login": "ログイン",
@@ -887,5 +888,27 @@
     "cinemaSection": "シネマサーガ",
     "era": "エラ",
     "saga": "サーガ"
+  },
+  "categories": {
+    "Pratos Principais": "メイン料理",
+    "Entradas": "前菜",
+    "Bebidas": "ドリンク",
+    "Sobremesas": "デザート",
+    "Combos": "コンボ",
+    "Sazonal": "季節限定",
+    "Ingressos": "チケット"
+  },
+  "deliveryMap": {
+    "estimatedArrival": "到着予定時間",
+    "customer": "お客様",
+    "orderId": "注文番号",
+    "progressTitle": "配達状況",
+    "stepConfirmed": "注文確認済み",
+    "stepOutForDelivery": "配達中",
+    "stepNearDestination": "目的地付近",
+    "stepDelivered": "配達完了",
+    "minAgo": "{{count}}分前",
+    "inProgress": "進行中",
+    "pending": "保留中"
   }
 }

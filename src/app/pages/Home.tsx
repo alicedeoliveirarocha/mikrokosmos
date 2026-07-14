@@ -75,7 +75,7 @@ export function Home() {
         {/* Banner Sazonal — Copa do Mundo / Dia dos Namorados / Comeback Season / Cinema Horror Night */}
         <SazonalBanner onVerCardapio={() => setSelectedCategory('Sazonal')} />
 
-        {/* Filtros de Categoria */}
+        {/* Filtros de Categoria — nomes traduzidos via categories.*, com fallback para o nome original */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -99,7 +99,7 @@ export function Home() {
               `}
               style={selectedCategory === category ? { backgroundColor: 'var(--primary-neon)' } : {}}
             >
-              {category === 'all' ? t('home.all') : category}
+              {category === 'all' ? t('home.all') : t(`categories.${category}`, { defaultValue: category })}
             </motion.button>
           ))}
         </motion.div>

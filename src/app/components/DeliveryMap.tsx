@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
+import { useTranslation } from 'react-i18next';
 import { MapEffects } from './MapEffects';
 import { useState, useEffect } from 'react';
 
@@ -22,6 +23,7 @@ export function DeliveryMap({
   status,
 }: DeliveryMapProps) {
   const { primaryColor } = useUniverse();
+  const { t } = useTranslation();
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -52,12 +54,12 @@ export function DeliveryMap({
   // Route waypoints for animation
   const routePath = `M 20 80 Q 30 70, 40 65 T 60 50 T 80 30`;
 
-  // Delivery steps
+  // Delivery steps — labels e tempos traduzidos
   const deliverySteps = [
-    { icon: Package, label: 'Order Confirmed', time: '2 min ago' },
-    { icon: Navigation, label: 'Out for Delivery', time: '5 min ago' },
-    { icon: MapPin, label: 'Near Destination', time: 'In progress' },
-    { icon: CheckCircle, label: 'Delivered', time: 'Pending' },
+    { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
+    { icon: Navigation, label: t('deliveryMap.stepOutForDelivery'), time: t('deliveryMap.minAgo', { count: 5 }) },
+    { icon: MapPin, label: t('deliveryMap.stepNearDestination'), time: t('deliveryMap.inProgress') },
+    { icon: CheckCircle, label: t('deliveryMap.stepDelivered'), time: t('deliveryMap.pending') },
   ];
 
   return (
@@ -291,7 +293,7 @@ export function DeliveryMap({
               </motion.div>
 
               <div>
-                <p className="text-white/60 text-xs uppercase tracking-wider">Estimated Arrival</p>
+                <p className="text-white/60 text-xs uppercase tracking-wider">{t('deliveryMap.estimatedArrival')}</p>
                 <p className="text-white text-2xl font-bold" style={{ color: primaryColor }}>
                   {estimatedTime}
                 </p>
@@ -333,7 +335,7 @@ export function DeliveryMap({
                 </div>
 
                 <div className="flex-1">
-                  <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Customer</p>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-1">{t('deliveryMap.customer')}</p>
                   <p className="text-white font-bold text-lg mb-1">{customerName}</p>
                   <p className="text-white/70 text-sm">{customerAddress}</p>
 
@@ -347,7 +349,7 @@ export function DeliveryMap({
               </div>
 
               <div className="pt-4 border-t border-white/10">
-                <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Order ID</p>
+                <p className="text-white/60 text-xs uppercase tracking-wider mb-1">{t('deliveryMap.orderId')}</p>
                 <p className="text-white font-mono text-sm">#{orderId}</p>
               </div>
             </motion.div>
@@ -364,7 +366,7 @@ export function DeliveryMap({
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
               }}
             >
-              <p className="text-white/60 text-xs uppercase tracking-wider mb-4">Delivery Progress</p>
+              <p className="text-white/60 text-xs uppercase tracking-wider mb-4">{t('deliveryMap.progressTitle')}</p>
 
               <div className="space-y-4">
                 {deliverySteps.map((step, index) => {

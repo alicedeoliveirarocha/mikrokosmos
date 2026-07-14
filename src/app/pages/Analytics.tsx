@@ -89,8 +89,15 @@ export function Analytics() {
     });
   }, [productSales]);
 
+  // Mapa: valor interno da categoria BCG (PT, usado só pra filtrar) → label traduzido pra exibição
+  const bcgLabelMap: Record<string, string> = {
+    '⭐ Estrela': t('analytics.bcg.starsLabel'),
+    '🐄 Vaca Leiteira': t('analytics.bcg.cowsLabel'),
+    '❓ Interrogação': t('analytics.bcg.questionLabel'),
+    '🐶 Abacaxi': t('analytics.bcg.dogsLabel'),
+  };
+
   // Os 4 quadrantes da Matriz BCG, com nome/descrição traduzidos pra exibição.
-  // (o valor interno de "category" em bcgData acima permanece em PT, só usado pra filtrar)
   const bcgCategories = [
     { name: t('analytics.bcg.starsLabel'), count: bcgData.filter(p => p.category === '⭐ Estrela').length, color: '#FFD700', desc: t('analytics.bcg.starsDesc') },
     { name: t('analytics.bcg.cowsLabel'), count: bcgData.filter(p => p.category === '🐄 Vaca Leiteira').length, color: '#4CAF50', desc: t('analytics.bcg.cowsDesc') },
@@ -106,6 +113,8 @@ export function Analytics() {
     .sort((a, b) => b.sales.revenue - a.sales.revenue)
     .slice(0, 5);
 
+  // Vendas por categoria — nome traduzido via categories.*, com fallback pro nome original.
+  // Isso alimenta o gráfico de barras E o "Categoria mais vendida" do resumo.
   const categoryData = useMemo(() => {
     const categorySales = new Map<string, number>();
     completedOrders.forEach(order => {
@@ -119,10 +128,10 @@ export function Analytics() {
       .filter(([name, value]) => name && value > 0)
       .map(([name, value], index) => ({
         id: `cat-${name}-${index}`,
-        name,
+        name: t(`categories.${name}`, { defaultValue: name }),
         value,
       }));
-  }, [completedOrders]);
+  }, [completedOrders, t]);
 
   const universeData = useMemo(() => {
     const universeSales = new Map<string, number>();
@@ -134,15 +143,21 @@ export function Analytics() {
       });
     });
 
+    // Nomes dos universos são marca — não traduzem. Só o "Todos" (bucket dos itens 'both') é traduzido.
     const nameMap: Record<string, string> = {
       'aespa': 'aespa',
       'bts': 'BTS',
       'blackpink': 'BLACKPINK',
       'enhypen': 'ENHYPEN',
       'redvelvet': 'Red Velvet',
+      'newjeans': 'NewJeans',
+      'illit': 'ILLIT',
       'starwars': 'Star Wars',
       'marvel': 'Marvel',
-      'Todos': 'Todos'
+      'spiderman': 'Spider-Man',
+      'meangirls': 'Mean Girls',
+      'interstellar': 'Interstellar',
+      'Todos': t('home.all'),
     };
 
     return Array.from(universeSales.entries())
@@ -152,7 +167,7 @@ export function Analytics() {
         name: nameMap[name] || name,
         value,
       }));
-  }, [completedOrders]);
+  }, [completedOrders, t]);
 
   const ordersByStatus = {
     pendente: orders.filter(o => o.status === 'pendente').length,
@@ -173,7 +188,7 @@ export function Analytics() {
           <p className="text-white font-bold mb-1">{data.name}</p>
           <p className="text-white/60 text-sm">{t('analytics.tooltip.sold')} {data.quantity}</p>
           <p className="text-white/60 text-sm">{t('analytics.tooltip.revenue')} R$ {data.revenue.toFixed(2)}</p>
-          <p className="text-white/60 text-sm">{t('analytics.tooltip.category')} {data.category}</p>
+          <p className="text-white/60 text-sm">{t('analytics.tooltip.category')} {bcgLabelMap[data.category] || data.category}</p>
         </div>
       );
     }
@@ -536,7 +551,7 @@ export function Analytics() {
                     </div>
                     <div className="flex-1">
                       <p className="text-white font-bold">{product.nome}</p>
-                      <p className="text-white/60 text-sm">{product.categoria}</p>
+                      <p className="text-white/60 text-sm">{t(`categories.${product.categoria}`, { defaultValue: product.categoria })}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-white font-bold">{t('analytics.top5.salesCount', { count: product.sales.quantity })}</p>

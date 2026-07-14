@@ -166,6 +166,17 @@ export function Cart() {
 
   const handleSaveAddress = () => {
     if (!customerAddress.trim()) return;
+
+    // Verificação de duplicidade: não salva o mesmo endereço duas vezes
+    const normalized = customerAddress.trim().toLowerCase().replace(/\s+/g, ' ');
+    const alreadyExists = customerData.addresses.some(
+      a => a.value.trim().toLowerCase().replace(/\s+/g, ' ') === normalized
+    );
+    if (alreadyExists) {
+      toast.error(t('cart.addressDuplicate'));
+      return;
+    }
+
     const label = newAddressLabel.trim() || `${t('cart.savedAddresses')} ${customerData.addresses.length + 1}`;
     const newAddr: SavedAddress = {
       id: Date.now().toString(),
@@ -274,11 +285,18 @@ export function Cart() {
     }
 
     try {
+      // Label do método de pagamento sempre traduzido (nada de slug cru tipo "DINHEIRO")
+      const paymentLabel =
+        paymentMethod === 'pix' ? t('cart.pix')
+        : paymentMethod === 'dinheiro' ? t('cart.cash')
+        : paymentMethod === 'cartao' ? t('cart.card')
+        : t('cart.boleto');
+
       const paymentInfo = paymentMethod === 'cartao'
         ? ` | ${t('cart.card')}: ••••${cardNumber.replace(/\s/g, '').slice(-4)}`
         : paymentMethod === 'boleto'
         ? ` | ${t('cart.boleto')}: ${boletoCode}`
-        : ` | ${t('cart.paymentMethod')}: ${paymentMethod.toUpperCase()}`;
+        : ` | ${t('cart.paymentMethod')}: ${paymentLabel}`;
 
       const orderId = await addOrder({
         items: items.map(item => ({

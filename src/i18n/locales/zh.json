@@ -43,8 +43,8 @@
   "welcome": {
     "title": "微宇宙",
     "tagline": "穿越次元的味道",
-    "description": "欢迎来到K-POP美食的未来！\n融合味道与音乐的沉浸式体验。",
-    "kpopUniverses": "7个K-POP宇宙",
+    "description": "欢迎来到K-pop美食的未来！\n融合味道与音乐的沉浸式体验。",
+    "kpopUniverses": "7个K-pop宇宙",
     "groups": "BTS, BLACKPINK, AESPA, ENHYPEN, RED VELVET, NEWJEANS, ILLIT",
     "featuredMenu": "主题菜单",
     "featuredMenuDesc": "以K-pop热门歌曲为灵感的菜肴",
@@ -169,7 +169,8 @@
     "boletoDesc": "确认订单后将生成银行单，有效期为3个工作日。可在任何银行、彩票店或银行应用程序中支付。",
     "boletoGenerated": "银行单已生成",
     "boletoBarcode": "条形码：",
-    "boletoExpiry": "有效期为3个工作日。请在任何银行或彩票店付款。"
+    "boletoExpiry": "有效期为3个工作日。请在任何银行或彩票店付款。",
+    "addressDuplicate": "该地址已保存"
   },
   "auth": {
     "login": "登录",
@@ -887,5 +888,27 @@
     "cinemaSection": "电影系列",
     "era": "时代",
     "saga": "系列"
+  },
+  "categories": {
+    "Pratos Principais": "主菜",
+    "Entradas": "开胃菜",
+    "Bebidas": "饮品",
+    "Sobremesas": "甜点",
+    "Combos": "套餐",
+    "Sazonal": "季节限定",
+    "Ingressos": "门票"
+  },
+  "deliveryMap": {
+    "estimatedArrival": "预计送达时间",
+    "customer": "顾客",
+    "orderId": "订单编号",
+    "progressTitle": "配送进度",
+    "stepConfirmed": "订单已确认",
+    "stepOutForDelivery": "配送中",
+    "stepNearDestination": "接近目的地",
+    "stepDelivered": "已送达",
+    "minAgo": "{{count}}分钟前",
+    "inProgress": "进行中",
+    "pending": "待处理"
   }
 }
