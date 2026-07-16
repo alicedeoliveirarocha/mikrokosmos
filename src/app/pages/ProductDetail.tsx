@@ -13,6 +13,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { StarRating } from '../components/StarRating';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../../lib/currency';
 
 // Tema festivo por evento sazonal, identificado pelo emoji no início do nome do produto.
 function getSeasonalCelebration(nome: string): string[] | null {
@@ -29,6 +30,7 @@ export function ProductDetail() {
   const { addToCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { t } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: preços na moeda do idioma ativo
   const [quantity, setQuantity] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [userRating, setUserRating] = useState(0);
@@ -206,7 +208,7 @@ export function ProductDetail() {
           <div className="mb-6">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{product.nome}</h1>
             <p className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--primary-neon)' }}>
-              R$ {product.preco.toFixed(2)}
+              {format(product.preco)}
             </p>
             <p className="text-white/80 text-lg leading-relaxed mb-4">{longDesc}</p>
 
@@ -273,7 +275,7 @@ export function ProductDetail() {
           <div className="flex items-center justify-between py-4 border-t border-white/10 mb-6">
             <span className="text-white/80 text-lg">{t('productDetail.totalValue')}</span>
             <span className="text-3xl font-bold" style={{ color: 'var(--primary-neon)' }}>
-              R$ {(product.preco * quantity).toFixed(2)}
+              {format(product.preco * quantity)}
             </span>
           </div>
 

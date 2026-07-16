@@ -13,9 +13,11 @@ import { products } from '../data/products';
 import { motion } from 'motion/react';
 import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair, Users, Building2 } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
+import { useCurrency } from '../../lib/currency';
 
 export function Analytics() {
   const { t } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: métricas financeiras na moeda do idioma; cálculo interno segue em BRL
   const { orders } = useOrders();
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
@@ -187,7 +189,7 @@ export function Analytics() {
         <div className="bg-black/90 backdrop-blur-xl border border-white/20 p-3 rounded-xl">
           <p className="text-white font-bold mb-1">{data.name}</p>
           <p className="text-white/60 text-sm">{t('analytics.tooltip.sold')} {data.quantity}</p>
-          <p className="text-white/60 text-sm">{t('analytics.tooltip.revenue')} R$ {data.revenue.toFixed(2)}</p>
+          <p className="text-white/60 text-sm">{t('analytics.tooltip.revenue')} {format(data.revenue)}</p>
           <p className="text-white/60 text-sm">{t('analytics.tooltip.category')} {bcgLabelMap[data.category] || data.category}</p>
         </div>
       );
@@ -371,7 +373,7 @@ export function Analytics() {
                   <TrendingUp className="w-5 h-5 text-green-400" />
                 </div>
                 <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.totalRevenue')}</p>
-                <p className="text-3xl font-bold text-white">R$ {totalRevenue.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-white">{format(totalRevenue)}</p>
               </motion.div>
 
               <motion.div
@@ -403,7 +405,7 @@ export function Analytics() {
                   <TrendingUp className="w-5 h-5 text-purple-400" />
                 </div>
                 <p className="text-white/60 text-sm mb-1">{t('analytics.metrics.averageTicket')}</p>
-                <p className="text-3xl font-bold text-white">R$ {averageTicket.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-white">{format(averageTicket)}</p>
               </motion.div>
 
               <motion.div
@@ -555,7 +557,7 @@ export function Analytics() {
                     </div>
                     <div className="text-right">
                       <p className="text-white font-bold">{t('analytics.top5.salesCount', { count: product.sales.quantity })}</p>
-                      <p className="text-white/60 text-sm">R$ {product.sales.revenue.toFixed(2)}</p>
+                      <p className="text-white/60 text-sm">{format(product.sales.revenue)}</p>
                     </div>
                   </div>
                 ))}

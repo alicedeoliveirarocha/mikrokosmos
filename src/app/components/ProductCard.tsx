@@ -7,6 +7,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { StarRating } from './StarRating';
 import { useEffect, useState } from 'react';
 import { useUniverse } from '../context/UniverseContext';
+import { useCurrency } from '../../lib/currency';
 
 interface ProductCardProps {
   product: Product;
@@ -16,6 +17,7 @@ interface ProductCardProps {
 export function ProductCard({ product, index }: ProductCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: preço na moeda do idioma ativo
   const { categoria } = useUniverse();
   const [averageRating, setAverageRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
@@ -117,7 +119,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
               className={`text-2xl font-bold ${isCinema ? 'price-text' : ''}`}
               style={{ color: 'var(--primary-neon)' }}
             >
-              R$ {product.preco.toFixed(2)}
+              {format(product.preco)}
             </span>
             
             {isKpop ? (

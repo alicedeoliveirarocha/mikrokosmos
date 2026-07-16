@@ -8,11 +8,13 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { Package, CheckCircle, Navigation, X, Map, Clock, ChefHat, Bike } from 'lucide-react';
+import { useCurrency } from '../../lib/currency';
 
 export function OrderTracking() {
   const { orders } = useOrders();
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: total do pedido na moeda do idioma ativo
   const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
 
   const myOrders = orders.filter(o =>
@@ -87,7 +89,7 @@ export function OrderTracking() {
                     <p className="text-white/40 text-sm">{formatDate(order.created_at)}</p>
                   </div>
                   <p className="text-2xl font-bold" style={{ color: 'var(--primary-neon)' }}>
-                    R$ {order.total.toFixed(2)}
+                    {format(order.total)}
                   </p>
                 </div>
 

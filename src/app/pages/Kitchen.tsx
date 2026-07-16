@@ -4,6 +4,7 @@
 // de labels que cobre TODOS os status possíveis, reaproveitando a chave
 // delivery.status.onRoute que já existe nos 6 locales.
 // FIX 2 (Lote 4): categoria do item traduzida via categories.* com fallback.
+// FIX 3 (moeda): totais exibidos na moeda do idioma ativo via useCurrency.
 import { useState } from 'react';
 import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
@@ -13,10 +14,12 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { ChefHat, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCurrency } from '../../lib/currency';
 
 export function Kitchen() {
   const { orders, updateOrderStatus } = useOrders();
   const { t, i18n } = useTranslation();
+  const { format } = useCurrency();
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('pendente');
 
   const statusConfig = {
@@ -121,7 +124,7 @@ export function Kitchen() {
                   </div>
                   <div className="text-right mt-3 md:mt-0">
                     <p className="text-3xl font-bold" style={{ color: 'var(--primary-neon)' }}>
-                      R$ {order.total.toFixed(2)}
+                      {format(order.total)}
                     </p>
                   </div>
                 </div>
@@ -135,7 +138,7 @@ export function Kitchen() {
                       </div>
                       <div className="text-right">
                         <p className="text-white font-bold">x{item.quantidade}</p>
-                        <p className="text-white/60 text-sm">R$ {(item.product.preco * item.quantidade).toFixed(2)}</p>
+                        <p className="text-white/60 text-sm">{format(item.product.preco * item.quantidade)}</p>
                       </div>
                     </div>
                   ))}

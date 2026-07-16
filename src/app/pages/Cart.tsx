@@ -19,6 +19,7 @@ import { getProductImage } from '../utils/productImages';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { toast } from 'sonner';
 import { photocards, Photocard, GROUP_CONFIG } from '../data/photocards';
+import { useCurrency } from '../../lib/currency';
 
 const CARDS_PER_ORDER = 3;
 
@@ -65,6 +66,7 @@ function saveCustomerData(data: CustomerData, userId?: string) {
 export function Cart() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: totais exibidos na moeda do idioma; cálculo interno segue em BRL
   const { items, updateQuantity, removeFromCart, total, clearCart } = useCart();
   const { addOrder } = useOrders();
   const { user } = useAuth();
@@ -795,7 +797,7 @@ export function Cart() {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-3">
               <span className="text-white/80">{t('cart.totalLabel')}</span>
-              <span className="text-2xl font-bold" style={{ color: 'var(--primary-neon)' }}>R$ {total.toFixed(2)}</span>
+              <span className="text-2xl font-bold" style={{ color: 'var(--primary-neon)' }}>{format(total)}</span>
             </div>
             <div className="flex gap-2">
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -857,7 +859,7 @@ export function Cart() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-lg font-bold" style={{ color: 'var(--primary-neon)' }}>
-                        R$ {(item.preco * item.quantidade).toFixed(2)}
+                        {format(item.preco * item.quantidade)}
                       </span>
                       <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                         onClick={() => removeFromCart(item.id)}
@@ -899,7 +901,7 @@ export function Cart() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <span className="text-white/80 text-lg">{t('cart.orderTotal')}</span>
-            <span className="text-4xl font-bold" style={{ color: 'var(--primary-neon)' }}>R$ {total.toFixed(2)}</span>
+            <span className="text-4xl font-bold" style={{ color: 'var(--primary-neon)' }}>{format(total)}</span>
           </div>
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             onClick={() => setStep(isKpop && wantPhotocards ? 'photocards' : 'checkout')}
