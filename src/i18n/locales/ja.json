@@ -728,7 +728,65 @@
     "scheduleTopics": "カリキュラムのトピック",
     "implemented": "Mikrokosmosでの実装",
     "techStack": "使用技術スタック",
-    "features": "プロジェクトの機能"
+    "features": "プロジェクトの機能",
+    "week": "第{{range}}週",
+    "blocks": {
+      "b1": {
+        "title": "JavaScript ES6+ & DOM",
+        "topics": {
+          "t1": "変数・データ型・演算子",
+          "t2": "制御構造とループ",
+          "t3": "関数とスコープ - モジュール化",
+          "t4": "DOM操作 - 動的メニュー"
+        }
+      },
+      "b2": {
+        "title": "配列・オブジェクト & BaaS",
+        "topics": {
+          "t1": "オブジェクトと配列の操作",
+          "t2": "イベントとインタラクション - カート",
+          "t3": "FirebaseとSupabase入門",
+          "t4": "スプリント2: メニューCRUD"
+        }
+      },
+      "b3": {
+        "title": "API & UX/UIデザイン",
+        "topics": {
+          "t1": "リアルタイムデータベース: 注文CRUD",
+          "t2": "Fetch APIとAsync/Await",
+          "t3": "UX/UIデザイン: ステータスとフィードバック",
+          "t4": "CSSアニメーションとトランジション"
+        }
+      },
+      "b4": {
+        "title": "React & デプロイ",
+        "topics": {
+          "t1": "コンポーネント化: React",
+          "t2": "フレームワークとのモジュール統合",
+          "t3": "セキュリティ: アクセスルール",
+          "t4": "ホスティングとCI/CD (Vercel)"
+        }
+      }
+    },
+    "stackDesc": {
+      "ui": "UIライブラリ",
+      "types": "型安全性",
+      "styling": "スタイリング",
+      "anim": "アニメーション",
+      "nav": "ナビゲーション",
+      "icons": "アイコン",
+      "toasts": "トースト通知"
+    },
+    "featureItems": {
+      "f1": "4つのテーマユニバース",
+      "f2": "ショッピングカート",
+      "f3": "12のユニークな商品",
+      "f4": "滑らかなアニメーション",
+      "f5": "レスポンシブデザイン",
+      "f6": "グラスモーフィズムUI",
+      "f7": "Context API",
+      "f8": "TypeScript"
+    }
   },
   "info": {
     "heroDesc": "K-popの音楽ユニバースとの同期を通じて、食の体験を革新するSaaSです。",
@@ -764,7 +822,13 @@
       "p3": "メニューの各料理は<strong style=\"color:white\">ガストロノミック・ナラティブ</strong>であり、テーマ名とユニークなビジュアルプレゼンテーションを通じて顧客とお気に入りのアーティストをつなぎます。",
       "tagline": "お気に入りのアーティストのミュージックビデオを料理体験として拡張したものです。"
     },
-    "tech": "テクノロジー"
+    "tech": "テクノロジー",
+    "universeColors": {
+      "aespa": "シアン＆ネオングリーン",
+      "enhypen": "ブラッドレッド＆ゴールド",
+      "bts": "パープル＆ゴールド",
+      "blackpink": "ピンク＆ローズ"
+    }
   },
   "customResponses": {
     "cliente": {
@@ -896,7 +960,8 @@
     "Sobremesas": "デザート",
     "Combos": "コンボ",
     "Sazonal": "季節限定",
-    "Ingressos": "チケット"
+    "Ingressos": "チケット",
+    "Sushi": "寿司"
   },
   "deliveryMap": {
     "estimatedArrival": "到着予定時間",
@@ -910,5 +975,23 @@
     "minAgo": "{{count}}分前",
     "inProgress": "進行中",
     "pending": "保留中"
+  },
+  "allergens": {
+    "Lactose": "乳糖",
+    "Glúten": "グルテン",
+    "Ovo": "卵",
+    "Soja": "大豆",
+    "Amendoim": "ピーナッツ",
+    "Frutos do Mar": "甲殻類",
+    "Peixe": "魚",
+    "Castanhas": "ナッツ類",
+    "Gergelim": "ごま"
+  },
+  "ingredients": {
+    "Gelo": "かき氷",
+    "Leite Condensado": "練乳",
+    "Morango": "いちご",
+    "Mochi": "餅",
+    "Calda de Morango": "いちごシロップ"
   }
 }

@@ -3,6 +3,7 @@
 // porque esse status não existia no statusConfig da cozinha. Agora há um mapa
 // de labels que cobre TODOS os status possíveis, reaproveitando a chave
 // delivery.status.onRoute que já existe nos 6 locales.
+// FIX 2 (Lote 4): categoria do item traduzida via categories.* com fallback.
 import { useState } from 'react';
 import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
@@ -12,19 +13,19 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { ChefHat, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
- 
+
 export function Kitchen() {
   const { orders, updateOrderStatus } = useOrders();
   const { t, i18n } = useTranslation();
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('pendente');
- 
+
   const statusConfig = {
     pendente:   { label: t('kitchen.status.pending'),   icon: AlertCircle,   color: '#FFD700' },
     preparando: { label: t('kitchen.status.preparing'), icon: Clock,         color: '#FF9800' },
     pronto:     { label: t('kitchen.status.ready'),     icon: CheckCircle,   color: '#00FFFF' },
     cancelado:  { label: t('kitchen.status.cancelled'), icon: XCircle,       color: '#FF1744' },
   };
- 
+
   // Labels para o toast — cobre também status que não são "da cozinha",
   // como 'saiu-para-entrega' (reusa a chave do namespace delivery) e 'entregue'.
   const statusLabels: Record<string, string> = {
@@ -35,15 +36,15 @@ export function Kitchen() {
     'saiu-para-entrega': t('delivery.status.onRoute'),
     entregue: t('delivery.status.delivered'),
   };
- 
+
   const kitchenStatuses: OrderStatus[] = ['pendente', 'preparando', 'pronto', 'cancelado'];
   const filteredOrders = orders.filter(order => order.status === selectedStatus);
- 
+
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
     updateOrderStatus(orderId, newStatus);
     toast.success(t('kitchen.updated', { label: statusLabels[newStatus] || newStatus }));
   };
- 
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const localeMap: Record<string, string> = {
@@ -54,10 +55,10 @@ export function Kitchen() {
       day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
     });
   };
- 
+
   const getStatusCount = (status: OrderStatus) =>
     orders.filter(order => order.status === status).length;
- 
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -67,7 +68,7 @@ export function Kitchen() {
           title={t('kitchen.bannerTitle')}
           description={t('kitchen.bannerDesc')}
         />
- 
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {kitchenStatuses.map((status) => {
@@ -93,7 +94,7 @@ export function Kitchen() {
             })}
           </div>
         </motion.div>
- 
+
         <div className="space-y-4">
           {filteredOrders.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -124,13 +125,13 @@ export function Kitchen() {
                     </p>
                   </div>
                 </div>
- 
+
                 <div className="space-y-3 mb-4">
                   {order.items.map((item: any, idx: number) => (
                     <div key={idx} className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
                       <div className="flex-1">
                         <p className="text-white font-medium">{item.product.nome}</p>
-                        <p className="text-white/60 text-sm">{item.product.categoria}</p>
+                        <p className="text-white/60 text-sm">{t(`categories.${item.product.categoria}`, { defaultValue: item.product.categoria })}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-white font-bold">x{item.quantidade}</p>
@@ -139,14 +140,14 @@ export function Kitchen() {
                     </div>
                   ))}
                 </div>
- 
+
                 {(order.observacoes || order.notes) && (
                   <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
                     <p className="text-yellow-400 text-sm font-bold mb-1">📝 {t('kitchen.notes')}</p>
                     <p className="text-white/80 text-sm">{order.observacoes || order.notes}</p>
                   </div>
                 )}
- 
+
                 <div className="flex flex-wrap gap-2">
                   {selectedStatus === 'pendente' && (
                     <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -189,4 +190,3 @@ export function Kitchen() {
     </div>
   );
 }
- 

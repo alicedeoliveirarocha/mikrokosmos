@@ -728,7 +728,65 @@
     "scheduleTopics": "Schedule Topics",
     "implemented": "Implemented in Mikrokosmos",
     "techStack": "Technology Stack Used",
-    "features": "Project Features"
+    "features": "Project Features",
+    "week": "Week {{range}}",
+    "blocks": {
+      "b1": {
+        "title": "JavaScript ES6+ & DOM",
+        "topics": {
+          "t1": "Variables, Data Types and Operators",
+          "t2": "Control Structures and Loops",
+          "t3": "Functions and Scope - Modularization",
+          "t4": "DOM Manipulation - Dynamic Menu"
+        }
+      },
+      "b2": {
+        "title": "Arrays, Objects & BaaS",
+        "topics": {
+          "t1": "Working with Objects and Arrays",
+          "t2": "Events and Interactivity - Cart",
+          "t3": "Introduction to Firebase and Supabase",
+          "t4": "Sprint 2: Menu CRUD"
+        }
+      },
+      "b3": {
+        "title": "API & UX/UI Design",
+        "topics": {
+          "t1": "Real-time Database: Orders CRUD",
+          "t2": "Fetch API and Async/Await",
+          "t3": "UX/UI Design: Status and Feedback",
+          "t4": "CSS Animations and Transitions"
+        }
+      },
+      "b4": {
+        "title": "React & Deploy",
+        "topics": {
+          "t1": "Componentization: React",
+          "t2": "Module Integration with Frameworks",
+          "t3": "Security: Access Rules",
+          "t4": "Hosting and CI/CD (Vercel)"
+        }
+      }
+    },
+    "stackDesc": {
+      "ui": "UI Library",
+      "types": "Type Safety",
+      "styling": "Styling",
+      "anim": "Animations",
+      "nav": "Navigation",
+      "icons": "Icons",
+      "toasts": "Toasts"
+    },
+    "featureItems": {
+      "f1": "4 Themed Universes",
+      "f2": "Shopping Cart",
+      "f3": "12 Unique Products",
+      "f4": "Smooth Animations",
+      "f5": "Responsive Design",
+      "f6": "Glassmorphism UI",
+      "f7": "Context API",
+      "f8": "TypeScript"
+    }
   },
   "info": {
     "heroDesc": "A revolutionary SaaS that transforms the gastronomic experience through synchronization with K-pop musical universes.",
@@ -764,7 +822,13 @@
       "p3": "Each dish on the menu is a <strong style=\"color:white\">gastronomic narrative</strong>, connecting customers to their favorite artists through themed names and unique visual presentations.",
       "tagline": "It is an extension of the favorite artist's music video, transformed into a culinary experience."
     },
-    "tech": "Technologies"
+    "tech": "Technologies",
+    "universeColors": {
+      "aespa": "Cyan & Neon Green",
+      "enhypen": "Blood Red & Gold",
+      "bts": "Purple & Gold",
+      "blackpink": "Pink & Rose"
+    }
   },
   "customResponses": {
     "cliente": {
@@ -896,7 +960,8 @@
     "Sobremesas": "Desserts",
     "Combos": "Combos",
     "Sazonal": "Seasonal",
-    "Ingressos": "Tickets"
+    "Ingressos": "Tickets",
+    "Sushi": "Sushi"
   },
   "deliveryMap": {
     "estimatedArrival": "Estimated Arrival",
@@ -910,5 +975,23 @@
     "minAgo": "{{count}} min ago",
     "inProgress": "In progress",
     "pending": "Pending"
+  },
+  "allergens": {
+    "Lactose": "Lactose",
+    "Glúten": "Gluten",
+    "Ovo": "Egg",
+    "Soja": "Soy",
+    "Amendoim": "Peanut",
+    "Frutos do Mar": "Shellfish",
+    "Peixe": "Fish",
+    "Castanhas": "Tree Nuts",
+    "Gergelim": "Sesame"
+  },
+  "ingredients": {
+    "Gelo": "Shaved Ice",
+    "Leite Condensado": "Condensed Milk",
+    "Morango": "Strawberry",
+    "Mochi": "Mochi",
+    "Calda de Morango": "Strawberry Syrup"
   }
 }

@@ -16,11 +16,13 @@ export function Info() {
     { icon: GraduationCap, key: 'education',   color: '#FFD700' },
   ];
 
+  // Nomes, temas de era e tracks são marca — não traduzem.
+  // As cores traduzem via info.universeColors.{slug}
   const universes = [
-    { name: 'AESPA',     theme: 'Cyberpunk Era',  colors: 'Ciano & Verde Neon',   tracks: 'Supernova, Next Level, Savage' },
-    { name: 'ENHYPEN',   theme: 'Dark Fantasy',   colors: 'Vermelho Sangue & Dourado', tracks: 'Bite Me, Given-Taken, Drunk-Dazed' },
-    { name: 'BTS',       theme: 'Purple Era',     colors: 'Roxo & Dourado',       tracks: 'Dynamite, Butter, Mikrokosmos' },
-    { name: 'BLACKPINK', theme: 'Pink Venom',     colors: 'Rosa & Pink',          tracks: 'Pink Venom, How You Like That, Lalisa' },
+    { slug: 'aespa',     name: 'AESPA',     theme: 'Cyberpunk Era', tracks: 'Supernova, Next Level, Savage' },
+    { slug: 'enhypen',   name: 'ENHYPEN',   theme: 'Dark Fantasy',  tracks: 'Bite Me, Given-Taken, Drunk-Dazed' },
+    { slug: 'bts',       name: 'BTS',       theme: 'Purple Era',    tracks: 'Dynamite, Butter, Mikrokosmos' },
+    { slug: 'blackpink', name: 'BLACKPINK', theme: 'Pink Venom',    tracks: 'Pink Venom, How You Like That, Lalisa' },
   ];
 
   return (
@@ -62,7 +64,7 @@ export function Info() {
                 <p className="text-white/80 font-semibold mb-3">{universe.theme}</p>
                 <div className="space-y-2 text-sm">
                   <p className="text-white/60">
-                    <span className="text-white">{t('info.colors')}</span> {universe.colors}
+                    <span className="text-white">{t('info.colors')}</span> {t(`info.universeColors.${universe.slug}`)}
                   </p>
                   <p className="text-white/60">
                     <span className="text-white">{t('info.tracks')}</span> {universe.tracks}

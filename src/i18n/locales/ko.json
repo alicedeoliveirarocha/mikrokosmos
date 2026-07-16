@@ -728,7 +728,65 @@
     "scheduleTopics": "교육과정 주제",
     "implemented": "Mikrokosmos에 구현됨",
     "techStack": "사용된 기술 스택",
-    "features": "프로젝트 기능"
+    "features": "프로젝트 기능",
+    "week": "{{range}}주차",
+    "blocks": {
+      "b1": {
+        "title": "JavaScript ES6+ & DOM",
+        "topics": {
+          "t1": "변수, 데이터 타입과 연산자",
+          "t2": "제어 구조와 반복문",
+          "t3": "함수와 스코프 - 모듈화",
+          "t4": "DOM 조작 - 동적 메뉴"
+        }
+      },
+      "b2": {
+        "title": "배열, 객체 & BaaS",
+        "topics": {
+          "t1": "객체와 배열 다루기",
+          "t2": "이벤트와 상호작용 - 장바구니",
+          "t3": "Firebase와 Supabase 입문",
+          "t4": "스프린트 2: 메뉴 CRUD"
+        }
+      },
+      "b3": {
+        "title": "API & UX/UI 디자인",
+        "topics": {
+          "t1": "실시간 데이터베이스: 주문 CRUD",
+          "t2": "Fetch API와 Async/Await",
+          "t3": "UX/UI 디자인: 상태와 피드백",
+          "t4": "CSS 애니메이션과 트랜지션"
+        }
+      },
+      "b4": {
+        "title": "React & 배포",
+        "topics": {
+          "t1": "컴포넌트화: React",
+          "t2": "프레임워크와 모듈 통합",
+          "t3": "보안: 접근 규칙",
+          "t4": "호스팅과 CI/CD (Vercel)"
+        }
+      }
+    },
+    "stackDesc": {
+      "ui": "UI 라이브러리",
+      "types": "타입 안정성",
+      "styling": "스타일링",
+      "anim": "애니메이션",
+      "nav": "내비게이션",
+      "icons": "아이콘",
+      "toasts": "토스트 알림"
+    },
+    "featureItems": {
+      "f1": "4개의 테마 유니버스",
+      "f2": "장바구니",
+      "f3": "12개의 고유 제품",
+      "f4": "부드러운 애니메이션",
+      "f5": "반응형 디자인",
+      "f6": "글래스모피즘 UI",
+      "f7": "Context API",
+      "f8": "TypeScript"
+    }
   },
   "info": {
     "heroDesc": "K-pop 음악 유니버스와의 동기화를 통해 미식 경험을 혁신하는 SaaS입니다.",
@@ -764,7 +822,13 @@
       "p3": "메뉴의 각 요리는 <strong style=\"color:white\">미식 내러티브</strong>로, 테마 이름과 독특한 비주얼 프레젠테이션을 통해 고객과 좋아하는 아티스트를 연결합니다.",
       "tagline": "고객이 가장 좋아하는 아티스트의 뮤직비디오를 미식 경험으로 확장한 것입니다."
     },
-    "tech": "기술"
+    "tech": "기술",
+    "universeColors": {
+      "aespa": "시안 & 네온 그린",
+      "enhypen": "블러드 레드 & 골드",
+      "bts": "퍼플 & 골드",
+      "blackpink": "핑크 & 로즈"
+    }
   },
   "customResponses": {
     "cliente": {
@@ -896,7 +960,8 @@
     "Sobremesas": "디저트",
     "Combos": "콤보",
     "Sazonal": "시즌 한정",
-    "Ingressos": "티켓"
+    "Ingressos": "티켓",
+    "Sushi": "스시"
   },
   "deliveryMap": {
     "estimatedArrival": "예상 도착 시간",
@@ -910,5 +975,23 @@
     "minAgo": "{{count}}분 전",
     "inProgress": "진행 중",
     "pending": "대기 중"
+  },
+  "allergens": {
+    "Lactose": "유당",
+    "Glúten": "글루텐",
+    "Ovo": "계란",
+    "Soja": "대두",
+    "Amendoim": "땅콩",
+    "Frutos do Mar": "갑각류",
+    "Peixe": "생선",
+    "Castanhas": "견과류",
+    "Gergelim": "참깨"
+  },
+  "ingredients": {
+    "Gelo": "얼음",
+    "Leite Condensado": "연유",
+    "Morango": "딸기",
+    "Mochi": "찹쌀떡",
+    "Calda de Morango": "딸기 시럽"
   }
 }

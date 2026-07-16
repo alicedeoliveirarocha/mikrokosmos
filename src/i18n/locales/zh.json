@@ -728,7 +728,65 @@
     "scheduleTopics": "课程主题",
     "implemented": "在Mikrokosmos中实现",
     "techStack": "使用的技术栈",
-    "features": "项目功能"
+    "features": "项目功能",
+    "week": "第{{range}}周",
+    "blocks": {
+      "b1": {
+        "title": "JavaScript ES6+ & DOM",
+        "topics": {
+          "t1": "变量、数据类型与运算符",
+          "t2": "控制结构与循环",
+          "t3": "函数与作用域 - 模块化",
+          "t4": "DOM操作 - 动态菜单"
+        }
+      },
+      "b2": {
+        "title": "数组、对象与BaaS",
+        "topics": {
+          "t1": "对象与数组的使用",
+          "t2": "事件与交互 - 购物车",
+          "t3": "Firebase与Supabase入门",
+          "t4": "冲刺2：菜单CRUD"
+        }
+      },
+      "b3": {
+        "title": "API与UX/UI设计",
+        "topics": {
+          "t1": "实时数据库：订单CRUD",
+          "t2": "Fetch API与Async/Await",
+          "t3": "UX/UI设计：状态与反馈",
+          "t4": "CSS动画与过渡"
+        }
+      },
+      "b4": {
+        "title": "React与部署",
+        "topics": {
+          "t1": "组件化：React",
+          "t2": "模块与框架集成",
+          "t3": "安全：访问规则",
+          "t4": "托管与CI/CD（Vercel）"
+        }
+      }
+    },
+    "stackDesc": {
+      "ui": "UI库",
+      "types": "类型安全",
+      "styling": "样式",
+      "anim": "动画",
+      "nav": "导航",
+      "icons": "图标",
+      "toasts": "提示通知"
+    },
+    "featureItems": {
+      "f1": "4个主题宇宙",
+      "f2": "购物车",
+      "f3": "12款独特产品",
+      "f4": "流畅动画",
+      "f5": "响应式设计",
+      "f6": "玻璃拟态UI",
+      "f7": "Context API",
+      "f8": "TypeScript"
+    }
   },
   "info": {
     "heroDesc": "一款革命性的SaaS，通过与K-pop音乐宇宙同步来变革美食体验。",
@@ -764,7 +822,13 @@
       "p3": "菜单上的每道菜都是一个<strong style=\"color:white\">美食叙事</strong>，通过主题名称和独特的视觉呈现，将顾客与他们喜爱的艺人连接起来。",
       "tagline": "这是顾客最喜欢的艺人MV的延伸，转化为烹饪体验。"
     },
-    "tech": "技术"
+    "tech": "技术",
+    "universeColors": {
+      "aespa": "青色和霓虹绿",
+      "enhypen": "血红色和金色",
+      "bts": "紫色和金色",
+      "blackpink": "粉色和玫瑰色"
+    }
   },
   "customResponses": {
     "cliente": {
@@ -896,7 +960,8 @@
     "Sobremesas": "甜点",
     "Combos": "套餐",
     "Sazonal": "季节限定",
-    "Ingressos": "门票"
+    "Ingressos": "门票",
+    "Sushi": "寿司"
   },
   "deliveryMap": {
     "estimatedArrival": "预计送达时间",
@@ -910,5 +975,23 @@
     "minAgo": "{{count}}分钟前",
     "inProgress": "进行中",
     "pending": "待处理"
+  },
+  "allergens": {
+    "Lactose": "乳糖",
+    "Glúten": "麸质",
+    "Ovo": "鸡蛋",
+    "Soja": "大豆",
+    "Amendoim": "花生",
+    "Frutos do Mar": "甲壳类",
+    "Peixe": "鱼",
+    "Castanhas": "坚果",
+    "Gergelim": "芝麻"
+  },
+  "ingredients": {
+    "Gelo": "刨冰",
+    "Leite Condensado": "炼乳",
+    "Morango": "草莓",
+    "Mochi": "麻糬",
+    "Calda de Morango": "草莓糖浆"
   }
 }

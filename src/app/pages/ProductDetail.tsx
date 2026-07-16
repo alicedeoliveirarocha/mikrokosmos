@@ -70,6 +70,14 @@ export function ProductDetail() {
     );
   }
 
+  // Descrição longa traduzida com cadeia de fallback:
+  // 1º tenta productsLong.{id} (descrição longa localizada)
+  // 2º cai na products.{id} (descrição curta já traduzida no catálogo)
+  // 3º por último, o texto original em PT dos dados
+  const longDesc = t(`productsLong.${product.id}`, {
+    defaultValue: t(`products.${product.id}`, { defaultValue: product.descLonga }),
+  });
+
   const handleAddToCart = () => {
     if (quantity === 0) return;
 
@@ -200,7 +208,7 @@ export function ProductDetail() {
             <p className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--primary-neon)' }}>
               R$ {product.preco.toFixed(2)}
             </p>
-            <p className="text-white/80 text-lg leading-relaxed mb-4">{product.descLonga}</p>
+            <p className="text-white/80 text-lg leading-relaxed mb-4">{longDesc}</p>
 
             {/* Rating */}
             <div className="flex flex-col gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
@@ -312,7 +320,7 @@ export function ProductDetail() {
             ))}
           </div>
 
-          {/* Ingredientes */}
+          {/* Ingredientes — traduzidos via ingredients.*, com fallback pro nome original */}
           <div className="mt-6">
             <div className="flex items-center gap-2 mb-3">
               <Apple className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
@@ -321,17 +329,18 @@ export function ProductDetail() {
             <div className="flex flex-wrap gap-2">
               {product.ingredientes.map((ingrediente, index) => (
                 <span key={index} className="px-3 py-1 rounded-full text-sm bg-white/10 text-white border border-white/20">
-                  {ingrediente}
+                  {t(`ingredients.${ingrediente}`, { defaultValue: ingrediente })}
                 </span>
               ))}
             </div>
           </div>
 
+          {/* Alérgenos — traduzidos via allergens.*, com fallback pro nome original */}
           {product.alergenos && product.alergenos.length > 0 && (
             <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl">
               <p className="text-yellow-400 font-bold mb-2">⚠️ {t('productDetail.allergenAlert')}</p>
               <p className="text-white/80 text-sm">
-                {t('productDetail.contains')} {product.alergenos.join(', ')}
+                {t('productDetail.contains')} {product.alergenos.map(a => t(`allergens.${a}`, { defaultValue: a })).join(', ')}
               </p>
             </div>
           )}

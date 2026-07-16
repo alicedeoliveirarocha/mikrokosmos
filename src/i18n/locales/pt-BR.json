@@ -728,7 +728,65 @@
     "scheduleTopics": "Tópicos do Cronograma",
     "implemented": "Implementado no Mikrokosmos",
     "techStack": "Stack Tecnológica Utilizada",
-    "features": "Features do Projeto"
+    "features": "Features do Projeto",
+    "week": "Semana {{range}}",
+    "blocks": {
+      "b1": {
+        "title": "JavaScript ES6+ & DOM",
+        "topics": {
+          "t1": "Variáveis, Tipos de Dados e Operadores",
+          "t2": "Estruturas de Controle e Laços",
+          "t3": "Funções e Escopo - Modularização",
+          "t4": "Manipulação de DOM - Dinamismo no cardápio"
+        }
+      },
+      "b2": {
+        "title": "Arrays, Objetos & BaaS",
+        "topics": {
+          "t1": "Trabalhando com Objetos e Arrays",
+          "t2": "Eventos e Interatividade - Carrinho",
+          "t3": "Introdução ao Firebase e Supabase",
+          "t4": "Sprint 2: CRUD Cardápio"
+        }
+      },
+      "b3": {
+        "title": "API & UX/UI Design",
+        "topics": {
+          "t1": "Real-time Database: CRUD de Pedidos",
+          "t2": "Fetch API e Async/Await",
+          "t3": "UX/UI Design: Status e Feedback",
+          "t4": "Animações e Transições CSS"
+        }
+      },
+      "b4": {
+        "title": "React & Deploy",
+        "topics": {
+          "t1": "Componentização: React",
+          "t2": "Integração de Módulos com Frameworks",
+          "t3": "Segurança: Regras de Acesso",
+          "t4": "Hospedagem e CI/CD (Vercel)"
+        }
+      }
+    },
+    "stackDesc": {
+      "ui": "Biblioteca de UI",
+      "types": "Tipagem Segura",
+      "styling": "Estilização",
+      "anim": "Animações",
+      "nav": "Navegação",
+      "icons": "Ícones",
+      "toasts": "Notificações"
+    },
+    "featureItems": {
+      "f1": "4 Universos Temáticos",
+      "f2": "Carrinho de Compras",
+      "f3": "12 Produtos Únicos",
+      "f4": "Animações Suaves",
+      "f5": "Design Responsivo",
+      "f6": "UI Glassmorphism",
+      "f7": "Context API",
+      "f8": "TypeScript"
+    }
   },
   "info": {
     "heroDesc": "Um SaaS revolucionário que transforma a experiência gastronômica através da sincronização com universos musicais K-pop.",
@@ -764,7 +822,13 @@
       "p3": "Cada prato no cardápio é uma <strong style=\"color:white\">narrativa gastronômica</strong>, conectando os clientes aos seus artistas favoritos através de nomes temáticos e apresentações visuais únicas.",
       "tagline": "É uma extensão do videoclipe do artista favorito do cliente, transformada em experiência culinária."
     },
-    "tech": "Tecnologias"
+    "tech": "Tecnologias",
+    "universeColors": {
+      "aespa": "Ciano & Verde Neon",
+      "enhypen": "Vermelho Sangue & Dourado",
+      "bts": "Roxo & Dourado",
+      "blackpink": "Rosa & Pink"
+    }
   },
   "customResponses": {
     "cliente": {
@@ -896,7 +960,8 @@
     "Sobremesas": "Sobremesas",
     "Combos": "Combos",
     "Sazonal": "Sazonal",
-    "Ingressos": "Ingressos"
+    "Ingressos": "Ingressos",
+    "Sushi": "Sushi"
   },
   "deliveryMap": {
     "estimatedArrival": "Chegada Estimada",
@@ -910,5 +975,23 @@
     "minAgo": "há {{count}} min",
     "inProgress": "Em andamento",
     "pending": "Pendente"
+  },
+  "allergens": {
+    "Lactose": "Lactose",
+    "Glúten": "Glúten",
+    "Ovo": "Ovo",
+    "Soja": "Soja",
+    "Amendoim": "Amendoim",
+    "Frutos do Mar": "Frutos do Mar",
+    "Peixe": "Peixe",
+    "Castanhas": "Castanhas",
+    "Gergelim": "Gergelim"
+  },
+  "ingredients": {
+    "Gelo": "Gelo",
+    "Leite Condensado": "Leite Condensado",
+    "Morango": "Morango",
+    "Mochi": "Mochi",
+    "Calda de Morango": "Calda de Morango"
   }
 }
