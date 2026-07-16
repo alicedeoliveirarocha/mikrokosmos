@@ -40,7 +40,7 @@ const FORM_VAZIO: FormState = {
 };
 
 export function FuncionariosPanel() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
@@ -80,6 +80,10 @@ export function FuncionariosPanel() {
   }, [isAdmin]);
 
   const cargoLabel = (c: Cargo) => t(`funcionarios.cargo.${c}`);
+
+  // FIX i18n: slug de role (dado do Supabase) traduzido só na exibição.
+  // Reaproveita as chaves profile.roles.* já existentes nos 6 idiomas.
+  const roleLabel = (r: string) => t(`profile.roles.${r}`, { defaultValue: r });
 
   const listaFiltrada = filtroUnidade === 'todas'
     ? funcionarios
@@ -269,8 +273,9 @@ export function FuncionariosPanel() {
                       className="w-full px-3 py-2.5 rounded-xl bg-black/30 border border-white/20 text-white text-sm"
                     >
                       <option value="">{t('funcionarios.noAccount')}</option>
+                      {/* FIX i18n: nome e email são dados (crus); só o role traduz */}
                       {profiles.map(p => (
-                        <option key={p.id} value={p.id}>{p.nome} — {p.email} ({p.role})</option>
+                        <option key={p.id} value={p.id}>{p.nome} — {p.email} ({roleLabel(p.role)})</option>
                       ))}
                     </select>
                   )}
@@ -334,9 +339,10 @@ export function FuncionariosPanel() {
                 </div>
               </div>
 
+              {/* FIX i18n: role do badge traduzido na exibição */}
               {f.profileId && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 mb-2">
-                  🔗 {t('funcionarios.linkedBadge')}{profileVinculado ? `: ${profileVinculado.role}` : ''}
+                  🔗 {t('funcionarios.linkedBadge')}{profileVinculado ? `: ${roleLabel(profileVinculado.role)}` : ''}
                 </span>
               )}
 
@@ -345,8 +351,9 @@ export function FuncionariosPanel() {
                   <Phone className="w-3.5 h-3.5" /> {f.telefone}
                 </div>
               )}
+              {/* FIX i18n: data de admissão formatada no locale ativo (ko → 2023. 3. 10., en → 3/10/2023...) */}
               <div className="flex items-center gap-1.5 text-white/50 text-xs mb-3">
-                <Calendar className="w-3.5 h-3.5" /> {t('funcionarios.since')} {new Date(f.dataAdmissao + 'T00:00:00').toLocaleDateString('pt-BR')}
+                <Calendar className="w-3.5 h-3.5" /> {t('funcionarios.since')} {new Date(f.dataAdmissao + 'T00:00:00').toLocaleDateString(i18n.language)}
               </div>
 
               <button
