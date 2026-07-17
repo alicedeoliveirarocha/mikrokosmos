@@ -1,9 +1,25 @@
+// src/app/components/DeliveryMap.tsx
+// ═══════════════════════════════════════════════════════════════
+// Tracking com MAPA REAL — Leaflet + OpenStreetMap (tiles CARTO dark)
+// Grátis, sem API key, sem billing.
+//
+// O que mudou vs. a versão anterior: o "mapa" simulado em SVG virou
+// um Leaflet de verdade centrado na Vila Mariana, com o entregador
+// animado ao longo de uma rota. Os cards de overlay (chegada estimada,
+// cliente, progresso) e todo o i18n (namespace deliveryMap) ficaram
+// exatamente como estavam.
+//
+// DEMO: a rota é fixa (restaurante → cliente na Vila Mariana) e o
+// progresso é simulado. Na trilha SaaS, a posição real do entregador
+// viria do Supabase Realtime e só o setLatLng muda.
+// ═══════════════════════════════════════════════════════════════
 import { motion } from 'motion/react';
 import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useTranslation } from 'react-i18next';
-import { MapEffects } from './MapEffects';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface DeliveryMapProps {
   orderId: string;
@@ -12,6 +28,77 @@ interface DeliveryMapProps {
   customerPhone?: string;
   estimatedTime: string;
   status: 'preparing' | 'on-route' | 'arriving' | 'delivered';
+}
+
+// ── Rota demo: Mikrokosmos Vila Mariana → cliente (sentido Paraíso) ──
+const RESTAURANT: [number, number] = [-23.5896, -46.6347];
+const ROUTE: [number, number][] = [
+  RESTAURANT,
+  [-23.5878, -46.6358],
+  [-23.5859, -46.6371],
+  [-23.5842, -46.6389],
+  [-23.5824, -46.6404],
+  [-23.5806, -46.6421],
+  [-23.5788, -46.6438],
+  [-23.5766, -46.6459],
+];
+const CUSTOMER: [number, number] = ROUTE[ROUTE.length - 1];
+
+// Ponto interpolado ao longo da rota para uma fração 0..1 do caminho total
+function pointAlongRoute(route: [number, number][], fraction: number): [number, number] {
+  if (fraction <= 0) return route[0];
+  if (fraction >= 1) return route[route.length - 1];
+
+  const segLens: number[] = [];
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    const d = Math.hypot(route[i + 1][0] - route[i][0], route[i + 1][1] - route[i][1]);
+    segLens.push(d);
+    total += d;
+  }
+
+  let target = fraction * total;
+  for (let i = 0; i < segLens.length; i++) {
+    if (target <= segLens[i]) {
+      const f = segLens[i] === 0 ? 0 : target / segLens[i];
+      return [
+        route[i][0] + (route[i + 1][0] - route[i][0]) * f,
+        route[i][1] + (route[i + 1][1] - route[i][1]) * f,
+      ];
+    }
+    target -= segLens[i];
+  }
+  return route[route.length - 1];
+}
+
+// Trecho já percorrido (pontos passados + posição atual) para a linha sólida
+function traveledPath(route: [number, number][], fraction: number): [number, number][] {
+  if (fraction <= 0) return [route[0]];
+  if (fraction >= 1) return route;
+
+  const segLens: number[] = [];
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    const d = Math.hypot(route[i + 1][0] - route[i][0], route[i + 1][1] - route[i][1]);
+    segLens.push(d);
+    total += d;
+  }
+
+  const pts: [number, number][] = [route[0]];
+  let target = fraction * total;
+  for (let i = 0; i < segLens.length; i++) {
+    if (target <= segLens[i]) {
+      const f = segLens[i] === 0 ? 0 : target / segLens[i];
+      pts.push([
+        route[i][0] + (route[i + 1][0] - route[i][0]) * f,
+        route[i][1] + (route[i + 1][1] - route[i][1]) * f,
+      ]);
+      return pts;
+    }
+    pts.push(route[i + 1]);
+    target -= segLens[i];
+  }
+  return pts;
 }
 
 export function DeliveryMap({
@@ -27,7 +114,12 @@ export function DeliveryMap({
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Simulate delivery progress
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const driverMarkerRef = useRef<L.Marker | null>(null);
+  const traveledLineRef = useRef<L.Polyline | null>(null);
+
+  // Simulate delivery progress (igual à versão anterior)
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -51,10 +143,95 @@ export function DeliveryMap({
     else setCurrentStep(3);
   }, [progress]);
 
-  // Route waypoints for animation
-  const routePath = `M 20 80 Q 30 70, 40 65 T 60 50 T 80 30`;
+  // ── Inicialização do mapa (uma vez) ──
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
 
-  // Delivery steps — labels e tempos traduzidos
+    const map = L.map(mapContainerRef.current, {
+      zoomControl: false,
+      attributionControl: false,
+    });
+    mapRef.current = map;
+
+    // Atribuição obrigatória (OSM + CARTO), discreta no topo direito
+    L.control
+      .attribution({ position: 'topright', prefix: false })
+      .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>')
+      .addTo(map);
+
+    // Tiles dark (grátis) — combinam com o visual neon do app
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd',
+    }).addTo(map);
+
+    // Rota completa (tracejada, apagada)
+    L.polyline(ROUTE, {
+      color: primaryColor,
+      weight: 3,
+      opacity: 0.35,
+      dashArray: '6 10',
+    }).addTo(map);
+
+    // Trecho percorrido (sólido, neon) — atualizado conforme o progresso
+    traveledLineRef.current = L.polyline([ROUTE[0]], {
+      color: primaryColor,
+      weight: 4,
+      opacity: 0.9,
+    }).addTo(map);
+
+    // Marcadores em divIcon com emoji — sem o bug clássico dos ícones
+    // default do Leaflet em bundlers, e com a cara do Mikrokosmos
+    const mkIcon = (emoji: string, pulse = false) =>
+      L.divIcon({
+        className: '',
+        html: `<div class="mk-marker${pulse ? ' mk-pulse' : ''}" style="border-color:${primaryColor};box-shadow:0 0 18px ${primaryColor}90;">${emoji}</div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      });
+
+    L.marker(RESTAURANT, { icon: mkIcon('🏪') })
+      .addTo(map)
+      .bindPopup('<b>MIKROKOSMOS</b><br/>Vila Mariana');
+
+    L.marker(CUSTOMER, { icon: mkIcon('📍') })
+      .addTo(map)
+      .bindPopup(`<b>${customerName}</b><br/>${customerAddress}`);
+
+    driverMarkerRef.current = L.marker(ROUTE[0], {
+      icon: mkIcon('🛵', true),
+      zIndexOffset: 1000,
+    }).addTo(map);
+
+    // Enquadra a rota com folga pros cards de overlay (embaixo tem 2 cards)
+    map.fitBounds(L.latLngBounds(ROUTE), {
+      paddingTopLeft: [60, 110],
+      paddingBottomRight: [60, 280],
+    });
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      driverMarkerRef.current = null;
+      traveledLineRef.current = null;
+    };
+    // primaryColor propositalmente fora das deps: o mapa é criado uma vez
+    // com a cor do universo ativo no momento da abertura do tracking.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Anima o entregador e a linha percorrida conforme o progresso ──
+  useEffect(() => {
+    const fraction = progress / 100;
+    if (driverMarkerRef.current) {
+      driverMarkerRef.current.setLatLng(pointAlongRoute(ROUTE, fraction));
+    }
+    if (traveledLineRef.current) {
+      traveledLineRef.current.setLatLngs(traveledPath(ROUTE, fraction));
+    }
+  }, [progress]);
+
+  // Delivery steps — labels e tempos traduzidos (igual à versão anterior)
   const deliverySteps = [
     { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
     { icon: Navigation, label: t('deliveryMap.stepOutForDelivery'), time: t('deliveryMap.minAgo', { count: 5 }) },
@@ -64,211 +241,38 @@ export function DeliveryMap({
 
   return (
     <div className="relative w-full h-full">
-      {/* Dark Mode Map Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
+      {/* Estilos dos marcadores (emoji + glow + pulso do entregador) */}
+      <style>{`
+        .mk-marker {
+          width: 40px; height: 40px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 20px; border-radius: 9999px;
+          background: rgba(0, 0, 0, 0.85);
+          border: 2px solid currentColor;
+        }
+        .mk-pulse { animation: mkPulse 1.2s ease-in-out infinite; }
+        @keyframes mkPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.12); }
+        }
+        .leaflet-container { background: #0a0a0f; font-family: inherit; }
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+          background: rgba(0, 0, 0, 0.9); color: #fff;
+        }
+        .leaflet-control-attribution {
+          background: rgba(0, 0, 0, 0.6) !important;
+          color: rgba(255, 255, 255, 0.5) !important;
+          font-size: 10px;
+        }
+        .leaflet-control-attribution a { color: rgba(255, 255, 255, 0.7) !important; }
+      `}</style>
 
-        {/* Cyberpunk Visual Effects */}
-        <MapEffects primaryColor={primaryColor} />
-        {/* Grid overlay for map feel */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(${primaryColor}30 1px, transparent 1px),
-              linear-gradient(90deg, ${primaryColor}30 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-          }}
-        />
-
-        {/* Simulated map streets */}
-        <svg className="absolute inset-0 w-full h-full opacity-20">
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Street lines */}
-          <line x1="10%" y1="30%" x2="90%" y2="30%" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-          <line x1="10%" y1="60%" x2="90%" y2="60%" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-          <line x1="30%" y1="10%" x2="30%" y2="90%" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-          <line x1="70%" y1="10%" x2="70%" y2="90%" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-
-          {/* Diagonal streets */}
-          <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-          <line x1="0%" y1="100%" x2="100%" y2="0%" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-        </svg>
-
-        {/* Neon Delivery Route */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={primaryColor} stopOpacity="0.3" />
-              <stop offset="50%" stopColor={primaryColor} stopOpacity="0.8" />
-              <stop offset="100%" stopColor={primaryColor} stopOpacity="0.3" />
-            </linearGradient>
-
-            <filter id="neonGlow">
-              <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Background route (glow) */}
-          <motion.path
-            d={routePath}
-            fill="none"
-            stroke={primaryColor}
-            strokeWidth="1"
-            strokeOpacity="0.3"
-            filter="url(#neonGlow)"
-            strokeDasharray="2 4"
-          />
-
-          {/* Main route line */}
-          <motion.path
-            d={routePath}
-            fill="none"
-            stroke="url(#routeGradient)"
-            strokeWidth="0.5"
-            strokeLinecap="round"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          />
-
-          {/* Animated route progress */}
-          <motion.path
-            d={routePath}
-            fill="none"
-            stroke={primaryColor}
-            strokeWidth="0.8"
-            strokeLinecap="round"
-            filter="url(#neonGlow)"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: progress / 100 }}
-            transition={{ duration: 0.3 }}
-          />
-
-          {/* Start point (Restaurant) */}
-          <g>
-            <motion.circle
-              cx="20"
-              cy="80"
-              r="2"
-              fill={primaryColor}
-              opacity="0.3"
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <circle cx="20" cy="80" r="1.2" fill={primaryColor} />
-          </g>
-
-          {/* End point (Customer) */}
-          <g>
-            <motion.circle
-              cx="80"
-              cy="30"
-              r="2"
-              fill={primaryColor}
-              opacity="0.3"
-              animate={{ scale: [1, 1.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-            />
-            <circle cx="80" cy="30" r="1.2" fill={primaryColor} />
-          </g>
-        </svg>
-
-        {/* Animated Motorcycle Icon */}
-        <motion.div
-          className="absolute"
-          initial={{ offsetDistance: "0%", rotate: 45 }}
-          animate={{
-            offsetDistance: `${progress}%`,
-            rotate: progress < 25 ? 45 : progress < 50 ? 30 : progress < 75 ? 15 : 0,
-          }}
-          transition={{ duration: 0.3, ease: "linear" }}
-          style={{
-            offsetPath: `path("${routePath}")`,
-            offsetRotate: "0deg",
-          }}
-        >
-          <motion.div
-            className="relative"
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity }}
-          >
-            {/* Glow effect */}
-            <div
-              className="absolute inset-0 rounded-full blur-lg"
-              style={{
-                backgroundColor: primaryColor,
-                opacity: 0.4,
-                transform: 'scale(2)',
-              }}
-            />
-
-            {/* Motorcycle icon */}
-            <div
-              className="relative w-8 h-8 rounded-full flex items-center justify-center border-2"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                borderColor: primaryColor,
-                boxShadow: `0 0 20px ${primaryColor}80`,
-              }}
-            >
-              <Navigation
-                className="w-4 h-4"
-                style={{ color: primaryColor }}
-                fill={primaryColor}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Pulsing location markers */}
-        <div className="absolute" style={{ left: '20%', top: '80%' }}>
-          <motion.div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              border: `2px solid ${primaryColor}`,
-              boxShadow: `0 0 30px ${primaryColor}60`,
-            }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Package className="w-6 h-6" style={{ color: primaryColor }} />
-          </motion.div>
-        </div>
-
-        <div className="absolute" style={{ left: '80%', top: '30%' }}>
-          <motion.div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              border: `2px solid ${primaryColor}`,
-              boxShadow: `0 0 30px ${primaryColor}60`,
-            }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-          >
-            <MapPin className="w-6 h-6" style={{ color: primaryColor }} />
-          </motion.div>
-        </div>
-      </div>
+      {/* Mapa real — o z-0 cria um stacking context que "prende" os
+          z-indexes internos do Leaflet, então o overlay z-10 fica por cima */}
+      <div ref={mapContainerRef} className="absolute inset-0 z-0" />
 
       {/* Overlay UI Elements */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none z-10">
         {/* Top Info Card - Estimated Delivery Time */}
         <motion.div
           initial={{ y: -100, opacity: 0 }}
@@ -417,35 +421,6 @@ export function DeliveryMap({
             </motion.div>
           </div>
         </div>
-
-        {/* Glowing tracking indicators */}
-        <motion.div
-          className="absolute top-1/4 right-6"
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{
-              backgroundColor: primaryColor,
-              boxShadow: `0 0 20px ${primaryColor}`,
-            }}
-          />
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-1/3 left-6"
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-        >
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{
-              backgroundColor: primaryColor,
-              boxShadow: `0 0 20px ${primaryColor}`,
-            }}
-          />
-        </motion.div>
       </div>
     </div>
   );
