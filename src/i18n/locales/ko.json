@@ -974,7 +974,9 @@
     "stepDelivered": "배달 완료",
     "minAgo": "{{count}}분 전",
     "inProgress": "진행 중",
-    "pending": "대기 중"
+    "pending": "대기 중",
+    "viewReal": "실제 지도",
+    "viewMatrix": "매트릭스 모드"
   },
   "allergens": {
     "Lactose": "유당",

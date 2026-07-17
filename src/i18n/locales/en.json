@@ -974,7 +974,9 @@
     "stepDelivered": "Delivered",
     "minAgo": "{{count}} min ago",
     "inProgress": "In progress",
-    "pending": "Pending"
+    "pending": "Pending",
+    "viewReal": "Real map",
+    "viewMatrix": "Matrix mode"
   },
   "allergens": {
     "Lactose": "Lactose",

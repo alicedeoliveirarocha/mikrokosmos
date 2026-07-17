@@ -974,7 +974,9 @@
     "stepDelivered": "配達完了",
     "minAgo": "{{count}}分前",
     "inProgress": "進行中",
-    "pending": "保留中"
+    "pending": "保留中",
+    "viewReal": "リアルマップ",
+    "viewMatrix": "マトリックスモード"
   },
   "allergens": {
     "Lactose": "乳成分",

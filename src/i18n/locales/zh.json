@@ -974,7 +974,9 @@
     "stepDelivered": "已送达",
     "minAgo": "{{count}}分钟前",
     "inProgress": "进行中",
-    "pending": "待处理"
+    "pending": "待处理",
+    "viewReal": "真实地图",
+    "viewMatrix": "矩阵模式"
   },
   "allergens": {
     "Lactose": "乳糖",

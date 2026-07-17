@@ -1,25 +1,29 @@
 // src/app/components/DeliveryMap.tsx
 // ═══════════════════════════════════════════════════════════════
-// Tracking com MAPA REAL — Leaflet + OpenStreetMap (tiles CARTO dark)
-// Grátis, sem API key, sem billing.
+// Tracking com DOIS MODOS de visualização:
+//   🗺️  Mapa real  — Leaflet + OpenStreetMap (tiles CARTO dark),
+//                    endereço do cliente geocodificado de verdade
+//                    (Nominatim) e rota pelas RUAS reais (OSRM).
+//   💊  Modo Matrix — a visualização cyberpunk original
+//                    (DeliveryMapMatrix.tsx), preservada intacta.
 //
-// O que mudou vs. a versão anterior: o "mapa" simulado em SVG virou
-// um Leaflet de verdade centrado na Vila Mariana, com o entregador
-// animado ao longo de uma rota. Os cards de overlay (chegada estimada,
-// cliente, progresso) e todo o i18n (namespace deliveryMap) ficaram
-// exatamente como estavam.
+// Tudo grátis, sem API key, sem billing:
+//   - Tiles: CARTO dark_all (© OpenStreetMap © CARTO)
+//   - Geocoding: nominatim.openstreetmap.org (1 req por tracking)
+//   - Rota: router.project-osrm.org (servidor público de demo)
 //
-// DEMO: a rota é fixa (restaurante → cliente na Vila Mariana) e o
-// progresso é simulado. Na trilha SaaS, a posição real do entregador
-// viria do Supabase Realtime e só o setLatLng muda.
+// Cadeia de fallback (nada quebra sem internet/serviço fora):
+//   geocode por CEP → geocode por endereço → ponto fixo demo
+//   rota OSRM pelas ruas → linha reta entre os dois pontos
 // ═══════════════════════════════════════════════════════════════
 import { motion } from 'motion/react';
-import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle } from 'lucide-react';
+import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle, Map as MapIcon, Sparkles } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { DeliveryMapMatrix } from './DeliveryMapMatrix';
 
 interface DeliveryMapProps {
   orderId: string;
@@ -30,23 +34,51 @@ interface DeliveryMapProps {
   status: 'preparing' | 'on-route' | 'arriving' | 'delivered';
 }
 
-// ── Rota demo: Mikrokosmos Vila Mariana → cliente (sentido Paraíso) ──
+// Mikrokosmos — unidade Vila Mariana (origem de toda entrega)
 const RESTAURANT: [number, number] = [-23.5896, -46.6347];
-const ROUTE: [number, number][] = [
-  RESTAURANT,
-  [-23.5878, -46.6358],
-  [-23.5859, -46.6371],
-  [-23.5842, -46.6389],
-  [-23.5824, -46.6404],
-  [-23.5806, -46.6421],
-  [-23.5788, -46.6438],
-  [-23.5766, -46.6459],
-];
-const CUSTOMER: [number, number] = ROUTE[ROUTE.length - 1];
+// Destino de emergência caso o geocoding falhe (perto da unidade)
+const FALLBACK_CUSTOMER: [number, number] = [-23.5766, -46.6459];
+
+// ── Geocoding do endereço real do cliente (Nominatim/OSM, grátis) ──
+// Tenta primeiro pelo CEP (mais preciso no Brasil), depois pelo texto.
+async function resolveCustomerLatLng(address: string): Promise<[number, number]> {
+  const cep = address.match(/\d{5}-?\d{3}/)?.[0]?.replace('-', '');
+  try {
+    if (cep) {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${cep}&country=Brazil&format=json&limit=1`
+      );
+      const d = await r.json();
+      if (d?.[0]) return [parseFloat(d[0].lat), parseFloat(d[0].lon)];
+    }
+    const r2 = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address + ', Brasil')}&format=json&limit=1`
+    );
+    const d2 = await r2.json();
+    if (d2?.[0]) return [parseFloat(d2[0].lat), parseFloat(d2[0].lon)];
+  } catch {}
+  return FALLBACK_CUSTOMER;
+}
+
+// ── Rota pelas RUAS de verdade (OSRM, servidor público, grátis) ──
+async function fetchStreetRoute(
+  from: [number, number],
+  to: [number, number]
+): Promise<[number, number][]> {
+  try {
+    const r = await fetch(
+      `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`
+    );
+    const d = await r.json();
+    const coords: [number, number][] | undefined = d?.routes?.[0]?.geometry?.coordinates;
+    if (coords?.length) return coords.map((c) => [c[1], c[0]] as [number, number]);
+  } catch {}
+  return [from, to]; // fallback: linha reta
+}
 
 // Ponto interpolado ao longo da rota para uma fração 0..1 do caminho total
 function pointAlongRoute(route: [number, number][], fraction: number): [number, number] {
-  if (fraction <= 0) return route[0];
+  if (fraction <= 0 || route.length < 2) return route[0];
   if (fraction >= 1) return route[route.length - 1];
 
   const segLens: number[] = [];
@@ -73,7 +105,7 @@ function pointAlongRoute(route: [number, number][], fraction: number): [number, 
 
 // Trecho já percorrido (pontos passados + posição atual) para a linha sólida
 function traveledPath(route: [number, number][], fraction: number): [number, number][] {
-  if (fraction <= 0) return [route[0]];
+  if (fraction <= 0 || route.length < 2) return [route[0]];
   if (fraction >= 1) return route;
 
   const segLens: number[] = [];
@@ -101,25 +133,24 @@ function traveledPath(route: [number, number][], fraction: number): [number, num
   return pts;
 }
 
-export function DeliveryMap({
-  orderId,
-  customerName,
-  customerAddress,
-  customerPhone,
-  estimatedTime,
-  status,
-}: DeliveryMapProps) {
+export function DeliveryMap(props: DeliveryMapProps) {
+  const { orderId, customerName, customerAddress, customerPhone, estimatedTime } = props;
   const { primaryColor } = useUniverse();
   const { t } = useTranslation();
+
+  // 🗺️ real ↔ 💊 matrix
+  const [viewMode, setViewMode] = useState<'real' | 'matrix'>('real');
+
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [route, setRoute] = useState<[number, number][] | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const traveledLineRef = useRef<L.Polyline | null>(null);
 
-  // Simulate delivery progress (igual à versão anterior)
+  // Simulate delivery progress
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -143,9 +174,20 @@ export function DeliveryMap({
     else setCurrentStep(3);
   }, [progress]);
 
-  // ── Inicialização do mapa (uma vez) ──
+  // ── Resolve endereço real → rota real (uma vez) ──
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
+    let cancelado = false;
+    (async () => {
+      const customer = await resolveCustomerLatLng(customerAddress);
+      const streets = await fetchStreetRoute(RESTAURANT, customer);
+      if (!cancelado) setRoute(streets);
+    })();
+    return () => { cancelado = true; };
+  }, [customerAddress]);
+
+  // ── Inicialização do mapa real (só no modo real, após a rota chegar) ──
+  useEffect(() => {
+    if (viewMode !== 'real' || !route || !mapContainerRef.current || mapRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
       zoomControl: false,
@@ -153,35 +195,31 @@ export function DeliveryMap({
     });
     mapRef.current = map;
 
-    // Atribuição obrigatória (OSM + CARTO), discreta no topo direito
     L.control
       .attribution({ position: 'topright', prefix: false })
       .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>')
       .addTo(map);
 
-    // Tiles dark (grátis) — combinam com o visual neon do app
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd',
     }).addTo(map);
 
     // Rota completa (tracejada, apagada)
-    L.polyline(ROUTE, {
+    L.polyline(route, {
       color: primaryColor,
       weight: 3,
       opacity: 0.35,
       dashArray: '6 10',
     }).addTo(map);
 
-    // Trecho percorrido (sólido, neon) — atualizado conforme o progresso
-    traveledLineRef.current = L.polyline([ROUTE[0]], {
+    // Trecho percorrido (sólido, neon)
+    traveledLineRef.current = L.polyline([route[0]], {
       color: primaryColor,
       weight: 4,
       opacity: 0.9,
     }).addTo(map);
 
-    // Marcadores em divIcon com emoji — sem o bug clássico dos ícones
-    // default do Leaflet em bundlers, e com a cara do Mikrokosmos
     const mkIcon = (emoji: string, pulse = false) =>
       L.divIcon({
         className: '',
@@ -194,17 +232,16 @@ export function DeliveryMap({
       .addTo(map)
       .bindPopup('<b>MIKROKOSMOS</b><br/>Vila Mariana');
 
-    L.marker(CUSTOMER, { icon: mkIcon('📍') })
+    L.marker(route[route.length - 1], { icon: mkIcon('📍') })
       .addTo(map)
       .bindPopup(`<b>${customerName}</b><br/>${customerAddress}`);
 
-    driverMarkerRef.current = L.marker(ROUTE[0], {
+    driverMarkerRef.current = L.marker(pointAlongRoute(route, progress / 100), {
       icon: mkIcon('🛵', true),
       zIndexOffset: 1000,
     }).addTo(map);
 
-    // Enquadra a rota com folga pros cards de overlay (embaixo tem 2 cards)
-    map.fitBounds(L.latLngBounds(ROUTE), {
+    map.fitBounds(L.latLngBounds(route), {
       paddingTopLeft: [60, 110],
       paddingBottomRight: [60, 280],
     });
@@ -215,23 +252,23 @@ export function DeliveryMap({
       driverMarkerRef.current = null;
       traveledLineRef.current = null;
     };
-    // primaryColor propositalmente fora das deps: o mapa é criado uma vez
-    // com a cor do universo ativo no momento da abertura do tracking.
+    // primaryColor fora das deps de propósito: mapa criado com a cor
+    // do universo ativo no momento da abertura/troca de modo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [viewMode, route]);
 
-  // ── Anima o entregador e a linha percorrida conforme o progresso ──
+  // ── Anima o entregador e a linha percorrida ──
   useEffect(() => {
+    if (viewMode !== 'real' || !route) return;
     const fraction = progress / 100;
     if (driverMarkerRef.current) {
-      driverMarkerRef.current.setLatLng(pointAlongRoute(ROUTE, fraction));
+      driverMarkerRef.current.setLatLng(pointAlongRoute(route, fraction));
     }
     if (traveledLineRef.current) {
-      traveledLineRef.current.setLatLngs(traveledPath(ROUTE, fraction));
+      traveledLineRef.current.setLatLngs(traveledPath(route, fraction));
     }
-  }, [progress]);
+  }, [progress, viewMode, route]);
 
-  // Delivery steps — labels e tempos traduzidos (igual à versão anterior)
   const deliverySteps = [
     { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
     { icon: Navigation, label: t('deliveryMap.stepOutForDelivery'), time: t('deliveryMap.minAgo', { count: 5 }) },
@@ -239,9 +276,44 @@ export function DeliveryMap({
     { icon: CheckCircle, label: t('deliveryMap.stepDelivered'), time: t('deliveryMap.pending') },
   ];
 
+  // Toggle 🗺️ ↔ 💊, visível nos dois modos
+  const ModeToggle = () => (
+    <div className="absolute top-6 left-6 z-20 pointer-events-auto flex rounded-xl overflow-hidden border"
+      style={{ borderColor: `${primaryColor}50`, backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}>
+      <button
+        onClick={() => setViewMode('real')}
+        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold transition-all"
+        style={viewMode === 'real'
+          ? { backgroundColor: primaryColor, color: '#000' }
+          : { color: 'rgba(255,255,255,0.6)' }}
+      >
+        <MapIcon className="w-3.5 h-3.5" /> {t('deliveryMap.viewReal')}
+      </button>
+      <button
+        onClick={() => setViewMode('matrix')}
+        className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold transition-all"
+        style={viewMode === 'matrix'
+          ? { backgroundColor: primaryColor, color: '#000' }
+          : { color: 'rgba(255,255,255,0.6)' }}
+      >
+        <Sparkles className="w-3.5 h-3.5" /> {t('deliveryMap.viewMatrix')}
+      </button>
+    </div>
+  );
+
+  // ── MODO MATRIX 💊 — a visualização cyberpunk original ──
+  if (viewMode === 'matrix') {
+    return (
+      <div className="relative w-full h-full">
+        <DeliveryMapMatrix {...props} />
+        <ModeToggle />
+      </div>
+    );
+  }
+
+  // ── MODO MAPA REAL 🗺️ ──
   return (
     <div className="relative w-full h-full">
-      {/* Estilos dos marcadores (emoji + glow + pulso do entregador) */}
       <style>{`
         .mk-marker {
           width: 40px; height: 40px;
@@ -271,8 +343,22 @@ export function DeliveryMap({
           z-indexes internos do Leaflet, então o overlay z-10 fica por cima */}
       <div ref={mapContainerRef} className="absolute inset-0 z-0" />
 
+      {/* Loading enquanto geocodifica o endereço e busca a rota */}
+      {!route && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+            className="w-10 h-10 rounded-full border-2 border-transparent"
+            style={{ borderTopColor: primaryColor, borderRightColor: primaryColor }}
+          />
+        </div>
+      )}
+
       {/* Overlay UI Elements */}
       <div className="absolute inset-0 pointer-events-none z-10">
+        <ModeToggle />
+
         {/* Top Info Card - Estimated Delivery Time */}
         <motion.div
           initial={{ y: -100, opacity: 0 }}
