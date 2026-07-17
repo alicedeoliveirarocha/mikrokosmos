@@ -353,6 +353,17 @@ export function DeliveryMap(props: DeliveryMapProps) {
     }
   }, [progress, viewMode, route, selectedRoute]);
 
+  // ── ETA real: duração da rota selecionada (OSRM), decrescendo com o
+  // progresso. Fallback: a prop estimatedTime (quando a rota ainda não
+  // chegou ou o OSRM caiu no fallback de linha reta, sem duração).
+  const selectedOption = routes?.[selectedRoute];
+  const remainingMin = selectedOption && selectedOption.durationMin > 0
+    ? Math.max(1, Math.round(selectedOption.durationMin * (1 - progress / 100)))
+    : null;
+  const etaLabel = remainingMin !== null
+    ? t('deliveryMap.minutes', { count: remainingMin })
+    : estimatedTime;
+
   const deliverySteps = [
     { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
     { icon: Navigation, label: t('deliveryMap.stepOutForDelivery'), time: t('deliveryMap.minAgo', { count: 5 }) },
@@ -389,7 +400,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
   if (viewMode === 'matrix') {
     return (
       <div className="relative w-full h-full">
-        <DeliveryMapMatrix {...props} />
+        <DeliveryMapMatrix {...props} estimatedTime={etaLabel} />
         <ModeToggle />
       </div>
     );
@@ -499,7 +510,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
               <div>
                 <p className="text-white/60 text-xs uppercase tracking-wider">{t('deliveryMap.estimatedArrival')}</p>
                 <p className="text-white text-2xl font-bold" style={{ color: primaryColor }}>
-                  {estimatedTime}
+                  {etaLabel}
                 </p>
               </div>
 

@@ -1,5 +1,5 @@
 // src/app/components/Header.tsx
-import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles, MoreVertical } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Info, GraduationCap, User, ChefHat, Bike, BarChart3, Film, Sparkles, MoreVertical, Package } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
@@ -32,15 +32,29 @@ export function Header() {
   const pendingOrders = orders.filter(o => ['pendente', 'preparando'].includes(o.status)).length;
   const deliveryOrders = orders.filter(o => ['pronto', 'saiu-para-entrega'].includes(o.status)).length;
 
+  // Pedidos ativos DO usuário logado (mesmo filtro do OrderTracking):
+  // qualquer pedido dele que ainda não foi entregue nem cancelado.
+  const myActiveOrders = orders.filter(o =>
+    (o.user_id === user?.id || o.customer_name === user?.nome) &&
+    !['entregue', 'cancelado'].includes(o.status)
+  ).length;
+
   const moreItems: {
     key: string; label: string; icon: typeof Info; path: string; badge?: number; show: boolean;
   }[] = [
-    { key: 'analytics', label: t('nav.analytics'), icon: BarChart3,    path: '/analytics', show: isAdmin },
-    { key: 'cozinha',   label: t('nav.kitchen'),    icon: ChefHat,     path: '/cozinha',   show: isCozinha, badge: pendingOrders },
-    { key: 'delivery',  label: t('nav.delivery'),   icon: Bike,        path: '/delivery',  show: isDelivery, badge: deliveryOrders },
-    { key: 'learning',  label: t('nav.learning'),   icon: GraduationCap, path: '/learning', show: true },
-    { key: 'info',      label: t('nav.info'),       icon: Info,        path: '/info',      show: true },
+    { key: 'meusPedidos', label: t('nav.myOrders'),   icon: Package,     path: '/meus-pedidos', show: isAuthenticated, badge: myActiveOrders },
+    { key: 'analytics',   label: t('nav.analytics'),  icon: BarChart3,   path: '/analytics', show: isAdmin },
+    { key: 'cozinha',     label: t('nav.kitchen'),    icon: ChefHat,     path: '/cozinha',   show: isCozinha, badge: pendingOrders },
+    { key: 'delivery',    label: t('nav.delivery'),   icon: Bike,        path: '/delivery',  show: isDelivery, badge: deliveryOrders },
+    { key: 'learning',    label: t('nav.learning'),   icon: GraduationCap, path: '/learning', show: true },
+    { key: 'info',        label: t('nav.info'),       icon: Info,        path: '/info',      show: true },
   ].filter(i => i.show);
+
+  // Badge do botão "mais opções": staff vê a fila de trabalho;
+  // cliente vê os pedidos ativos dele
+  const moreBadge = (isCozinha || isDelivery)
+    ? pendingOrders + deliveryOrders
+    : myActiveOrders;
 
   // Tamanho dos botões — bem menor no celular, cresce a partir de sm:
   const btnSize = 'w-8 h-8 sm:w-9 sm:h-9';
@@ -118,10 +132,10 @@ export function Header() {
                   {...{title: t('nav.moreOptions')}}
                 >
                   <MoreVertical className={iconSize} />
-                  {(pendingOrders > 0 || deliveryOrders > 0) && (isCozinha || isDelivery) && (
+                  {isAuthenticated && moreBadge > 0 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center text-black"
                       style={{ backgroundColor: 'var(--primary-neon)' }}>
-                      {pendingOrders + deliveryOrders}
+                      {moreBadge}
                     </span>
                   )}
                 </motion.button>

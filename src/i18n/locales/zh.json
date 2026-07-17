@@ -38,7 +38,8 @@
     "delivery": "外卖",
     "analytics": "数据分析",
     "menu": "菜单",
-    "moreOptions": "更多选项"
+    "moreOptions": "更多选项",
+    "myOrders": "我的订单"
   },
   "welcome": {
     "title": "微宇宙",
@@ -978,7 +979,8 @@
     "viewReal": "真实地图",
     "viewMatrix": "矩阵模式",
     "routesTitle": "备选路线",
-    "routeLabel": "路线 {{n}}"
+    "routeLabel": "路线 {{n}}",
+    "minutes": "{{count}}分钟"
   },
   "allergens": {
     "Lactose": "乳糖",
@@ -1218,5 +1220,12 @@
     "sz6": "灵感来自照亮演唱会的应援棒，色彩缤纷的气泡饮品。\"Comeback Season\"限定版——仅新时代发行期间供应!",
     "sz7": "爆米花桶、辣酱玉米片和深红色汽水。Cinema Horror Night恐怖场次的完美搭配。",
     "sz8": "浓郁红莓饮品，上桌时伴随烟雾效果，专为Cinema Horror Night打造。好喝得吓人!"
+  },
+  "protectedRoute": {
+    "title": "访问被拒绝",
+    "message": "您没有权限访问此区域。",
+    "currentRole": "当前角色",
+    "requires": "此页面需要:",
+    "back": "返回"
   }
 }

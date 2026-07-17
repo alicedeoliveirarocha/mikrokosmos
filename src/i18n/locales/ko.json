@@ -38,7 +38,8 @@
     "delivery": "배달",
     "analytics": "분석",
     "menu": "메뉴",
-    "moreOptions": "더 보기"
+    "moreOptions": "더 보기",
+    "myOrders": "내 주문"
   },
   "welcome": {
     "title": "미크로코스모스",
@@ -978,7 +979,8 @@
     "viewReal": "실제 지도",
     "viewMatrix": "매트릭스 모드",
     "routesTitle": "대체 경로",
-    "routeLabel": "경로 {{n}}"
+    "routeLabel": "경로 {{n}}",
+    "minutes": "{{count}}분"
   },
   "allergens": {
     "Lactose": "유당",
@@ -1218,5 +1220,12 @@
     "sz6": "콘서트를 밝히는 응원봉에서 영감을 받은 반짝이는 탄산 음료. \"Comeback Season\" 에디션 — 새 시대 발매 기간 한정!",
     "sz7": "팝콘 버킷과 매콤한 소스의 나초, 강렬한 레드 소다. Cinema Horror Night 공포 상영에 딱 맞는 콤보.",
     "sz8": "연기 효과와 함께 서빙되는 진한 베리 드링크. Cinema Horror Night를 위해 특별히 탄생 — 무섭도록 맛있습니다!"
+  },
+  "protectedRoute": {
+    "title": "접근 거부",
+    "message": "이 영역에 접근할 권한이 없습니다.",
+    "currentRole": "현재 역할",
+    "requires": "이 페이지에 필요한 권한:",
+    "back": "돌아가기"
   }
 }

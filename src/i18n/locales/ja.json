@@ -38,7 +38,8 @@
     "delivery": "デリバリー",
     "analytics": "分析",
     "menu": "メニュー",
-    "moreOptions": "その他"
+    "moreOptions": "その他",
+    "myOrders": "注文履歴"
   },
   "welcome": {
     "title": "ミクロコスモス",
@@ -978,7 +979,8 @@
     "viewReal": "リアルマップ",
     "viewMatrix": "マトリックスモード",
     "routesTitle": "代替ルート",
-    "routeLabel": "ルート{{n}}"
+    "routeLabel": "ルート{{n}}",
+    "minutes": "{{count}}分"
   },
   "allergens": {
     "Lactose": "乳成分",
@@ -1218,5 +1220,12 @@
     "sz6": "コンサートを彩るペンライトから着想を得た、キラキラ弾ける炭酸ドリンク。\"Comeback Season\"エディション — 新エラのリリース期間限定!",
     "sz7": "ポップコーンバケツ、ピリ辛ソースのナチョス、真っ赤なソーダ。Cinema Horror Nightのホラー上映にぴったりのコンボ。",
     "sz8": "スモーク演出とともに提供される濃厚ベリードリンク。Cinema Horror Nightのために特別に誕生 — 恐ろしいほど美味しい!"
+  },
+  "protectedRoute": {
+    "title": "アクセス拒否",
+    "message": "このエリアにアクセスする権限がありません。",
+    "currentRole": "現在の役割",
+    "requires": "このページに必要な権限:",
+    "back": "戻る"
   }
 }

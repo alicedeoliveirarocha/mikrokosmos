@@ -1,12 +1,14 @@
 // src/app/components/ProtectedRoute.tsx
 // RBAC REAL — bloqueia rotas baseado no role do Supabase
-// Substitui o ProtectedRoute.tsx atual
+// Agora com i18n: a tela de Acesso Negado fala os 6 idiomas,
+// e os roles aparecem traduzidos via profile.roles.* (관리자, 配送员...)
 
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router';
 import { useAuth, UserRole } from '../context/AuthContext';
 import { motion } from 'motion/react';
 import { ShieldAlert, Lock, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -22,6 +24,11 @@ export function ProtectedRoute({
   redirectTo = '/auth',
 }: ProtectedRouteProps) {
   const { isAuthenticated, user, hasRole, loading } = useAuth();
+  const { t } = useTranslation();
+
+  // Roles são slugs de dados — tradução SÓ na exibição
+  const roleLabel = (r?: string) =>
+    r ? t(`profile.roles.${r}`, { defaultValue: r }) : '';
 
   // Enquanto carrega a sessão do Supabase, mostra loading
   if (loading) {
@@ -56,27 +63,27 @@ export function ProtectedRoute({
               <ShieldAlert className="w-10 h-10 text-red-500" />
             </div>
 
-            <h2 className="text-2xl font-bold text-white mb-2">Acesso Negado</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{t('protectedRoute.title')}</h2>
             <p className="text-white/60 mb-6 text-sm">
-              Você não tem permissão para acessar esta área.
+              {t('protectedRoute.message')}
             </p>
 
             <div className="bg-black/40 rounded-lg p-4 mb-6 text-left">
               <div className="flex items-center gap-3">
                 <Lock className="w-5 h-5 text-white/40" />
                 <div>
-                  <p className="text-xs text-white/40">Seu papel atual</p>
+                  <p className="text-xs text-white/40">{t('protectedRoute.currentRole')}</p>
                   <p className="font-bold uppercase" style={{ color: 'var(--primary-neon)' }}>
-                    {user?.role}
+                    {roleLabel(user?.role)}
                   </p>
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-white/40 mb-6">
-              Esta página requer:{' '}
+              {t('protectedRoute.requires')}{' '}
               <span className="text-white/60 font-bold">
-                {allowedRoles?.map(r => r.toUpperCase()).join(', ')}
+                {allowedRoles?.map(r => roleLabel(r)).join(', ')}
               </span>
             </p>
 
@@ -85,7 +92,7 @@ export function ProtectedRoute({
               className="w-full px-6 py-3 rounded-full font-bold text-black transition-all hover:opacity-90"
               style={{ background: 'var(--primary-neon)' }}
             >
-              Voltar
+              {t('protectedRoute.back')}
             </button>
           </div>
         </motion.div>

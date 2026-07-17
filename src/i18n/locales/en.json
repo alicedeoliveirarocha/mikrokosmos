@@ -38,7 +38,8 @@
     "delivery": "Delivery",
     "analytics": "Analytics",
     "menu": "Menu",
-    "moreOptions": "More options"
+    "moreOptions": "More options",
+    "myOrders": "My Orders"
   },
   "welcome": {
     "title": "Mikrokosmos",
@@ -978,7 +979,8 @@
     "viewReal": "Real map",
     "viewMatrix": "Matrix mode",
     "routesTitle": "Alternate routes",
-    "routeLabel": "Route {{n}}"
+    "routeLabel": "Route {{n}}",
+    "minutes": "{{count}} min"
   },
   "allergens": {
     "Lactose": "Lactose",
@@ -1218,5 +1220,12 @@
     "sz6": "A colorful, fizzy drink inspired by the lightsticks that light up concerts. \"Comeback Season\" edition — only during the new era's launch!",
     "sz7": "A popcorn bucket, nachos with spicy sauce and an intensely red soda. The perfect combo for Cinema Horror Night's scary session.",
     "sz8": "An intense red-berry drink served with a smoke effect, created especially for Cinema Horror Night. Frighteningly delicious!"
+  },
+  "protectedRoute": {
+    "title": "Access Denied",
+    "message": "You don't have permission to access this area.",
+    "currentRole": "Your current role",
+    "requires": "This page requires:",
+    "back": "Go Back"
   }
 }

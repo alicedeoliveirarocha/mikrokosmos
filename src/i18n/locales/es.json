@@ -38,7 +38,8 @@
     "delivery": "Delivery",
     "analytics": "Análisis",
     "menu": "Menú",
-    "moreOptions": "Más opciones"
+    "moreOptions": "Más opciones",
+    "myOrders": "Mis Pedidos"
   },
   "welcome": {
     "title": "Mikrokosmos",
@@ -978,7 +979,8 @@
     "viewReal": "Mapa real",
     "viewMatrix": "Modo Matrix",
     "routesTitle": "Rutas alternativas",
-    "routeLabel": "Ruta {{n}}"
+    "routeLabel": "Ruta {{n}}",
+    "minutes": "{{count}} min"
   },
   "allergens": {
     "Lactose": "Lactosa",
@@ -1218,5 +1220,12 @@
     "sz6": "Bebida colorida y efervescente, inspirada en los lightsticks que iluminan los conciertos. Edición \"Comeback Season\" — ¡solo durante el lanzamiento de la nueva era!",
     "sz7": "Balde de palomitas, nachos con salsa picante y refresco rojo intenso. El combo perfecto para la sesión de terror de la Cinema Horror Night.",
     "sz8": "Bebida intensa de frutos rojos servida con efecto de humo, creada especialmente para la Cinema Horror Night. ¡Espantosamente deliciosa!"
+  },
+  "protectedRoute": {
+    "title": "Acceso Denegado",
+    "message": "No tienes permiso para acceder a esta área.",
+    "currentRole": "Tu rol actual",
+    "requires": "Esta página requiere:",
+    "back": "Volver"
   }
 }
