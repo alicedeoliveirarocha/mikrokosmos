@@ -33,6 +33,8 @@ export interface Order {
   status: 'pendente' | 'preparando' | 'pronto' | 'saiu-para-entrega' | 'entregue' | 'cancelado';
   items: OrderItem[];
   selected_route?: number; // índice da rota OSRM escolhida pelo entregador
+  payment_method?: 'pix' | 'dinheiro' | 'cartao' | 'boleto'; // slug — tradução na exibição
+  payment_ref?: string; // últimos 4 do cartão ou código do boleto
   created_at: string;
   updated_at: string;
 }

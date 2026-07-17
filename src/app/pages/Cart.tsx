@@ -287,18 +287,13 @@ export function Cart() {
     }
 
     try {
-      // Label do método de pagamento sempre traduzido (nada de slug cru tipo "DINHEIRO")
-      const paymentLabel =
-        paymentMethod === 'pix' ? t('cart.pix')
-        : paymentMethod === 'dinheiro' ? t('cart.cash')
-        : paymentMethod === 'cartao' ? t('cart.card')
-        : t('cart.boleto');
-
-      const paymentInfo = paymentMethod === 'cartao'
-        ? ` | ${t('cart.card')}: ••••${cardNumber.replace(/\s/g, '').slice(-4)}`
-        : paymentMethod === 'boleto'
-        ? ` | ${t('cart.boleto')}: ${boletoCode}`
-        : ` | ${t('cart.paymentMethod')}: ${paymentLabel}`;
+      // REGRA DE OURO: slug no dado, tradução na exibição.
+      // Nada de texto pronto congelado dentro do pedido — o método vai
+      // como slug (payment_method) e a Kitchen traduz na hora de mostrar.
+      const paymentRef =
+        paymentMethod === 'cartao' ? cardNumber.replace(/\s/g, '').slice(-4)
+        : paymentMethod === 'boleto' ? boletoCode
+        : undefined;
 
       const orderId = await addOrder({
         items: items.map(item => ({
@@ -311,7 +306,9 @@ export function Cart() {
         customer_name: customerName.trim(),
         customer_phone: customerPhone.trim() || undefined,
         customer_address: customerAddress.trim() || undefined,
-        observacoes: (observacoes.trim() || '') + paymentInfo,
+        observacoes: observacoes.trim() || undefined,
+        payment_method: paymentMethod,
+        payment_ref: paymentRef,
       });
 
       if (orderId) {

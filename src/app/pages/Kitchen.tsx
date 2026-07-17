@@ -144,10 +144,27 @@ export function Kitchen() {
                   ))}
                 </div>
 
-                {(order.observacoes || order.notes) && (
+                {(order.observacoes || order.notes || order.payment_method) && (
                   <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
                     <p className="text-yellow-400 text-sm font-bold mb-1">📝 {t('kitchen.notes')}</p>
-                    <p className="text-white/80 text-sm">{order.observacoes || order.notes}</p>
+                    {(order.observacoes || order.notes) && (
+                      <p className="text-white/80 text-sm">{order.observacoes || order.notes}</p>
+                    )}
+                    {/* Pagamento: slug no dado → tradução aqui, no idioma de QUEM LÊ */}
+                    {order.payment_method && (
+                      <p className="text-white/80 text-sm">
+                        {order.payment_method === 'cartao' && order.payment_ref
+                          ? `${t('cart.card')}: ••••${order.payment_ref}`
+                          : order.payment_method === 'boleto' && order.payment_ref
+                          ? `${t('cart.boleto')}: ${order.payment_ref}`
+                          : `${t('cart.paymentMethod')}: ${
+                              order.payment_method === 'pix' ? t('cart.pix')
+                              : order.payment_method === 'dinheiro' ? t('cart.cash')
+                              : order.payment_method === 'cartao' ? t('cart.card')
+                              : t('cart.boleto')
+                            }`}
+                      </p>
+                    )}
                   </div>
                 )}
 
