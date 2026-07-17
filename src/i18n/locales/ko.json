@@ -976,7 +976,9 @@
     "inProgress": "진행 중",
     "pending": "대기 중",
     "viewReal": "실제 지도",
-    "viewMatrix": "매트릭스 모드"
+    "viewMatrix": "매트릭스 모드",
+    "routesTitle": "대체 경로",
+    "routeLabel": "경로 {{n}}"
   },
   "allergens": {
     "Lactose": "유당",

@@ -976,7 +976,9 @@
     "inProgress": "In progress",
     "pending": "Pending",
     "viewReal": "Real map",
-    "viewMatrix": "Matrix mode"
+    "viewMatrix": "Matrix mode",
+    "routesTitle": "Alternate routes",
+    "routeLabel": "Route {{n}}"
   },
   "allergens": {
     "Lactose": "Lactose",

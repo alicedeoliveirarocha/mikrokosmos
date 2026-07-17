@@ -976,7 +976,9 @@
     "inProgress": "En curso",
     "pending": "Pendiente",
     "viewReal": "Mapa real",
-    "viewMatrix": "Modo Matrix"
+    "viewMatrix": "Modo Matrix",
+    "routesTitle": "Rutas alternativas",
+    "routeLabel": "Ruta {{n}}"
   },
   "allergens": {
     "Lactose": "Lactosa",

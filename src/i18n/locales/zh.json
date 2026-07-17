@@ -976,7 +976,9 @@
     "inProgress": "进行中",
     "pending": "待处理",
     "viewReal": "真实地图",
-    "viewMatrix": "矩阵模式"
+    "viewMatrix": "矩阵模式",
+    "routesTitle": "备选路线",
+    "routeLabel": "路线 {{n}}"
   },
   "allergens": {
     "Lactose": "乳糖",

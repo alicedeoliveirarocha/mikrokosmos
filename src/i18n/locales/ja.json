@@ -976,7 +976,9 @@
     "inProgress": "進行中",
     "pending": "保留中",
     "viewReal": "リアルマップ",
-    "viewMatrix": "マトリックスモード"
+    "viewMatrix": "マトリックスモード",
+    "routesTitle": "代替ルート",
+    "routeLabel": "ルート{{n}}"
   },
   "allergens": {
     "Lactose": "乳成分",

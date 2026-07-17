@@ -19,6 +19,7 @@
 import { motion } from 'motion/react';
 import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle, Map as MapIcon, Sparkles } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
+import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
@@ -86,20 +87,34 @@ async function resolveCustomerLatLng(address: string): Promise<[number, number]>
   return FALLBACK_CUSTOMER;
 }
 
-// ── Rota pelas RUAS de verdade (OSRM, servidor público, grátis) ──
-async function fetchStreetRoute(
+// ── Rotas pelas RUAS de verdade (OSRM, servidor público, grátis) ──
+// alternatives=3 pede até 3 caminhos diferentes; cada um vem com
+// distância e duração. O entregador/admin escolhe; o cliente só vê
+// a rota selecionada.
+export interface RouteOption {
+  coords: [number, number][];
+  distanceKm: number;
+  durationMin: number;
+}
+
+async function fetchStreetRoutes(
   from: [number, number],
   to: [number, number]
-): Promise<[number, number][]> {
+): Promise<RouteOption[]> {
   try {
     const r = await fetch(
-      `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`
+      `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson&alternatives=3`
     );
     const d = await r.json();
-    const coords: [number, number][] | undefined = d?.routes?.[0]?.geometry?.coordinates;
-    if (coords?.length) return coords.map((c) => [c[1], c[0]] as [number, number]);
+    if (d?.routes?.length) {
+      return d.routes.map((rt: any) => ({
+        coords: rt.geometry.coordinates.map((c: [number, number]) => [c[1], c[0]] as [number, number]),
+        distanceKm: rt.distance / 1000,
+        durationMin: Math.max(1, Math.round(rt.duration / 60)),
+      }));
+    }
   } catch {}
-  return [from, to]; // fallback: linha reta
+  return [{ coords: [from, to], distanceKm: 0, durationMin: 0 }]; // fallback: linha reta
 }
 
 // Ponto interpolado ao longo da rota para uma fração 0..1 do caminho total
@@ -163,18 +178,26 @@ export function DeliveryMap(props: DeliveryMapProps) {
   const { orderId, customerName, customerAddress, customerPhone, estimatedTime } = props;
   const { primaryColor } = useUniverse();
   const { t } = useTranslation();
+  const { user } = useAuth();
+
+  // Só quem entrega (ou o admin) vê e escolhe rotas alternativas.
+  // O cliente enxerga apenas a rota selecionada.
+  const canChooseRoute = user?.role === 'delivery' || user?.role === 'admin';
 
   // 🗺️ real ↔ 💊 matrix
   const [viewMode, setViewMode] = useState<'real' | 'matrix'>('real');
 
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [route, setRoute] = useState<[number, number][] | null>(null);
+  const [routes, setRoutes] = useState<RouteOption[] | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState(0);
+  const route = routes ? routes[selectedRoute]?.coords ?? null : null;
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const traveledLineRef = useRef<L.Polyline | null>(null);
+  const routeLayersRef = useRef<L.LayerGroup | null>(null);
 
   // Simulate delivery progress
   useEffect(() => {
@@ -205,15 +228,18 @@ export function DeliveryMap(props: DeliveryMapProps) {
     let cancelado = false;
     (async () => {
       const customer = await resolveCustomerLatLng(customerAddress);
-      const streets = await fetchStreetRoute(RESTAURANT, customer);
-      if (!cancelado) setRoute(streets);
+      const opts = await fetchStreetRoutes(RESTAURANT, customer);
+      if (!cancelado) {
+        setRoutes(opts);
+        setSelectedRoute(0);
+      }
     })();
     return () => { cancelado = true; };
   }, [customerAddress]);
 
-  // ── Inicialização do mapa real (só no modo real, após a rota chegar) ──
+  // ── Inicialização do mapa real (só no modo real, após as rotas chegarem) ──
   useEffect(() => {
-    if (viewMode !== 'real' || !route || !mapContainerRef.current || mapRef.current) return;
+    if (viewMode !== 'real' || !routes || !mapContainerRef.current || mapRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
       zoomControl: false,
@@ -231,21 +257,6 @@ export function DeliveryMap(props: DeliveryMapProps) {
       subdomains: 'abcd',
     }).addTo(map);
 
-    // Rota completa (tracejada, apagada)
-    L.polyline(route, {
-      color: primaryColor,
-      weight: 3,
-      opacity: 0.35,
-      dashArray: '6 10',
-    }).addTo(map);
-
-    // Trecho percorrido (sólido, neon)
-    traveledLineRef.current = L.polyline([route[0]], {
-      color: primaryColor,
-      weight: 4,
-      opacity: 0.9,
-    }).addTo(map);
-
     const mkIcon = (emoji: string, pulse = false) =>
       L.divIcon({
         className: '',
@@ -258,30 +269,77 @@ export function DeliveryMap(props: DeliveryMapProps) {
       .addTo(map)
       .bindPopup('<b>MIKROKOSMOS</b><br/>Vila Mariana');
 
-    L.marker(route[route.length - 1], { icon: mkIcon('📍') })
+    const dest = routes[0].coords[routes[0].coords.length - 1];
+    L.marker(dest, { icon: mkIcon('📍') })
       .addTo(map)
       .bindPopup(`<b>${customerName}</b><br/>${customerAddress}`);
 
-    driverMarkerRef.current = L.marker(pointAlongRoute(route, progress / 100), {
+    driverMarkerRef.current = L.marker(routes[0].coords[0], {
       icon: mkIcon('🛵', true),
       zIndexOffset: 1000,
     }).addTo(map);
-
-    map.fitBounds(L.latLngBounds(route), {
-      paddingTopLeft: [60, 110],
-      paddingBottomRight: [60, 280],
-    });
 
     return () => {
       map.remove();
       mapRef.current = null;
       driverMarkerRef.current = null;
       traveledLineRef.current = null;
+      routeLayersRef.current = null;
     };
     // primaryColor fora das deps de propósito: mapa criado com a cor
     // do universo ativo no momento da abertura/troca de modo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode, route]);
+  }, [viewMode, routes]);
+
+  // ── Desenha/redesenha as rotas quando a seleção muda ──
+  useEffect(() => {
+    const map = mapRef.current;
+    if (viewMode !== 'real' || !map || !routes) return;
+
+    // limpa as camadas de rota anteriores (marcadores ficam)
+    routeLayersRef.current?.remove();
+    const group = L.layerGroup().addTo(map);
+    routeLayersRef.current = group;
+
+    // Alternativas apagadas — só pra quem pode escolher; clicáveis
+    if (canChooseRoute) {
+      routes.forEach((opt, idx) => {
+        if (idx === selectedRoute) return;
+        L.polyline(opt.coords, {
+          color: primaryColor,
+          weight: 3,
+          opacity: 0.18,
+          dashArray: '2 8',
+        })
+          .on('click', () => setSelectedRoute(idx))
+          .addTo(group);
+      });
+    }
+
+    const sel = routes[selectedRoute];
+
+    // Rota selecionada (tracejada, apagada)
+    L.polyline(sel.coords, {
+      color: primaryColor,
+      weight: 3,
+      opacity: 0.35,
+      dashArray: '6 10',
+    }).addTo(group);
+
+    // Trecho percorrido (sólido, neon)
+    traveledLineRef.current = L.polyline(traveledPath(sel.coords, progress / 100), {
+      color: primaryColor,
+      weight: 4,
+      opacity: 0.9,
+    }).addTo(group);
+
+    map.fitBounds(L.latLngBounds(sel.coords), {
+      paddingTopLeft: [60, 110],
+      paddingBottomRight: [60, 280],
+    });
+    // progress fora das deps de propósito (o efeito abaixo cuida da animação)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode, routes, selectedRoute, canChooseRoute]);
 
   // ── Anima o entregador e a linha percorrida ──
   useEffect(() => {
@@ -293,7 +351,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
     if (traveledLineRef.current) {
       traveledLineRef.current.setLatLngs(traveledPath(route, fraction));
     }
-  }, [progress, viewMode, route]);
+  }, [progress, viewMode, route, selectedRoute]);
 
   const deliverySteps = [
     { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
@@ -384,6 +442,36 @@ export function DeliveryMap(props: DeliveryMapProps) {
       {/* Overlay UI Elements */}
       <div className="absolute inset-0 pointer-events-none z-10">
         <ModeToggle />
+
+        {/* Seletor de rotas alternativas — SÓ pra delivery/admin.
+            O cliente nunca vê este painel, só a rota escolhida. */}
+        {canChooseRoute && routes && routes.length > 1 && (
+          <div className="absolute top-20 left-6 pointer-events-auto rounded-xl border overflow-hidden"
+            style={{ borderColor: `${primaryColor}50`, backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}>
+            <p className="px-3 pt-2 pb-1 text-[10px] uppercase tracking-wider text-white/50">
+              {t('deliveryMap.routesTitle')}
+            </p>
+            {routes.map((opt, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedRoute(idx)}
+                className="flex items-center gap-3 w-full px-3 py-2 text-left text-xs transition-all"
+                style={selectedRoute === idx
+                  ? { backgroundColor: `${primaryColor}25`, color: '#fff' }
+                  : { color: 'rgba(255,255,255,0.55)' }}
+              >
+                <span className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: selectedRoute === idx ? primaryColor : 'rgba(255,255,255,0.25)' }} />
+                <span className="font-bold">{t('deliveryMap.routeLabel', { n: idx + 1 })}</span>
+                {opt.distanceKm > 0 && (
+                  <span className="ml-auto font-mono text-[11px] text-white/60">
+                    {opt.distanceKm.toFixed(1)} km · {opt.durationMin} min
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Top Info Card - Estimated Delivery Time */}
         <motion.div
