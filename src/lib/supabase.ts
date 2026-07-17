@@ -1,5 +1,7 @@
 // src/lib/supabase.ts
-// Arquivo de conexão com o Supabase — cria a pasta src/lib primeiro
+// Arquivo de conexão com o Supabase
+// NOVO: Order.selected_route — a rota escolhida pelo entregador,
+// sincronizada entre dispositivos via Realtime.
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -30,6 +32,7 @@ export interface Order {
   total: number;
   status: 'pendente' | 'preparando' | 'pronto' | 'saiu-para-entrega' | 'entregue' | 'cancelado';
   items: OrderItem[];
+  selected_route?: number; // índice da rota OSRM escolhida pelo entregador
   created_at: string;
   updated_at: string;
 }

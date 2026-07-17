@@ -1,3 +1,6 @@
+// src/app/context/OrdersContext.tsx
+// NOVO: updateOrderRoute — persiste a rota escolhida pelo entregador
+// no pedido; o Realtime espalha pra todos os dispositivos.
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { supabase, Order, OrderItem } from '../../lib/supabase';
 import { useAuth } from './AuthContext';
@@ -7,6 +10,7 @@ interface OrdersContextType {
   loading: boolean;
   addOrder: (order: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => Promise<string | null>;
   updateOrderStatus: (orderId: string, status: Order['status']) => Promise<void>;
+  updateOrderRoute: (orderId: string, routeIndex: number) => Promise<void>;
   getOrdersByStatus: (status: Order['status']) => Order[];
   cancelOrder: (orderId: string) => Promise<void>;
 }
@@ -73,6 +77,15 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       .eq('id', orderId);
   };
 
+  // Rota escolhida pelo entregador — RLS: só staff consegue esse UPDATE,
+  // então mesmo que um cliente chame, o banco recusa educadamente.
+  const updateOrderRoute = async (orderId: string, routeIndex: number) => {
+    await supabase
+      .from('orders')
+      .update({ selected_route: routeIndex })
+      .eq('id', orderId);
+  };
+
   const getOrdersByStatus = (status: Order['status']) => {
     return orders.filter(o => o.status === status);
   };
@@ -87,6 +100,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       loading,
       addOrder,
       updateOrderStatus,
+      updateOrderRoute,
       getOrdersByStatus,
       cancelOrder,
     }}>
