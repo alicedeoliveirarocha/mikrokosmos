@@ -39,23 +39,49 @@ const RESTAURANT: [number, number] = [-23.5896, -46.6347];
 // Destino de emergência caso o geocoding falhe (perto da unidade)
 const FALLBACK_CUSTOMER: [number, number] = [-23.5766, -46.6459];
 
-// ── Geocoding do endereço real do cliente (Nominatim/OSM, grátis) ──
-// Tenta primeiro pelo CEP (mais preciso no Brasil), depois pelo texto.
+// ── Geocoding do endereço real do cliente ──
+// LIÇÃO APRENDIDA: buscar CEP direto no Nominatim falha no Brasil
+// (cobertura de CEPs no OSM é fraca — devolvia bairro errado).
+// Agora o ViaCEP (o mesmo do checkout) traduz CEP → nome da rua,
+// e o Nominatim geocodifica a RUA pelo nome, que ele acha certinho.
+// Cadeia: CEP→ViaCEP→rua estruturada → rua+bairro texto → endereço
+// limpo → ponto fixo. Nada quebra se algum serviço falhar.
 async function resolveCustomerLatLng(address: string): Promise<[number, number]> {
   const cep = address.match(/\d{5}-?\d{3}/)?.[0]?.replace('-', '');
+  const numero = address.match(/n[ºo°]?\s*(\d+)/i)?.[1];
+
+  const nominatim = async (params: Record<string, string>): Promise<[number, number] | null> => {
+    const qs = new URLSearchParams({ format: 'json', limit: '1', countrycodes: 'br', ...params });
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?${qs}`);
+    const d = await r.json();
+    return d?.[0] ? [parseFloat(d[0].lat), parseFloat(d[0].lon)] : null;
+  };
+
   try {
     if (cep) {
-      const r = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${cep}&country=Brazil&format=json&limit=1`
-      );
-      const d = await r.json();
-      if (d?.[0]) return [parseFloat(d[0].lat), parseFloat(d[0].lon)];
+      const v = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json());
+      if (v && !v.erro && v.logradouro) {
+        // 1º: busca estruturada — rua (com número, se tiver) + cidade + UF
+        const street = numero ? `${numero} ${v.logradouro}` : v.logradouro;
+        const hit = await nominatim({ street, city: v.localidade || 'São Paulo', state: v.uf || 'SP', country: 'Brazil' });
+        if (hit) return hit;
+
+        // 2º: texto livre com rua + bairro + cidade
+        const q = [v.logradouro, v.bairro, v.localidade, v.uf].filter(Boolean).join(', ');
+        const hit2 = await nominatim({ q });
+        if (hit2) return hit2;
+      }
     }
-    const r2 = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address + ', Brasil')}&format=json&limit=1`
-    );
-    const d2 = await r2.json();
-    if (d2?.[0]) return [parseFloat(d2[0].lat), parseFloat(d2[0].lon)];
+
+    // 3º: endereço digitado, limpo de apto/bloco/CEP (Nominatim engasga com eles)
+    const clean = address
+      .replace(/CEP:?\s*\d{5}-?\d{3}/gi, '')
+      .replace(/\b(apt\.?|apto\.?|apartamento|bloco|bl\.?)\s*\S+/gi, '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/(,\s*)+/g, ', ')
+      .trim();
+    const hit3 = await nominatim({ q: clean });
+    if (hit3) return hit3;
   } catch {}
   return FALLBACK_CUSTOMER;
 }
