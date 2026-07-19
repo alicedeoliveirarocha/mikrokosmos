@@ -8,8 +8,11 @@
 // salvar, o banco recusa.
 // Regras do projeto respeitadas: nome é marca (não traduz), preço
 // sempre em BRL no dado (conversão só na exibição).
+// Renderizado via createPortal no <body>: ancestrais com backdrop-blur
+// ou transform (painéis do Analytics) não conseguem sequestrar o fixed.
 // ═══════════════════════════════════════════════════════════════
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -177,7 +180,7 @@ export function PratoEditorModal({ open, productId, onClose }: PratoEditorModalP
   const inputCls = 'w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors';
   const labelCls = 'block text-white/60 text-xs uppercase tracking-wider mb-1.5';
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -356,6 +359,7 @@ export function PratoEditorModal({ open, productId, onClose }: PratoEditorModalP
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
