@@ -1,176 +1,89 @@
-<div align="center">
+# 🌌 MIKROKOSMOS — Themed Restaurant Management SaaS
 
-# 🌌 MIKROKOSMOS
-### Themed-Sync System
+**English** · [Português (Brasil)](./README.pt-BR.md)
 
-*Uma experiência gastronômica imersiva que sincroniza sabor, música e cultura K-pop*
+> A full-stack management system for themed restaurants and K-pop cafés — born as an award-winning university project, engineered into a real-time, multilingual SaaS.
 
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://mikrokosmos-i9bp.vercel.app)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://typescriptlang.org)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
-
-</div>
+🔗 **Live demo:** https://mikrokosmos-i9bp.vercel.app
 
 ---
 
-## 🍜 Sobre o Projeto
+## ✨ What it does
 
-O **Mikrokosmos** é um sistema de restaurante temático K-pop desenvolvido como projeto acadêmico. Cada mesa do restaurante é sincronizada com uma *era* de um grupo K-pop diferente — alterando o tema visual, o cardápio exibido e a trilha sonora ambiente em tempo real.
+MIKROKOSMOS lets a themed restaurant run its entire operation — menu, orders, kitchen, delivery and analytics — while giving customers an immersive experience that switches between **K-pop** and **Cinema** universes (each with its own visual identity, playlists and themed dishes).
 
-O sistema também conta com um modo **Cinema**, onde as eras são trocadas por sagas cinematográficas (Star Wars, Marvel, Interstellar e outros).
+**Four user roles, four experiences:**
 
-🔗 **Demo ao vivo:** [mikrokosmos-i9bp.vercel.app](https://mikrokosmos-i9bp.vercel.app)
+| Role | What they see |
+|---|---|
+| 🍽️ **Customer** | Themed menu, cart, checkout, live order tracking on a real map |
+| 👨‍🍳 **Kitchen** | Real-time order queue with status management |
+| 🛵 **Delivery** | Pickup/delivery workflow with route selection and live map |
+| 🛡️ **Admin** | Full dashboard: BCG matrix, sales analytics, stock, staff, and a self-service menu editor |
 
----
+## 🌍 Internationalization at the core
 
-## ✨ Funcionalidades
+This is not a translated app — it is an app **architected for i18n**:
 
-### 🎵 Sistema K-pop
-- **7 Universos K-pop:** BTS, BLACKPINK, AESPA, ENHYPEN, RED VELVET, NEWJEANS, ILLIT
-- Tema visual dinâmico sincronizado com a era ativa
-- Música ambiente por grupo (sons customizados)
+- **6 languages**: Portuguese, English, Spanish, Korean, Japanese and Chinese
+- **Currency follows language**: prices are stored in BRL and converted at display time (R$ → $, €, ₩, ¥) via `Intl.NumberFormat` — across every screen that shows money, including chart axes and tooltips
+- **The database never stores translated or formatted text.** Order statuses, payment methods and roles are canonical slugs (`'preparando'`, `'cartao'`); translation happens only at render time. A Japanese customer and a Brazilian kitchen see the *same* order, each in their own language
+- **Menu translations live inside the data**: each dish carries its descriptions in all 6 languages as a `jsonb` object — editable from the admin panel, no code involved
 
-### 🃏 Photocards
-- +77 photocards reais dos grupos
-- Sistema de raridades: Common, Rare, Ultra Rare, Legendary
-- Efeito shimmer animado nos cards Ultra Rare
-- 3 photocards grátis por pedido (opcional)
+## 🛠️ Self-service menu management (the SaaS moment)
 
-### 🎬 Modo Cinema
-- 5 sagas cinematográficas: Star Wars, Spider-Man, Mean Girls, Marvel, Interstellar
-- Tema visual alternativo com estética cinematográfica
-- Photocards exclusivos de cinema
+The restaurant operator manages the menu **without touching code**:
 
-### 🛒 Carrinho & Pedidos
-- Múltiplos métodos de pagamento: PIX, Dinheiro, Cartão
-- Dados do cliente salvos localmente (endereços múltiplos, cartões)
-- Observações por pedido
-- Acompanhamento de pedido em tempo real
+- Full dish editor available in two places: an admin **"Dishes" tab** and an **edit button on every product page** (admin only)
+- Edit price, photo, ingredients, allergens, nutrition — and the **translations of every description, per language, in a tabbed form**
+- Toggle a dish off and it disappears from every connected customer's menu **in real time**
+- Create new dishes that are born multilingual
 
-### 👥 Sistema de Roles
-| Role | Acesso |
-|------|--------|
-| `cliente` | Cardápio, carrinho, meus pedidos |
-| `cozinha` | Painel de pedidos da cozinha |
-| `delivery` | Painel de entregas |
-| `admin` | Tudo + Analytics |
+## ⚡ Real-time everything
 
-### 🌍 Internacionalização (i18n)
-Suporte completo a 6 idiomas:
-🇧🇷 Português · 🇺🇸 English · 🇰🇷 한국어 · 🇯🇵 日本語 · 🇪🇸 Español · 🇨🇳 中文
+Built on **Supabase Realtime** (PostgreSQL logical replication):
 
-### 📊 Analytics
-- Dashboard BCG (Matriz de portfólio)
-- Métricas de vendas por categoria
-- Análise de universos mais populares
+- Kitchen marks an order ready → delivery panel and the customer's tracking screen update instantly, no refresh
+- Admin edits a dish → every open menu updates live
+- The delivery person picks one of up to 3 route alternatives → the customer's map redraws with the chosen route only
 
----
+## 🗺️ Real delivery tracking
 
-## 🛠️ Tecnologias
+- **Leaflet** map with dark CARTO tiles matching the cyberpunk aesthetic
+- **Geocoding pipeline built for Brazil**: ViaCEP resolves the street, then Nominatim structured search pins it (direct CEP lookup returns wrong neighborhoods in Brazil — discovered and worked around)
+- **Real routing via OSRM** with alternative routes; route choice is restricted to delivery/admin roles
+- **Dynamic ETA** counting down based on actual route duration × delivery progress, formatted per language
 
-| Tecnologia | Uso |
-|-----------|-----|
-| **React 18** + **TypeScript** | Interface e tipagem |
-| **Vite** | Build e bundler |
-| **Tailwind CSS** | Estilização |
-| **Framer Motion** | Animações |
-| **Supabase** | Banco de dados e autenticação |
-| **React Router v7** | Navegação |
-| **i18next** | Internacionalização |
-| **Sonner** | Notificações toast |
-| **Lucide React** | Ícones |
-| **Recharts** | Gráficos analytics |
+## 🔐 Security (audited RLS)
 
----
+All access rules are enforced **in the database** via Row Level Security — the front-end is never the security boundary. A self-audit found and fixed real vulnerabilities:
 
-## 🚀 Como Rodar Localmente
+- ❌ Privilege escalation (users could self-promote to admin) → ✅ blocked by a `guard_role_change` trigger; only admins change roles
+- ❌ Public e-mail exposure → ✅ profiles scoped to owner + staff
+- ❌ Orders could be created on behalf of others → ✅ INSERT anchored to the authenticated user
+- Guests keep a localStorage cart; logged-in users get a database cart with **merge-on-login**
 
-### Pré-requisitos
-- Node.js 18+
-- npm ou yarn
-- Conta no Supabase (para o banco de dados)
+## 🧰 Stack
 
-### Instalação
+**React 18 · TypeScript · Vite · Tailwind CSS · Framer Motion · react-i18next · Recharts · Leaflet · Supabase (PostgreSQL, Auth, RLS, Realtime) · Vercel**
 
-```bash
-# 1. Clone o repositório
-git clone https://github.com/alicedeolivirarocha/mikrokosmos.git
-cd mikrokosmos
+## 🏆 Origin story
 
-# 2. Instale as dependências
-npm install
+MIKROKOSMOS started as a Front-End Development course project at Unasp-SP, where it took **2nd place in the class competition with a perfect score** — with special praise for its internationalization. It has since been re-engineered from a browser-only prototype (localStorage) into a database-backed, real-time, self-service system.
 
-# 3. Configure as variáveis de ambiente
-cp .env.example .env.local
-# Edite .env.local com suas chaves do Supabase
+## 🗺️ Roadmap to market
 
-# 4. Rode o projeto
-npm run dev
-```
+Deliberate phasing — demo today, product tomorrow:
 
-### Variáveis de Ambiente
+- [ ] **Multi-tenancy** (`tenant_id` + RLS isolation) to serve many restaurants on one deployment
+- [ ] **Real payments** (Stripe / Mercado Pago) replacing the simulated checkout
+- [ ] **Original themed content** replacing trademarked references (K-pop groups / movie franchises are demo-only; commercialization requires licensed or original IP)
+- [ ] Live courier GPS position streamed via Realtime
 
-```env
-VITE_SUPABASE_URL=sua_url_do_supabase
-VITE_SUPABASE_ANON_KEY=sua_chave_anonima
-```
+## 👩‍💻 Authors
+
+**Alice de Oliveira Rocha** — architecture & development · **Giovanna** — collaborator
 
 ---
 
-## 📁 Estrutura do Projeto
-
-```
-src/
-├── app/
-│   ├── components/       # Componentes reutilizáveis
-│   │   ├── Header.tsx
-│   │   ├── LanguageSwitcher.tsx
-│   │   └── ...
-│   ├── context/          # Contextos React (Auth, Cart, Orders, Universe)
-│   ├── data/             # Dados estáticos (produtos, photocards)
-│   ├── pages/            # Páginas da aplicação
-│   │   ├── Welcome.tsx
-│   │   ├── Home.tsx
-│   │   ├── Cart.tsx
-│   │   ├── Cinema.tsx
-│   │   ├── Kitchen.tsx
-│   │   ├── Delivery.tsx
-│   │   └── Analytics.tsx
-│   └── routes.tsx
-├── i18n/
-│   ├── config.ts
-│   └── locales/          # Traduções (pt-BR, en, ko, ja, es, zh)
-└── lib/
-    └── supabase.ts
-```
-
----
-
-## 👩‍💻 Equipe
-
-| Nome | GitHub |
-|------|--------|
-| **Alice de Oliveira Rocha** | [@alicedeolivirarocha](https://github.com/alicedeolivirarocha) |
-| **Giovanna** | [giovannadias071@gmail.com] |
-
----
-
-## 📚 Contexto Acadêmico
-
-Projeto desenvolvido para a disciplina de **Desenvolvimento de Sistemas** — Sprint 3.
-
-**Entregas do Sprint 3:**
-- [x] Photocards com sistema de raridades
-- [x] 77+ cards reais dos 7 grupos K-pop
-- [x] Fluxo completo de pedido com pagamento
-- [x] Internacionalização (6 idiomas)
-- [x] Modo Cinema com 5 sagas
-- [x] Sistema de roles (cliente / cozinha / delivery / admin)
-- [x] Analytics com métricas de vendas
-
----
-
-<div align="center">
-  <sub>Feito com 💜 e muito K-pop</sub>
-</div>
+*"On Wednesdays we wear pink — and ship features."* 💜
