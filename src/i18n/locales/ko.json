@@ -456,7 +456,8 @@
       "estoque": "재고",
       "mesas": "테이블",
       "funcionarios": "직원",
-      "unidades": "지점"
+      "unidades": "지점",
+      "pratos": "메뉴"
     },
     "period": {
       "hoje": "오늘",
@@ -1227,5 +1228,31 @@
     "currentRole": "현재 역할",
     "requires": "이 페이지에 필요한 권한:",
     "back": "돌아가기"
+  },
+  "pratosPanel": {
+    "title": "메뉴 관리",
+    "subtitle": "가격, 번역, 판매 여부를 관리하세요",
+    "newDish": "새 메뉴",
+    "editDish": "메뉴 수정",
+    "search": "메뉴 검색...",
+    "name": "이름 (브랜드 — 번역하지 않음)",
+    "priceBRL": "R$ 가격 (표시 시 언어별 통화로 변환)",
+    "category": "카테고리",
+    "universe": "유니버스",
+    "cuisine": "요리 종류",
+    "cuisineNone": "없음",
+    "image": "이미지",
+    "active": "판매 중",
+    "inactive": "판매 중지",
+    "ingredients": "재료",
+    "ingredientsHint": "쉼표로 구분",
+    "allergens": "알레르기 유발 성분",
+    "translations": "설명 번역",
+    "shortDesc": "짧은 설명",
+    "longDesc": "자세한 설명",
+    "save": "저장",
+    "cancel": "취소",
+    "saved": "메뉴가 저장되었습니다!",
+    "saveError": "저장에 실패했습니다"
   }
 }

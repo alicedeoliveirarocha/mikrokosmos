@@ -456,7 +456,8 @@
       "estoque": "Estoque",
       "mesas": "Mesas",
       "funcionarios": "Funcionários",
-      "unidades": "Unidades"
+      "unidades": "Unidades",
+      "pratos": "Pratos"
     },
     "period": {
       "hoje": "Hoje",
@@ -1227,5 +1228,31 @@
     "currentRole": "Seu papel atual",
     "requires": "Esta página requer:",
     "back": "Voltar"
+  },
+  "pratosPanel": {
+    "title": "Gestão de Pratos",
+    "subtitle": "Edite preços, traduções e disponibilidade do cardápio",
+    "newDish": "Novo prato",
+    "editDish": "Editar prato",
+    "search": "Buscar prato...",
+    "name": "Nome (marca — não traduz)",
+    "priceBRL": "Preço em R$ (convertido por idioma na exibição)",
+    "category": "Categoria",
+    "universe": "Universo",
+    "cuisine": "Culinária",
+    "cuisineNone": "Nenhuma",
+    "image": "Imagem",
+    "active": "Ativo no cardápio",
+    "inactive": "Fora do cardápio",
+    "ingredients": "Ingredientes",
+    "ingredientsHint": "separados por vírgula",
+    "allergens": "Alérgenos",
+    "translations": "Traduções das descrições",
+    "shortDesc": "Descrição curta",
+    "longDesc": "Descrição longa",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "saved": "Prato salvo!",
+    "saveError": "Erro ao salvar o prato"
   }
 }

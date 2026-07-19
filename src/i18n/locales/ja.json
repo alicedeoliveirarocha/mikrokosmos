@@ -456,7 +456,8 @@
       "estoque": "在庫",
       "mesas": "テーブル",
       "funcionarios": "従業員",
-      "unidades": "店舗"
+      "unidades": "店舗",
+      "pratos": "メニュー"
     },
     "period": {
       "hoje": "今日",
@@ -1227,5 +1228,31 @@
     "currentRole": "現在の役割",
     "requires": "このページに必要な権限:",
     "back": "戻る"
+  },
+  "pratosPanel": {
+    "title": "メニュー管理",
+    "subtitle": "価格・翻訳・販売状況を管理",
+    "newDish": "新しい料理",
+    "editDish": "料理を編集",
+    "search": "料理を検索...",
+    "name": "名前（ブランド — 翻訳しない）",
+    "priceBRL": "R$ 価格（表示時に言語別通貨へ変換）",
+    "category": "カテゴリー",
+    "universe": "ユニバース",
+    "cuisine": "料理ジャンル",
+    "cuisineNone": "なし",
+    "image": "画像",
+    "active": "販売中",
+    "inactive": "販売停止",
+    "ingredients": "材料",
+    "ingredientsHint": "カンマ区切り",
+    "allergens": "アレルゲン",
+    "translations": "説明の翻訳",
+    "shortDesc": "短い説明",
+    "longDesc": "詳しい説明",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "saved": "保存しました！",
+    "saveError": "保存に失敗しました"
   }
 }

@@ -4,6 +4,7 @@ import { useInsumos } from '../context/InsumoContext';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { AlertTriangle, Plus, Minus, RotateCcw, TrendingDown, Warehouse } from 'lucide-react';
+import { useCurrency } from '../../lib/currency';
 
 const MOTIVO_KEYS = ['perda', 'vencido', 'quebra', 'outro'] as const;
 const MOTIVO_CANONICAL: Record<string, string> = {
@@ -13,6 +14,7 @@ const MOTIVO_CANONICAL: Record<string, string> = {
 export function StockPanel() {
   const { insumos, lowStockItems, outOfStockItems, restock, discardStock, resetStock, getStockPercent, getStockStatus, totalStockValue } = useInsumos();
   const { t } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: valor do estoque e custo unitário na moeda do idioma
   const [restockQtd, setRestockQtd] = useState<Record<string, string>>({});
   const [discardQtd, setDiscardQtd] = useState<Record<string, string>>({});
   const [discardMotivo, setDiscardMotivo] = useState<Record<string, string>>({});
@@ -49,7 +51,7 @@ export function StockPanel() {
             {t('stock.title')}
           </h2>
           <p className="text-white/60 text-sm mt-1">
-            {t('stock.totalValue')} <span className="font-bold text-white">R$ {totalStockValue.toFixed(2)}</span>
+            {t('stock.totalValue')} <span className="font-bold text-white">{format(totalStockValue)}</span>
           </p>
         </div>
         <button onClick={resetStock}
@@ -122,7 +124,7 @@ export function StockPanel() {
                     <span className="text-xl">{insumo.emoji}</span>
                     <div>
                       <p className="text-white font-bold text-sm">{insumo.nome}</p>
-                      <p className="text-white/40 text-xs">R$ {insumo.custoUnitario.toFixed(2)}/{insumo.unidade}</p>
+                      <p className="text-white/40 text-xs">{format(insumo.custoUnitario)}/{insumo.unidade}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

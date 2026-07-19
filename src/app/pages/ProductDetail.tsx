@@ -7,10 +7,11 @@ import { useProducts } from '../context/ProductsContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { getProductImage } from '../utils/productImages';
-import { Minus, Plus, Trash2, Heart, Flame, Apple } from 'lucide-react';
+import { Minus, Plus, Trash2, Heart, Flame, Apple, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { StarRating } from '../components/StarRating';
+import { PratoEditorModal } from '../components/PratoEditorModal';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../../lib/currency';
@@ -31,15 +32,17 @@ export function ProductDetail() {
   const { user, isAuthenticated } = useAuth();
   const { t } = useTranslation();
   const { format } = useCurrency(); // FIX moeda: preços na moeda do idioma ativo
-  const { products } = useProducts(); // cardápio vem do Supabase, já no idioma ativo
+  const { allProducts } = useProducts(); // admin enxerga até pratos desativados (RLS filtra pros demais)
   const [quantity, setQuantity] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [totalRatings, setTotalRatings] = useState(0);
   const [celebration, setCelebration] = useState<string[] | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const isAdmin = user?.role === 'admin';
 
-  const product = products.find(p => p.id === id);
+  const product = allProducts.find(p => p.id === id);
 
   useEffect(() => {
     if (!product) return;
@@ -193,6 +196,18 @@ export function ProductDetail() {
           >
             <Heart className={`w-6 h-6 transition-all ${isFavorite ? 'fill-red-500 text-red-500' : 'text-white'}`} />
           </button>
+
+          {/* Botão de editar prato — SÓ pro admin (a 2ª porta do editor) */}
+          {isAdmin && (
+            <button
+              onClick={() => setEditorOpen(true)}
+              className="absolute top-4 left-4 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 border"
+              style={{ borderColor: 'var(--primary-neon)' }}
+              title={t('pratosPanel.editDish')}
+            >
+              <Pencil className="w-5 h-5" style={{ color: 'var(--primary-neon)' }} />
+            </button>
+          )}
         </motion.div>
 
         {/* Informações do Produto */}
@@ -345,6 +360,14 @@ export function ProductDetail() {
           )}
         </motion.div>
       </main>
+
+      {isAdmin && (
+        <PratoEditorModal
+          open={editorOpen}
+          productId={product.id}
+          onClose={() => setEditorOpen(false)}
+        />
+      )}
 
       <UniverseToggle />
     </div>

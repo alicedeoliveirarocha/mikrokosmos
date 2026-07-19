@@ -8,10 +8,11 @@ import { StockPanel } from '../components/StockPanel';
 import { MesasPanel } from '../components/MesasPanel';
 import { FuncionariosPanel } from '../components/FuncionariosPanel';
 import { UnidadesPanel } from '../components/UnidadesPanel';
+import { PratosPanel } from '../components/PratosPanel';
 import { useOrders } from '../context/OrdersContext';
 import { useProducts } from '../context/ProductsContext';
 import { motion } from 'motion/react';
-import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair, Users, Building2 } from 'lucide-react';
+import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair, Users, Building2, UtensilsCrossed } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
 import { useCurrency } from '../../lib/currency';
 
@@ -21,7 +22,7 @@ export function Analytics() {
   const { orders } = useOrders();
   const { products } = useProducts(); // cardápio do Supabase (a BCG analisa o cardápio vivo)
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pratos' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
 
   // Calcular métricas gerais
   const completedOrders = orders.filter(o => o.status === 'entregue');
@@ -239,6 +240,19 @@ export function Analytics() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
+              onClick={() => setActiveTab('pratos')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
+                activeTab === 'pratos'
+                  ? 'text-black'
+                  : 'bg-white/5 text-white/60 border border-white/10'
+              }`}
+              style={activeTab === 'pratos' ? { backgroundColor: 'var(--primary-neon)' } : {}}
+            >
+              <UtensilsCrossed className="w-4 h-4" /> {t('analytics.tabs.pratos')}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setActiveTab('estoque')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
                 activeTab === 'estoque'
@@ -311,6 +325,17 @@ export function Analytics() {
             </div>
           )}
         </motion.div>
+
+        {/* ═══════════ TAB: PRATOS ═══════════ */}
+        {activeTab === 'pratos' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6"
+          >
+            <PratosPanel />
+          </motion.div>
+        )}
 
         {/* ═══════════ TAB: ESTOQUE ═══════════ */}
         {activeTab === 'estoque' && (

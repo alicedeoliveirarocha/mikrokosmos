@@ -9,10 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { Navigation, Package, CheckCircle, X, Map, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCurrency } from '../../lib/currency';
 
 export function Delivery() {
   const { orders, updateOrderStatus } = useOrders();
   const { t, i18n } = useTranslation();
+  const { format } = useCurrency(); // FIX moeda: totais na moeda do idioma ativo (o fugitivo que faltava!)
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('saiu-para-entrega');
   const [trackingOrder, setTrackingOrder] = useState<string | null>(null);
 
@@ -122,7 +124,7 @@ export function Delivery() {
                     </div>
                     <div className="text-right mt-3 md:mt-0">
                       <p className="text-3xl font-bold" style={{ color: 'var(--primary-neon)' }}>
-                        R$ {order.total.toFixed(2)}
+                        {format(order.total)}
                       </p>
                     </div>
                   </div>
@@ -187,7 +189,7 @@ export function Delivery() {
                     </div>
                     <div className="text-right mt-3 md:mt-0">
                       <p className="text-3xl font-bold" style={{ color: 'var(--primary-neon)' }}>
-                        R$ {order.total.toFixed(2)}
+                        {format(order.total)}
                       </p>
                     </div>
                   </div>

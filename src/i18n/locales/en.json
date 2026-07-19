@@ -456,7 +456,8 @@
       "estoque": "Stock",
       "mesas": "Tables",
       "funcionarios": "Staff",
-      "unidades": "Locations"
+      "unidades": "Locations",
+      "pratos": "Dishes"
     },
     "period": {
       "hoje": "Today",
@@ -1227,5 +1228,31 @@
     "currentRole": "Your current role",
     "requires": "This page requires:",
     "back": "Go Back"
+  },
+  "pratosPanel": {
+    "title": "Dish Management",
+    "subtitle": "Edit menu prices, translations and availability",
+    "newDish": "New dish",
+    "editDish": "Edit dish",
+    "search": "Search dishes...",
+    "name": "Name (brand — not translated)",
+    "priceBRL": "Price in R$ (converted per language at display)",
+    "category": "Category",
+    "universe": "Universe",
+    "cuisine": "Cuisine",
+    "cuisineNone": "None",
+    "image": "Image",
+    "active": "Active on menu",
+    "inactive": "Off the menu",
+    "ingredients": "Ingredients",
+    "ingredientsHint": "comma-separated",
+    "allergens": "Allergens",
+    "translations": "Description translations",
+    "shortDesc": "Short description",
+    "longDesc": "Long description",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Dish saved!",
+    "saveError": "Error saving dish"
   }
 }

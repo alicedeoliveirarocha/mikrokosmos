@@ -456,7 +456,8 @@
       "estoque": "库存",
       "mesas": "桌台",
       "funcionarios": "员工",
-      "unidades": "门店"
+      "unidades": "门店",
+      "pratos": "菜品"
     },
     "period": {
       "hoje": "今天",
@@ -1227,5 +1228,31 @@
     "currentRole": "当前角色",
     "requires": "此页面需要:",
     "back": "返回"
+  },
+  "pratosPanel": {
+    "title": "菜品管理",
+    "subtitle": "管理价格、翻译和上架状态",
+    "newDish": "新增菜品",
+    "editDish": "编辑菜品",
+    "search": "搜索菜品...",
+    "name": "名称（品牌 — 不翻译）",
+    "priceBRL": "R$ 价格（显示时按语言换算货币）",
+    "category": "类别",
+    "universe": "主题宇宙",
+    "cuisine": "菜系",
+    "cuisineNone": "无",
+    "image": "图片",
+    "active": "上架中",
+    "inactive": "已下架",
+    "ingredients": "配料",
+    "ingredientsHint": "用逗号分隔",
+    "allergens": "过敏原",
+    "translations": "描述翻译",
+    "shortDesc": "简短描述",
+    "longDesc": "详细描述",
+    "save": "保存",
+    "cancel": "取消",
+    "saved": "已保存！",
+    "saveError": "保存失败"
   }
 }
