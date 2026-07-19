@@ -606,8 +606,10 @@ export function Analytics() {
                       <BarChart data={categoryData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                         <XAxis dataKey="name" stroke="#fff" tick={{ fill: '#fff', fontSize: 12 }} />
-                        <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+                        {/* FIX moeda: eixo e tooltip convertidos pro idioma ativo */}
+                        <YAxis stroke="#fff" tick={{ fill: '#fff', fontSize: 11 }} tickFormatter={(v: number) => format(v)} width={80} />
                         <Tooltip
+                          formatter={(value: number) => format(value)}
                           contentStyle={{
                             backgroundColor: 'rgba(0,0,0,0.9)',
                             border: '1px solid rgba(255,255,255,0.2)',
@@ -655,7 +657,9 @@ export function Analytics() {
                             />
                           ))}
                         </Pie>
+                        {/* FIX moeda: tooltip convertido pro idioma ativo */}
                         <Tooltip
+                          formatter={(value: number) => format(value)}
                           contentStyle={{
                             backgroundColor: 'rgba(0,0,0,0.9)',
                             border: '1px solid rgba(255,255,255,0.2)',
