@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Header } from '../components/Header';
 import { UniverseToggle } from '../components/UniverseToggle';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { getProductImage } from '../utils/productImages';
@@ -31,6 +31,7 @@ export function ProductDetail() {
   const { user, isAuthenticated } = useAuth();
   const { t } = useTranslation();
   const { format } = useCurrency(); // FIX moeda: preços na moeda do idioma ativo
+  const { products } = useProducts(); // cardápio vem do Supabase, já no idioma ativo
   const [quantity, setQuantity] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [userRating, setUserRating] = useState(0);
@@ -72,13 +73,9 @@ export function ProductDetail() {
     );
   }
 
-  // Descrição longa traduzida com cadeia de fallback:
-  // 1º tenta productsLong.{id} (descrição longa localizada)
-  // 2º cai na products.{id} (descrição curta já traduzida no catálogo)
-  // 3º por último, o texto original em PT dos dados
-  const longDesc = t(`productsLong.${product.id}`, {
-    defaultValue: t(`products.${product.id}`, { defaultValue: product.descLonga }),
-  });
+  // Descrição longa já vem localizada do ProductsContext
+  // (jsonb multilíngue do banco → idioma ativo, com fallback pt-BR)
+  const longDesc = product.descLonga;
 
   const handleAddToCart = () => {
     if (quantity === 0) return;

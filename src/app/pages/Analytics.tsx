@@ -9,7 +9,7 @@ import { MesasPanel } from '../components/MesasPanel';
 import { FuncionariosPanel } from '../components/FuncionariosPanel';
 import { UnidadesPanel } from '../components/UnidadesPanel';
 import { useOrders } from '../context/OrdersContext';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { motion } from 'motion/react';
 import { TrendingUp, DollarSign, ShoppingCart, Package, BarChart3, PieChart, Download, Warehouse, Armchair, Users, Building2 } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, BarChart, Bar, PieChart as RePieChart, Pie, Legend } from 'recharts';
@@ -19,6 +19,7 @@ export function Analytics() {
   const { t } = useTranslation();
   const { format } = useCurrency(); // FIX moeda: métricas financeiras na moeda do idioma; cálculo interno segue em BRL
   const { orders } = useOrders();
+  const { products } = useProducts(); // cardápio do Supabase (a BCG analisa o cardápio vivo)
   const [selectedPeriod, setSelectedPeriod] = useState<'hoje' | 'semana' | 'mes' | 'tudo'>('tudo');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'estoque' | 'mesas' | 'funcionarios' | 'unidades'>('dashboard');
 
@@ -89,7 +90,7 @@ export function Analytics() {
         revenue: sales.revenue,
       };
     });
-  }, [productSales]);
+  }, [productSales, products]);
 
   // Mapa: valor interno da categoria BCG (PT, usado só pra filtrar) → label traduzido pra exibição
   const bcgLabelMap: Record<string, string> = {

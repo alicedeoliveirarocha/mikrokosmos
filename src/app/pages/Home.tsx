@@ -5,7 +5,7 @@ import { ProductCard } from '../components/ProductCard';
 import { UniverseToggle } from '../components/UniverseToggle';
 import { StatsBar } from '../components/StatsBar';
 import { SazonalBanner } from '../components/SazonalBanner';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { useUniverse } from '../context/UniverseContext';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
@@ -13,6 +13,7 @@ import { motion } from 'motion/react';
 export function Home() {
   const { universeActive, universeName, categoria } = useUniverse();
   const { t } = useTranslation();
+  const { products } = useProducts(); // cardápio vem do Supabase, já no idioma ativo
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const rawCategories = Array.from(new Set(products.map(p => p.categoria)));

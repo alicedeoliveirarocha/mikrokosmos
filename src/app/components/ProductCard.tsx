@@ -102,7 +102,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             text-sm text-white/60 mb-2 line-clamp-2
             ${isCinema ? 'font-serif italic' : ''}
           `}>
-            {t(`products.${product.id}`, { defaultValue: product.desc })}
+            {product.desc /* já localizada pelo ProductsContext (banco → idioma ativo) */}
           </p>
           
           {isKpop && totalRatings > 0 && (
