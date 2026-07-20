@@ -986,7 +986,9 @@
     "gpsSending": "Transmitiendo GPS",
     "hideInfo": "Ocultar detalles",
     "showInfo": "Ver detalles",
-    "arrived": "¡El repartidor llegó! 🎉"
+    "arrived": "¡El repartidor llegó! 🎉",
+    "routeChanged": "El repartidor cambió la ruta: Ruta {{n}} · {{min}} min",
+    "close": "Cerrar seguimiento"
   },
   "allergens": {
     "Lactose": "Lactosa",

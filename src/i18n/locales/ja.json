@@ -986,7 +986,9 @@
     "gpsSending": "GPS送信中",
     "hideInfo": "詳細を隠す",
     "showInfo": "詳細を見る",
-    "arrived": "配達員が到着しました！🎉"
+    "arrived": "配達員が到着しました！🎉",
+    "routeChanged": "配達員がルートを変更しました：ルート{{n}}・{{min}}分",
+    "close": "追跡を閉じる"
   },
   "allergens": {
     "Lactose": "乳成分",

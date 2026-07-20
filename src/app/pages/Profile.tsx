@@ -103,10 +103,12 @@ export function Profile() {
           <p className="text-white/80">{welcomeMsg.message}</p>
         </motion.div>
 
+        {/* FIX responsividade: padding progressivo (p-5 no celular → p-12 no
+            desktop) pra tela estreita não espremer o conteúdo pra fora */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 md:p-12"
+          className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-5 sm:p-8 md:p-12"
         >
           {/* Avatar e Nome */}
           <div className="flex flex-col items-center mb-8">
@@ -114,61 +116,69 @@ export function Profile() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200 }}
-              className="w-32 h-32 rounded-full mb-6 flex items-center justify-center"
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full mb-6 flex items-center justify-center"
               style={{
                 background: `linear-gradient(135deg, var(--gradient-from), var(--gradient-to))`,
                 boxShadow: '0 20px 60px rgba(0, 255, 255, 0.4)'
               }}
             >
-              <User className="w-16 h-16 text-black" />
+              <User className="w-14 h-14 sm:w-16 sm:h-16 text-black" />
             </motion.div>
 
             {isEditing ? (
-              <div className="flex items-center gap-3 mb-4">
+              /* FIX mobile: o input tinha largura intrínseca fixa e estourava
+                 a tela no retrato (o campo vazava pela esquerda e o salvar
+                 sumia pela direita). Agora a linha ocupa no máximo a largura
+                 do card (w-full max-w-md), o input encolhe (flex-1 min-w-0)
+                 e os botões nunca são amassados (flex-shrink-0). */
+              <div className="flex w-full max-w-md items-center gap-2 sm:gap-3 mb-4">
                 <input
                   type="text"
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
-                  className="bg-white/5 border border-white/20 rounded-xl px-4 py-2 text-white text-2xl text-center focus:outline-none focus:border-white/40"
+                  className="flex-1 min-w-0 bg-white/5 border border-white/20 rounded-xl px-3 sm:px-4 py-2 text-white text-xl sm:text-2xl text-center focus:outline-none focus:border-white/40"
                   placeholder={t('auth.namePlaceholder')}
                 />
                 <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   onClick={handleSave}
-                  className="w-10 h-10 rounded-full flex items-center justify-center"
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: 'var(--primary-neon)' }}>
                   <Save className="w-5 h-5 text-black" />
                 </motion.button>
                 <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   onClick={() => { setIsEditing(false); setEditedName(user.nome); }}
-                  className="w-10 h-10 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center">
+                  className="w-10 h-10 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center flex-shrink-0">
                   <X className="w-5 h-5 text-red-500" />
                 </motion.button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 mb-4">
-                <h1 className="text-4xl font-bold text-white">{user.nome}</h1>
+              /* FIX mobile: nome longo quebra linha (break-words) em vez de
+                 vazar; flex-wrap deixa o lápis descer se faltar espaço */
+              <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-3 mb-4">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white text-center break-words max-w-full">{user.nome}</h1>
                 <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   onClick={() => setIsEditing(true)}
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all">
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all flex-shrink-0">
                   <Edit className="w-5 h-5 text-white" />
                 </motion.button>
               </div>
             )}
-            <p className="text-white/60 text-lg">{t('profile.memberTitle')}</p>
+            <p className="text-white/60 text-lg text-center">{t('profile.memberTitle')}</p>
           </div>
 
-          {/* RBAC */}
-          <div className="mb-6 p-6 rounded-2xl border-2"
+          {/* RBAC — min-w-0 no texto pra descrições longas (ja/ko/zh)
+              quebrarem dentro do card em vez de vazar */}
+          <div className="mb-6 p-4 sm:p-6 rounded-2xl border-2"
             style={{ backgroundColor: `${roleColor}15`, borderColor: roleColor }}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center"
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${roleColor}30` }}>
-                <RoleIcon className="w-8 h-8" style={{ color: roleColor }} />
+                <RoleIcon className="w-7 h-7 sm:w-8 sm:h-8" style={{ color: roleColor }} />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-white/60 text-sm mb-1">{t('profile.rbacRole')}</p>
-                <p className="text-2xl font-bold text-white">{t(`profile.roles.${user.role}`)}</p>
-                <p className="text-sm text-white/50 mt-1">{t(`profile.roleAccess.${user.role}`)}</p>
+                <p className="text-xl sm:text-2xl font-bold text-white break-words">{t(`profile.roles.${user.role}`)}</p>
+                <p className="text-sm text-white/50 mt-1 break-words">{t(`profile.roleAccess.${user.role}`)}</p>
               </div>
             </div>
           </div>
@@ -185,7 +195,7 @@ export function Profile() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white/60 text-sm">{t('auth.email')}</p>
-                <p className="text-white text-lg break-all">{user.email}</p>
+                <p className="text-white text-base sm:text-lg break-all">{user.email}</p>
               </div>
             </div>
 
@@ -196,30 +206,31 @@ export function Profile() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white/60 text-sm">{t('profile.memberSince')}</p>
-                <p className="text-white text-lg break-words">{formatDate(user.created_at)}</p>
+                <p className="text-white text-base sm:text-lg break-words">{formatDate(user.created_at)}</p>
               </div>
             </div>
           </div>
 
-          {/* Estatísticas */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
+          {/* Estatísticas — gap e padding menores no celular pros 3 cards
+              caberem lado a lado sem espremer os números */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
+            <div className="text-center p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
                 {myRatingsCount}
               </p>
-              <p className="text-white/60 text-sm">{t('profile.ratings')}</p>
+              <p className="text-white/60 text-xs sm:text-sm">{t('profile.ratings')}</p>
             </div>
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
+            <div className="text-center p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
                 {myFavoritesCount}
               </p>
-              <p className="text-white/60 text-sm">{t('profile.favorites')}</p>
+              <p className="text-white/60 text-xs sm:text-sm">{t('profile.favorites')}</p>
             </div>
-            <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
+            <div className="text-center p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
                 {Math.floor((Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24))}
               </p>
-              <p className="text-white/60 text-sm">{t('profile.days')}</p>
+              <p className="text-white/60 text-xs sm:text-sm">{t('profile.days')}</p>
             </div>
           </div>
 

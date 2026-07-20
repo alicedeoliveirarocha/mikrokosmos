@@ -986,7 +986,9 @@
     "gpsSending": "GPS 전송 중",
     "hideInfo": "정보 숨기기",
     "showInfo": "정보 보기",
-    "arrived": "배달원이 도착했어요! 🎉"
+    "arrived": "배달원이 도착했어요! 🎉",
+    "routeChanged": "배달원이 경로를 변경했어요: 경로 {{n}} · {{min}}분",
+    "close": "추적 닫기"
   },
   "allergens": {
     "Lactose": "유당",

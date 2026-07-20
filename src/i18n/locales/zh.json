@@ -986,7 +986,9 @@
     "gpsSending": "正在发送GPS",
     "hideInfo": "隐藏详情",
     "showInfo": "查看详情",
-    "arrived": "骑手已到达！🎉"
+    "arrived": "骑手已到达！🎉",
+    "routeChanged": "骑手更改了路线：路线 {{n}} · {{min}} 分钟",
+    "close": "关闭跟踪"
   },
   "allergens": {
     "Lactose": "乳糖",

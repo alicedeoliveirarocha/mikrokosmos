@@ -17,7 +17,7 @@
 //   rota OSRM pelas ruas → linha reta entre os dois pontos
 // ═══════════════════════════════════════════════════════════════
 import { motion } from 'motion/react';
-import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle, Map as MapIcon, Sparkles } from 'lucide-react';
+import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle, Map as MapIcon, Sparkles, X } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrdersContext';
@@ -35,6 +35,11 @@ interface DeliveryMapProps {
   customerPhone?: string;
   estimatedTime: string;
   status: 'preparing' | 'on-route' | 'arriving' | 'delivered';
+  // ── Fechar o tracking SEM depender do "voltar" do navegador.
+  // Quando a página-mãe passa onClose, o X aparece DENTRO do mapa
+  // (nos dois modos, em qualquer tamanho de tela) e devolve o cliente
+  // pra tela de pedidos — nunca mais pro início por engano. ──
+  onClose?: () => void;
 }
 
 // Mikrokosmos — unidade Vila Mariana (origem de toda entrega)
@@ -221,7 +226,7 @@ function nearestFractionOnRoute(route: [number, number][], p: [number, number]):
 }
 
 export function DeliveryMap(props: DeliveryMapProps) {
-  const { orderId, customerName, customerAddress, customerPhone, estimatedTime } = props;
+  const { orderId, customerName, customerAddress, customerPhone, estimatedTime, onClose } = props;
   const { primaryColor } = useUniverse();
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -229,7 +234,10 @@ export function DeliveryMap(props: DeliveryMapProps) {
 
   // O pedido vivo, vindo do Supabase — o Realtime mantém ele fresco,
   // então a rota escolhida pelo entregador chega aqui sozinha.
-  const order = orders.find(o => o.id === orderId);
+  // BUG RESOLVIDO: o OrderTracking passava o id ABREVIADO (slice(-8)) e o
+  // find nunca achava o pedido — o cliente ficava sem Realtime (rota, GPS)
+  // exatamente na tela dele. Agora aceita id completo OU abreviado.
+  const order = orders.find(o => o.id === orderId || o.id.endsWith(orderId));
   const remoteRoute = order?.selected_route ?? 0;
 
   // Só quem entrega (ou o admin) vê e escolhe rotas alternativas.
@@ -283,6 +291,31 @@ export function DeliveryMap(props: DeliveryMapProps) {
     if (!routes) return;
     setSelectedRoute(Math.min(remoteRoute, routes.length - 1));
   }, [remoteRoute, routes]);
+
+  // ── 🔔 TRANSPARÊNCIA PRO CLIENTE: quando o entregador TROCA de
+  // percurso, o cliente é avisado NA HORA (toast com rota nova + tempo).
+  // O primeiro valor que chega não dispara nada (não é troca, é o estado
+  // inicial); e quem escolheu a rota (delivery/admin) não recebe o aviso
+  // da própria ação. ──
+  const prevRouteRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!routes) return;
+    const idx = Math.min(remoteRoute, routes.length - 1);
+    if (prevRouteRef.current === null) {
+      prevRouteRef.current = idx;
+      return;
+    }
+    if (idx !== prevRouteRef.current) {
+      prevRouteRef.current = idx;
+      if (!canChooseRoute) {
+        const opt = routes[idx];
+        toast.info(
+          t('deliveryMap.routeChanged', { n: idx + 1, min: opt?.durationMin ?? 0 }),
+          { duration: 6000 }
+        );
+      }
+    }
+  }, [remoteRoute, routes, canChooseRoute, t]);
 
   // Escolher rota: atualiza a tela na hora (otimista) e persiste no
   // pedido — o banco espalha pra todos os dispositivos via Realtime.
@@ -555,12 +588,55 @@ export function DeliveryMap(props: DeliveryMapProps) {
     </div>
   );
 
+  // ── ❌ FECHAR O TRACKING — presente nos DOIS modos e em QUALQUER
+  // tela (o X antigo morava na página-mãe e sumia no celular; este
+  // vive dentro do mapa, então nunca some). O cliente fecha e volta
+  // pros pedidos — sem apelar pro "voltar" do navegador. ──
+  const CloseButton = () => {
+    if (!onClose) return null;
+    return (
+      <button
+        onClick={onClose}
+        aria-label={t('deliveryMap.close')}
+        className="absolute top-6 right-6 z-30 pointer-events-auto w-11 h-11 rounded-full flex items-center justify-center border backdrop-blur-xl transition-all hover:scale-110"
+        style={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: 'rgba(255,255,255,0.3)' }}
+      >
+        <X className="w-5 h-5 text-white" />
+      </button>
+    );
+  };
+
+  // ── 🛵 CHIP DE PERCURSO — a transparência que faltava pro CLIENTE.
+  // Quem não escolhe rota (o cliente) agora VÊ qual percurso o
+  // entregador pegou: "Rota 2 · 22,7 km · 34 min". Atualiza sozinho
+  // via Realtime quando o entregador troca (junto com o toast acima).
+  // Delivery/admin não precisam do chip: eles têm o painel completo. ──
+  const RouteChip = () => {
+    if (canChooseRoute || !selectedOption || selectedOption.durationMin <= 0) return null;
+    return (
+      <div className="absolute bottom-[4.75rem] md:bottom-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-xl"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: `${primaryColor}50` }}>
+          <span className="text-sm leading-none">🛵</span>
+          <span className="text-xs font-bold text-white whitespace-nowrap">
+            {t('deliveryMap.routeLabel', { n: selectedRoute + 1 })}
+          </span>
+          <span className="text-[11px] font-mono text-white/60 whitespace-nowrap">
+            {selectedOption.distanceKm.toFixed(1)} km · {selectedOption.durationMin} min
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   // ── MODO MATRIX 💊 — a visualização cyberpunk original ──
   if (viewMode === 'matrix') {
     return (
       <div className="relative w-full h-full">
         <DeliveryMapMatrix {...props} estimatedTime={etaDisplay} externalProgress={progress} />
         <ModeToggle />
+        <RouteChip />
+        <CloseButton />
       </div>
     );
   }
@@ -591,6 +667,8 @@ export function DeliveryMap(props: DeliveryMapProps) {
           font-size: 10px;
         }
         .leaflet-control-attribution a { color: rgba(255, 255, 255, 0.7) !important; }
+        /* Desce a atribuição do canto pra ela não brigar com o X de fechar */
+        .leaflet-top.leaflet-right .leaflet-control { margin-top: 3.75rem; margin-right: 0.5rem; }
       `}</style>
 
       {/* Mapa real — o z-0 cria um stacking context que "prende" os
@@ -612,6 +690,8 @@ export function DeliveryMap(props: DeliveryMapProps) {
       {/* Overlay UI Elements */}
       <div className="absolute inset-0 pointer-events-none z-10">
         <ModeToggle />
+        <CloseButton />
+        <RouteChip />
 
         {/* Seletor de rotas alternativas — SÓ pra delivery/admin.
             O cliente nunca vê este painel, só a rota escolhida. */}
@@ -643,37 +723,42 @@ export function DeliveryMap(props: DeliveryMapProps) {
           </div>
         )}
 
-        {/* Top Info Card - Estimated Delivery Time */}
+        {/* Top Info Card - Estimated Delivery Time
+            FIX mobile: no celular ele desce (top-[4.75rem]) pra não ficar
+            escondido atrás do toggle Mapa/Matrix e do X, encolhe padding e
+            fonte, e ganha largura máxima — nada de texto cortado ("ESTIMADA"
+            atrás dos botões). No desktop, tudo como era. */}
         <motion.div
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, type: "spring" }}
-          className="absolute top-6 left-1/2 -translate-x-1/2 pointer-events-auto"
+          className="absolute top-[4.75rem] md:top-6 left-1/2 -translate-x-1/2 pointer-events-auto w-[calc(100%-3rem)] max-w-md md:w-auto md:max-w-none"
         >
           <div
-            className="px-8 py-4 rounded-2xl backdrop-blur-2xl border-2"
+            className="px-4 py-3 md:px-8 md:py-4 rounded-2xl backdrop-blur-2xl border-2"
             style={{
               backgroundColor: 'rgba(0, 0, 0, 0.85)',
               borderColor: `${primaryColor}60`,
               boxShadow: `0 10px 40px ${primaryColor}30, inset 0 0 20px ${primaryColor}10`,
             }}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-3 md:gap-4 flex-wrap">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="flex-shrink-0"
               >
-                <Clock className="w-6 h-6" style={{ color: primaryColor }} />
+                <Clock className="w-5 h-5 md:w-6 md:h-6" style={{ color: primaryColor }} />
               </motion.div>
 
-              <div>
+              <div className="min-w-0">
                 <p className="text-white/60 text-xs uppercase tracking-wider">{t('deliveryMap.estimatedArrival')}</p>
-                <p className="text-white text-2xl font-bold" style={{ color: primaryColor }}>
+                <p className="text-white text-lg md:text-2xl font-bold" style={{ color: primaryColor }}>
                   {etaDisplay}
                 </p>
               </div>
 
-              <div className="ml-4 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
+              <div className="md:ml-4 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm flex-shrink-0">
                 <p className="text-white text-xs font-bold uppercase tracking-wider">
                   {Math.round(progress)}%
                 </p>
@@ -681,7 +766,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
 
               {/* 📡 GPS ao vivo — todo mundo vê quando o entregador transmite */}
               {liveGps && (
-                <div className="px-3 py-1 rounded-full border"
+                <div className="px-3 py-1 rounded-full border flex-shrink-0"
                   style={{ backgroundColor: 'rgba(74,222,128,0.15)', borderColor: 'rgba(74,222,128,0.5)' }}>
                   <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#4ade80' }}>
                     📡 {t('deliveryMap.liveGps')}
@@ -691,7 +776,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
 
               {/* Transmitindo — só no aparelho do próprio entregador */}
               {gpsSending && !liveGps && (
-                <div className="px-3 py-1 rounded-full bg-white/10">
+                <div className="px-3 py-1 rounded-full bg-white/10 flex-shrink-0">
                   <p className="text-white/60 text-xs font-bold uppercase tracking-wider">
                     📡 {t('deliveryMap.gpsSending')}
                   </p>
@@ -736,14 +821,14 @@ export function DeliveryMap(props: DeliveryMapProps) {
                   <User className="w-6 h-6" style={{ color: primaryColor }} />
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className="text-white/60 text-xs uppercase tracking-wider mb-1">{t('deliveryMap.customer')}</p>
-                  <p className="text-white font-bold text-lg mb-1">{customerName}</p>
-                  <p className="text-white/70 text-sm">{customerAddress}</p>
+                  <p className="text-white font-bold text-lg mb-1 break-words">{customerName}</p>
+                  <p className="text-white/70 text-sm break-words">{customerAddress}</p>
 
                   {customerPhone && (
                     <div className="flex items-center gap-2 mt-3 text-white/80">
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-4 h-4 flex-shrink-0" />
                       <span className="text-sm">{customerPhone}</span>
                     </div>
                   )}
@@ -752,7 +837,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
 
               <div className="pt-4 border-t border-white/10">
                 <p className="text-white/60 text-xs uppercase tracking-wider mb-1">{t('deliveryMap.orderId')}</p>
-                <p className="text-white font-mono text-sm">#{orderId}</p>
+                <p className="text-white font-mono text-sm">#{orderId.slice(-8)}</p>
               </div>
             </motion.div>
 

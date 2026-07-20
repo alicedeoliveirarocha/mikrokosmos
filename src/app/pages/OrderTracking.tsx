@@ -161,24 +161,30 @@ export function OrderTracking() {
               className="absolute inset-4 md:inset-8 rounded-3xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 90 }} whileTap={{ scale: 0.9 }}
-                onClick={() => setTrackingOrder(null)}
-                className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/80 backdrop-blur-xl border border-white/20 flex items-center justify-center"
-              >
-                <X className="w-6 h-6 text-white" />
-              </motion.button>
+              {/* O X antigo morava AQUI e foi removido de propósito:
+                  ele era z-10 e vinha antes do DeliveryMap no DOM, então os
+                  elementos internos do mapa pintavam por cima — no celular o
+                  card do ETA (largura total) cobria o X e o cliente ficava
+                  preso. Agora o X vive DENTRO do DeliveryMap (via onClose),
+                  com z-30, visível nos dois modos e em qualquer tela. */}
               {(() => {
                 const order = orders.find(o => o.id === trackingOrder);
                 if (!order) return null;
                 return (
                   <DeliveryMap
-                    orderId={order.id.slice(-8)}
+                    /* BUG RESOLVIDO: passava order.id.slice(-8) e o DeliveryMap
+                       nunca achava o pedido no orders → sem Realtime (rota
+                       escolhida, GPS, chip de percurso) justamente na tela do
+                       cliente. Agora vai o id COMPLETO; o nº curto (#8c612c8a)
+                       continua aparecendo porque o card interno abrevia na
+                       exibição. */
+                    orderId={order.id}
                     customerName={order.customer_name || t('orders.you')}
                     customerAddress={order.customer_address || t('orders.yourAddress')}
                     customerPhone={order.customer_phone}
                     estimatedTime="15-20 min"
                     status="on-route"
+                    onClose={() => setTrackingOrder(null)}
                   />
                 );
               })()}
