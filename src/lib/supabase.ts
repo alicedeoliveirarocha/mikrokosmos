@@ -1,7 +1,7 @@
 // src/lib/supabase.ts
 // Arquivo de conexão com o Supabase
-// NOVO: Order.selected_route — a rota escolhida pelo entregador,
-// sincronizada entre dispositivos via Realtime.
+// NOVO: Order.selected_route (rota escolhida) e courier_lat/lng/updated_at
+// (posição GPS real do entregador) — tudo sincronizado via Realtime.
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -33,6 +33,9 @@ export interface Order {
   status: 'pendente' | 'preparando' | 'pronto' | 'saiu-para-entrega' | 'entregue' | 'cancelado';
   items: OrderItem[];
   selected_route?: number; // índice da rota OSRM escolhida pelo entregador
+  courier_lat?: number | null;        // posição REAL do entregador (GPS do celular)
+  courier_lng?: number | null;
+  courier_updated_at?: string | null; // frescor do GPS (expira em 2 min no mapa)
   payment_method?: 'pix' | 'dinheiro' | 'cartao' | 'boleto'; // slug — tradução na exibição
   payment_ref?: string; // últimos 4 do cartão ou código do boleto
   created_at: string;

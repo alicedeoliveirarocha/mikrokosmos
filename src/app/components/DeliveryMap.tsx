@@ -20,6 +20,7 @@ import { motion } from 'motion/react';
 import { MapPin, Navigation, Clock, Package, User, Phone, CheckCircle, Map as MapIcon, Sparkles } from 'lucide-react';
 import { useUniverse } from '../context/UniverseContext';
 import { useAuth } from '../context/AuthContext';
+import { useOrders } from '../context/OrdersContext';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
@@ -174,15 +175,90 @@ function traveledPath(route: [number, number][], fraction: number): [number, num
   return pts;
 }
 
+// ── GPS REAL DO ENTREGADOR ──
+// Distância aproximada em metros entre dois pontos lat/lng — suficiente
+// pra decidir "andou o bastante pra valer um update no banco?".
+function distMeters(a: [number, number], b: [number, number]): number {
+  const dLat = (b[0] - a[0]) * 111320;
+  const dLng = (b[1] - a[1]) * 111320 * Math.cos((a[0] * Math.PI) / 180);
+  return Math.hypot(dLat, dLng);
+}
+
+// Projeta um ponto GPS na rota e devolve a fração 0..1 já percorrida.
+// É o truque que faz TUDO continuar funcionando com posição real:
+// barra de progresso, passos da entrega e ETA seguem alimentados por
+// "progress" — só que agora ele vem do GPS em vez da simulação.
+function nearestFractionOnRoute(route: [number, number][], p: [number, number]): number {
+  if (route.length < 2) return 0;
+  const segLens: number[] = [];
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    const d = Math.hypot(route[i + 1][0] - route[i][0], route[i + 1][1] - route[i][1]);
+    segLens.push(d);
+    total += d;
+  }
+  if (total === 0) return 0;
+
+  let best = Infinity;
+  let bestAlong = 0;
+  let acc = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    const [ax, ay] = route[i];
+    const [bx, by] = route[i + 1];
+    const vx = bx - ax, vy = by - ay;
+    const len2 = vx * vx + vy * vy;
+    const tt = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - ax) * vx + (p[1] - ay) * vy) / len2));
+    const px = ax + vx * tt, py = ay + vy * tt;
+    const d = Math.hypot(p[0] - px, p[1] - py);
+    if (d < best) {
+      best = d;
+      bestAlong = acc + segLens[i] * tt;
+    }
+    acc += segLens[i];
+  }
+  return Math.min(1, bestAlong / total);
+}
+
 export function DeliveryMap(props: DeliveryMapProps) {
   const { orderId, customerName, customerAddress, customerPhone, estimatedTime } = props;
   const { primaryColor } = useUniverse();
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { orders, updateOrderRoute, updateCourierPosition } = useOrders();
+
+  // O pedido vivo, vindo do Supabase — o Realtime mantém ele fresco,
+  // então a rota escolhida pelo entregador chega aqui sozinha.
+  const order = orders.find(o => o.id === orderId);
+  const remoteRoute = order?.selected_route ?? 0;
 
   // Só quem entrega (ou o admin) vê e escolhe rotas alternativas.
   // O cliente enxerga apenas a rota selecionada.
   const canChooseRoute = user?.role === 'delivery' || user?.role === 'admin';
+
+  // ── GPS REAL: a posição vive no pedido; o Realtime a traz até aqui ──
+  const courierPos: [number, number] | null =
+    order?.courier_lat != null && order?.courier_lng != null
+      ? [order.courier_lat, order.courier_lng]
+      : null;
+
+  // Relógio de 15s só pra reavaliar o frescor (GPS parado expira sozinho)
+  const [, setGpsTick] = useState(0);
+  useEffect(() => {
+    if (!courierPos) return;
+    const iv = setInterval(() => setGpsTick(v => v + 1), 15000);
+    return () => clearInterval(iv);
+  }, [courierPos !== null]);
+
+  // "Ao vivo" = última posição tem menos de 2 minutos.
+  // Sem GPS fresco, o mapa cai de volta na simulação — a demo nunca quebra.
+  const liveGps = !!(
+    courierPos &&
+    order?.courier_updated_at &&
+    Date.now() - new Date(order.courier_updated_at).getTime() < 120000
+  );
+
+  // Badge do transmissor (só no aparelho do entregador)
+  const [gpsSending, setGpsSending] = useState(false);
 
   // 🗺️ real ↔ 💊 matrix
   const [viewMode, setViewMode] = useState<'real' | 'matrix'>('real');
@@ -193,14 +269,32 @@ export function DeliveryMap(props: DeliveryMapProps) {
   const [selectedRoute, setSelectedRoute] = useState(0);
   const route = routes ? routes[selectedRoute]?.coords ?? null : null;
 
+  // ── SYNC: a escolha de rota vive no pedido (coluna selected_route).
+  // Quando o entregador troca, o Realtime atualiza orders → este efeito
+  // roda → o mapa do cliente redesenha sozinho. ──
+  useEffect(() => {
+    if (!routes) return;
+    setSelectedRoute(Math.min(remoteRoute, routes.length - 1));
+  }, [remoteRoute, routes]);
+
+  // Escolher rota: atualiza a tela na hora (otimista) e persiste no
+  // pedido — o banco espalha pra todos os dispositivos via Realtime.
+  const chooseRoute = (idx: number) => {
+    setSelectedRoute(idx);
+    if (order) updateOrderRoute(order.id, idx);
+  };
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const traveledLineRef = useRef<L.Polyline | null>(null);
   const routeLayersRef = useRef<L.LayerGroup | null>(null);
 
-  // Simulate delivery progress
+  // Simulação de progresso — SÓ enquanto não há GPS real.
+  // Quando o entregador começa a transmitir, este efeito se desliga
+  // (cleanup limpa o interval) e o progresso passa a vir do GPS.
   useEffect(() => {
+    if (liveGps) return;
     const interval = setInterval(() => {
       setProgress((prev) => {
         const newProgress = prev + 0.5;
@@ -213,7 +307,44 @@ export function DeliveryMap(props: DeliveryMapProps) {
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [liveGps]);
+
+  // ── GPS real → progresso: projeta a posição do entregador na rota
+  // escolhida. Barra, passos e ETA seguem funcionando sem mudar nada. ──
+  useEffect(() => {
+    if (!liveGps || !courierPos || !route) return;
+    setProgress(nearestFractionOnRoute(route, courierPos) * 100);
+  }, [liveGps, order?.courier_lat, order?.courier_lng, route]);
+
+  // ── TRANSMISSOR: o celular do ENTREGADOR envia o GPS ──
+  // Só o papel 'delivery' transmite (admin vê o mapa, mas não sobrescreve
+  // a posição de quem está na rua). Throttle: ≥4s entre envios E ≥8m de
+  // deslocamento — poupa o banco e a bateria. Permissão negada? Sem drama:
+  // o badge apaga e a simulação continua.
+  useEffect(() => {
+    if (user?.role !== 'delivery' || !order || !('geolocation' in navigator)) return;
+    let lastSent = 0;
+    let lastPos: [number, number] | null = null;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const here: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        const now = Date.now();
+        const moved = !lastPos || distMeters(here, lastPos) >= 8;
+        if (now - lastSent >= 4000 && moved) {
+          lastSent = now;
+          lastPos = here;
+          setGpsSending(true);
+          updateCourierPosition(order.id, here[0], here[1]);
+        }
+      },
+      () => setGpsSending(false),
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.role, order?.id]);
 
   // Update current step based on progress
   useEffect(() => {
@@ -311,7 +442,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
           opacity: 0.18,
           dashArray: '2 8',
         })
-          .on('click', () => setSelectedRoute(idx))
+          .on('click', () => chooseRoute(idx))
           .addTo(group);
       });
     }
@@ -342,16 +473,20 @@ export function DeliveryMap(props: DeliveryMapProps) {
   }, [viewMode, routes, selectedRoute, canChooseRoute]);
 
   // ── Anima o entregador e a linha percorrida ──
+  // Com GPS ao vivo, o marcador fica na posição REAL (mesmo fora da rota);
+  // a linha percorrida usa a projeção na rota (via progress).
   useEffect(() => {
     if (viewMode !== 'real' || !route) return;
     const fraction = progress / 100;
     if (driverMarkerRef.current) {
-      driverMarkerRef.current.setLatLng(pointAlongRoute(route, fraction));
+      driverMarkerRef.current.setLatLng(
+        liveGps && courierPos ? courierPos : pointAlongRoute(route, fraction)
+      );
     }
     if (traveledLineRef.current) {
       traveledLineRef.current.setLatLngs(traveledPath(route, fraction));
     }
-  }, [progress, viewMode, route, selectedRoute]);
+  }, [progress, viewMode, route, selectedRoute, liveGps, order?.courier_lat, order?.courier_lng]);
 
   // ── ETA real: duração da rota selecionada (OSRM), decrescendo com o
   // progresso. Fallback: a prop estimatedTime (quando a rota ainda não
@@ -465,7 +600,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
             {routes.map((opt, idx) => (
               <button
                 key={idx}
-                onClick={() => setSelectedRoute(idx)}
+                onClick={() => chooseRoute(idx)}
                 className="flex items-center gap-3 w-full px-3 py-2 text-left text-xs transition-all"
                 style={selectedRoute === idx
                   ? { backgroundColor: `${primaryColor}25`, color: '#fff' }
@@ -519,6 +654,25 @@ export function DeliveryMap(props: DeliveryMapProps) {
                   {Math.round(progress)}%
                 </p>
               </div>
+
+              {/* 📡 GPS ao vivo — todo mundo vê quando o entregador transmite */}
+              {liveGps && (
+                <div className="px-3 py-1 rounded-full border"
+                  style={{ backgroundColor: 'rgba(74,222,128,0.15)', borderColor: 'rgba(74,222,128,0.5)' }}>
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#4ade80' }}>
+                    📡 {t('deliveryMap.liveGps')}
+                  </p>
+                </div>
+              )}
+
+              {/* Transmitindo — só no aparelho do próprio entregador */}
+              {gpsSending && !liveGps && (
+                <div className="px-3 py-1 rounded-full bg-white/10">
+                  <p className="text-white/60 text-xs font-bold uppercase tracking-wider">
+                    📡 {t('deliveryMap.gpsSending')}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>

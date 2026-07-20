@@ -981,7 +981,9 @@
     "viewMatrix": "矩阵模式",
     "routesTitle": "备选路线",
     "routeLabel": "路线 {{n}}",
-    "minutes": "{{count}}分钟"
+    "minutes": "{{count}}分钟",
+    "liveGps": "实时GPS",
+    "gpsSending": "正在发送GPS"
   },
   "allergens": {
     "Lactose": "乳糖",

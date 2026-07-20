@@ -981,7 +981,9 @@
     "viewMatrix": "マトリックスモード",
     "routesTitle": "代替ルート",
     "routeLabel": "ルート{{n}}",
-    "minutes": "{{count}}分"
+    "minutes": "{{count}}分",
+    "liveGps": "ライブGPS",
+    "gpsSending": "GPS送信中"
   },
   "allergens": {
     "Lactose": "乳成分",

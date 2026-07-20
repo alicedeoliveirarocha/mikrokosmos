@@ -981,7 +981,9 @@
     "viewMatrix": "Modo Matrix",
     "routesTitle": "Rotas alternativas",
     "routeLabel": "Rota {{n}}",
-    "minutes": "{{count}} min"
+    "minutes": "{{count}} min",
+    "liveGps": "GPS ao vivo",
+    "gpsSending": "Transmitindo GPS"
   },
   "allergens": {
     "Lactose": "Lactose",

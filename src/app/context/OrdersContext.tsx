@@ -11,6 +11,7 @@ interface OrdersContextType {
   addOrder: (order: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => Promise<string | null>;
   updateOrderStatus: (orderId: string, status: Order['status']) => Promise<void>;
   updateOrderRoute: (orderId: string, routeIndex: number) => Promise<void>;
+  updateCourierPosition: (orderId: string, lat: number, lng: number) => Promise<void>;
   getOrdersByStatus: (status: Order['status']) => Order[];
   cancelOrder: (orderId: string) => Promise<void>;
 }
@@ -86,6 +87,15 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       .eq('id', orderId);
   };
 
+  // Posição real do entregador — gravada no pedido; o Realtime espalha
+  // pro mapa do cliente. Silencioso (sem toast): roda a cada poucos segundos.
+  const updateCourierPosition = async (orderId: string, lat: number, lng: number) => {
+    await supabase
+      .from('orders')
+      .update({ courier_lat: lat, courier_lng: lng, courier_updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+  };
+
   const getOrdersByStatus = (status: Order['status']) => {
     return orders.filter(o => o.status === status);
   };
@@ -101,6 +111,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       addOrder,
       updateOrderStatus,
       updateOrderRoute,
+      updateCourierPosition,
       getOrdersByStatus,
       cancelOrder,
     }}>

@@ -981,7 +981,9 @@
     "viewMatrix": "매트릭스 모드",
     "routesTitle": "대체 경로",
     "routeLabel": "경로 {{n}}",
-    "minutes": "{{count}}분"
+    "minutes": "{{count}}분",
+    "liveGps": "실시간 GPS",
+    "gpsSending": "GPS 전송 중"
   },
   "allergens": {
     "Lactose": "유당",
