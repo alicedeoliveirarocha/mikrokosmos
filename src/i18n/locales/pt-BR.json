@@ -983,7 +983,10 @@
     "routeLabel": "Rota {{n}}",
     "minutes": "{{count}} min",
     "liveGps": "GPS ao vivo",
-    "gpsSending": "Transmitindo GPS"
+    "gpsSending": "Transmitindo GPS",
+    "hideInfo": "Ocultar detalhes",
+    "showInfo": "Ver detalhes",
+    "arrived": "Entregador chegou! 🎉"
   },
   "allergens": {
     "Lactose": "Lactose",

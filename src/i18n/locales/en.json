@@ -983,7 +983,10 @@
     "routeLabel": "Route {{n}}",
     "minutes": "{{count}} min",
     "liveGps": "Live GPS",
-    "gpsSending": "Broadcasting GPS"
+    "gpsSending": "Broadcasting GPS",
+    "hideInfo": "Hide details",
+    "showInfo": "Show details",
+    "arrived": "Courier arrived! 🎉"
   },
   "allergens": {
     "Lactose": "Lactose",

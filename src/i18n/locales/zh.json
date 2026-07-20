@@ -983,7 +983,10 @@
     "routeLabel": "路线 {{n}}",
     "minutes": "{{count}}分钟",
     "liveGps": "实时GPS",
-    "gpsSending": "正在发送GPS"
+    "gpsSending": "正在发送GPS",
+    "hideInfo": "隐藏详情",
+    "showInfo": "查看详情",
+    "arrived": "骑手已到达！🎉"
   },
   "allergens": {
     "Lactose": "乳糖",

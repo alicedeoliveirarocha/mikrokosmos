@@ -26,6 +26,7 @@ import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { DeliveryMapMatrix } from './DeliveryMapMatrix';
+import { toast } from 'sonner';
 
 interface DeliveryMapProps {
   orderId: string;
@@ -259,6 +260,12 @@ export function DeliveryMap(props: DeliveryMapProps) {
 
   // Badge do transmissor (só no aparelho do entregador)
   const [gpsSending, setGpsSending] = useState(false);
+
+  // O cliente decide: cards de detalhes OU mapa em tela cheia.
+  // No celular começa recolhido — o mapa aparece primeiro.
+  const [showInfo, setShowInfo] = useState(() =>
+    typeof window === 'undefined' ? true : window.innerWidth >= 768
+  );
 
   // 🗺️ real ↔ 💊 matrix
   const [viewMode, setViewMode] = useState<'real' | 'matrix'>('real');
@@ -499,6 +506,23 @@ export function DeliveryMap(props: DeliveryMapProps) {
     ? t('deliveryMap.minutes', { count: remainingMin })
     : estimatedTime;
 
+  // ── 🎉 CHEGADA: progresso ≥ 99% OU GPS real a menos de 60 m do
+  // destino. Vira banner no lugar do ETA + toast (avisado uma vez só)
+  // — o cliente nunca mais olha o mapa sem saber que o entregador
+  // já está na porta. ──
+  const destino = route ? route[route.length - 1] : null;
+  const arrived =
+    progress >= 99 ||
+    !!(liveGps && courierPos && destino && distMeters(courierPos, destino) < 60);
+  const arrivedNotifiedRef = useRef(false);
+  useEffect(() => {
+    if (arrived && !arrivedNotifiedRef.current) {
+      arrivedNotifiedRef.current = true;
+      toast.success(t('deliveryMap.arrived'), { duration: 6000 });
+    }
+  }, [arrived, t]);
+  const etaDisplay = arrived ? t('deliveryMap.arrived') : etaLabel;
+
   const deliverySteps = [
     { icon: Package, label: t('deliveryMap.stepConfirmed'), time: t('deliveryMap.minAgo', { count: 2 }) },
     { icon: Navigation, label: t('deliveryMap.stepOutForDelivery'), time: t('deliveryMap.minAgo', { count: 5 }) },
@@ -535,7 +559,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
   if (viewMode === 'matrix') {
     return (
       <div className="relative w-full h-full">
-        <DeliveryMapMatrix {...props} estimatedTime={etaLabel} />
+        <DeliveryMapMatrix {...props} estimatedTime={etaDisplay} externalProgress={progress} />
         <ModeToggle />
       </div>
     );
@@ -645,7 +669,7 @@ export function DeliveryMap(props: DeliveryMapProps) {
               <div>
                 <p className="text-white/60 text-xs uppercase tracking-wider">{t('deliveryMap.estimatedArrival')}</p>
                 <p className="text-white text-2xl font-bold" style={{ color: primaryColor }}>
-                  {etaLabel}
+                  {etaDisplay}
                 </p>
               </div>
 
@@ -677,9 +701,18 @@ export function DeliveryMap(props: DeliveryMapProps) {
           </div>
         </motion.div>
 
-        {/* Bottom Info Cards */}
+        {/* Bottom Info Cards — o cliente escolhe: detalhes ou mapa livre */}
         <div className="absolute bottom-6 left-6 right-6 pointer-events-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex justify-center mb-3">
+            <button
+              onClick={() => setShowInfo(v => !v)}
+              className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-xl transition-all hover:scale-105"
+              style={{ backgroundColor: 'rgba(0,0,0,0.75)', borderColor: 'rgba(255,255,255,0.25)', color: 'white' }}
+            >
+              {showInfo ? `▾ ${t('deliveryMap.hideInfo')}` : `▴ ${t('deliveryMap.showInfo')}`}
+            </button>
+          </div>
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${showInfo ? '' : 'hidden'}`}>
             {/* Customer Info Card */}
             <motion.div
               initial={{ x: -100, opacity: 0 }}

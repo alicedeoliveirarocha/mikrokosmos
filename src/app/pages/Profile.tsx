@@ -73,6 +73,22 @@ export function Profile() {
   const roleColor = getRoleColor();
   const welcomeMsg = getWelcomeMessage(user.role, user.nome);
 
+  // ── Estatísticas — lidas do MESMO storage que o ProductDetail grava.
+  // BUG antigo resolvido: o contador de avaliações lia a chave inexistente
+  // 'mikrokosmos_ratings' e vivia congelado em 0. O formato real é
+  // mikrokosmos_product_ratings: { [productId]: [{ userId, rating }] }.
+  // (Futuro: migrar avaliações/favoritos pras tabelas ratings/favorites
+  // do Supabase, que já existem com RLS prontas.) ──
+  const allRatings: Record<string, { userId: string }[]> = JSON.parse(
+    localStorage.getItem('mikrokosmos_product_ratings') || '{}'
+  );
+  const myRatingsCount = Object.values(allRatings).reduce(
+    (n, arr) => n + (Array.isArray(arr) ? arr.filter(r => r.userId === user.id).length : 0),
+    0
+  );
+  const myFavoritesCount =
+    (JSON.parse(localStorage.getItem('mikrokosmos_favorites') || '{}')[user.id] || []).length;
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -159,25 +175,28 @@ export function Profile() {
 
           {/* Informações */}
           <div className="space-y-4 mb-8">
+            {/* FIX overflow: min-w-0 deixa o texto encolher dentro do flex
+                (sem ele, filho de flex não encolhe e o e-mail vaza do card);
+                break-all quebra e-mails longos; flex-shrink-0 protege o ícone */}
             <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center"
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: 'var(--primary-neon)' }}>
                 <Mail className="w-6 h-6 text-black" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-white/60 text-sm">{t('auth.email')}</p>
-                <p className="text-white text-lg">{user.email}</p>
+                <p className="text-white text-lg break-all">{user.email}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center"
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: 'var(--primary-neon)' }}>
                 <Calendar className="w-6 h-6 text-black" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-white/60 text-sm">{t('profile.memberSince')}</p>
-                <p className="text-white text-lg">{formatDate(user.created_at)}</p>
+                <p className="text-white text-lg break-words">{formatDate(user.created_at)}</p>
               </div>
             </div>
           </div>
@@ -186,13 +205,13 @@ export function Profile() {
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
               <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {JSON.parse(localStorage.getItem('mikrokosmos_ratings') || '{}')[user.id]?.length || 0}
+                {myRatingsCount}
               </p>
               <p className="text-white/60 text-sm">{t('profile.ratings')}</p>
             </div>
             <div className="text-center p-4 bg-white/5 rounded-2xl border border-white/10">
               <p className="text-3xl font-bold mb-1" style={{ color: 'var(--primary-neon)' }}>
-                {JSON.parse(localStorage.getItem('mikrokosmos_favorites') || '{}')[user.id]?.length || 0}
+                {myFavoritesCount}
               </p>
               <p className="text-white/60 text-sm">{t('profile.favorites')}</p>
             </div>

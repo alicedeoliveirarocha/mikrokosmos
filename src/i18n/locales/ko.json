@@ -983,7 +983,10 @@
     "routeLabel": "경로 {{n}}",
     "minutes": "{{count}}분",
     "liveGps": "실시간 GPS",
-    "gpsSending": "GPS 전송 중"
+    "gpsSending": "GPS 전송 중",
+    "hideInfo": "정보 숨기기",
+    "showInfo": "정보 보기",
+    "arrived": "배달원이 도착했어요! 🎉"
   },
   "allergens": {
     "Lactose": "유당",

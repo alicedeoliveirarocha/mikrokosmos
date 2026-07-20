@@ -983,7 +983,10 @@
     "routeLabel": "ルート{{n}}",
     "minutes": "{{count}}分",
     "liveGps": "ライブGPS",
-    "gpsSending": "GPS送信中"
+    "gpsSending": "GPS送信中",
+    "hideInfo": "詳細を隠す",
+    "showInfo": "詳細を見る",
+    "arrived": "配達員が到着しました！🎉"
   },
   "allergens": {
     "Lactose": "乳成分",

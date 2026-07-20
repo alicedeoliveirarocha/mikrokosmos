@@ -20,6 +20,7 @@ interface DeliveryMapMatrixProps {
   customerPhone?: string;
   estimatedTime: string;
   status: 'preparing' | 'on-route' | 'arriving' | 'delivered';
+  externalProgress?: number; // progresso vindo do DeliveryMap — sincroniza os dois modos
 }
 
 export function DeliveryMapMatrix({
@@ -29,16 +30,28 @@ export function DeliveryMapMatrix({
   customerPhone,
   estimatedTime,
   status,
+  externalProgress,
 }: DeliveryMapMatrixProps) {
   const { primaryColor } = useUniverse();
   const { t } = useTranslation();
-  const [progress, setProgress] = useState(0);
+  // ── SINCRONIA: quando o DeliveryMap manda externalProgress, o Matrix
+  // usa o MESMO relógio do mapa real (inclusive o GPS de verdade).
+  // A simulação própria só existe como fallback se o Matrix rodar sozinho.
+  const [simProgress, setSimProgress] = useState(0);
+  const progress = externalProgress ?? simProgress;
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Simulate delivery progress
+  // O cliente decide: detalhes OU visual limpo.
+  // No celular começa recolhido pra tela ficar livre pro Matrix.
+  const [showInfo, setShowInfo] = useState(() =>
+    typeof window === 'undefined' ? true : window.innerWidth >= 768
+  );
+
+  // Simulação de fallback — desligada quando o pai fornece o progresso
   useEffect(() => {
+    if (externalProgress != null) return;
     const interval = setInterval(() => {
-      setProgress((prev) => {
+      setSimProgress((prev) => {
         const newProgress = prev + 0.5;
         if (newProgress >= 100) {
           clearInterval(interval);
@@ -49,7 +62,7 @@ export function DeliveryMapMatrix({
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [externalProgress != null]);
 
   // Update current step based on progress
   useEffect(() => {
@@ -316,9 +329,18 @@ export function DeliveryMapMatrix({
           </div>
         </motion.div>
 
-        {/* Bottom Info Cards */}
+        {/* Bottom Info Cards — o cliente escolhe: detalhes ou tela livre */}
         <div className="absolute bottom-6 left-6 right-6 pointer-events-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex justify-center mb-3">
+            <button
+              onClick={() => setShowInfo(v => !v)}
+              className="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-xl transition-all hover:scale-105"
+              style={{ backgroundColor: 'rgba(0,0,0,0.75)', borderColor: 'rgba(255,255,255,0.25)', color: 'white' }}
+            >
+              {showInfo ? `▾ ${t('deliveryMap.hideInfo')}` : `▴ ${t('deliveryMap.showInfo')}`}
+            </button>
+          </div>
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${showInfo ? '' : 'hidden'}`}>
             {/* Customer Info Card */}
             <motion.div
               initial={{ x: -100, opacity: 0 }}
